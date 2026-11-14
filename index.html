@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f8db45">
+  <meta name="survey-endpoint" content="">
   <meta name="description" content="含人量过高，建议适当降低。10道轻松场景题，一份倒过来的AI率报告。">
   <title>含人量检测站 · 请适当降低无效坚持</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2217%22%20fill%3D%22%23f05a32%22%2F%3E%3Cpath%20d%3D%22M17%2017v30m22-30v30M17%2032h22%22%20fill%3D%22none%22%20stroke%3D%22%23fff9ec%22%20stroke-width%3D%227%22%2F%3E%3Ccircle%20cx%3D%2249%22%20cy%3D%2244%22%20r%3D%224%22%20fill%3D%22%2322251f%22%2F%3E%3C%2Fsvg%3E%0A" type="image/svg+xml">
@@ -45,6 +46,26 @@
 .types-preview:not(.expanded) .mini-type:nth-child(n+6) { display: none; }
 .types-preview.expanded .mini-type { display: block; }
 .afterword { justify-content: flex-end; }
+.collection-note { font-size: 11px; color: var(--muted); line-height: 1.7; margin: 13px 0; }
+.context-card { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; max-width: 410px; }
+.context-card label { font-size: 10px; color: var(--muted); }
+.context-card select { display: block; width: 100%; padding: 9px 6px; font: inherit; font-size: 11px; color: var(--ink); background: var(--paper); border: 1px solid; border-radius: 6px; margin-top: 6px; }
+.dimension-panel { margin-top: 32px; }
+.dimension-panel > h2 { font-size: 18px; margin-bottom: 15px; }
+.dimension-panel details { border-top: 1px solid #bab6aa; padding: 13px 0; }
+.dimension-panel details:last-child { border-bottom: 1px solid #bab6aa; }
+.dimension-panel summary { display: flex; justify-content: space-between; font-size: 13px; cursor: pointer; gap: 14px; }
+.dimension-panel summary small { color: var(--muted); font-size: 10px; }
+.dimension-panel p { font-size: 12px; margin-top: 13px; line-height: 1.9; }
+.answer-evidence { color: var(--muted); }
+.answer-evidence strong { display: block; color: var(--ink); font-size: 12px; margin-top: 4px; }
+.support-choice { font-size: 12px; margin-top: 24px; line-height: 1.9; }
+.support-choice strong { font-weight: 600; }
+.type-poster { padding-bottom: 22px; }
+.type-quote { white-space: normal; }
+.review-buddy { width: 150px; height: 140px; margin: auto; }
+#quality-dialog h2 { margin-top: 2px; }
+#quality-dialog .text-button { display: block; width: 100%; margin-top: 14px; text-align: center; }
 @media (max-width: 600px) {
   .header-actions { gap: 14px; }
   .home-grid .stage { min-height: 0; height: 175px; }
@@ -76,254 +97,392 @@
     <button class="dialog-close" id="close-dialog" aria-label="关闭说明">×</button>
     <span class="eyebrow">HUMAN CONTENT LAB</span>
     <h2 id="about-title">给人类和AI，<br>重新排个班。</h2>
-    <p>选个搭子，每局抽 10 道题。它出 3 道专属题，其他题也会换。回到结果页改答案时，还是这一套。</p>
+    <p>每局 10 题，包含 4 道公共情境、4 道搭子情境，以及校园支持需求和课余安排各 1 题。相同方面会问两次，场景各有不同。</p>
+    <p>请按课程允许使用 AI 的情形作答。没遇到过的情境可以选“暂时说不准”。</p>
     <p>题目里的鲸鱼、螃蟹和其他小动物都是本所的出题搭子。</p>
+    <p id="collection-detail" hidden>交卷后，搭子、题目、选项、结果和提交时间会保存到活动作者的答卷库，用于本次活动统计。</p>
     <button class="button primary" id="understood">明白，允许整活 <span aria-hidden="true">↗</span></button>
   </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog id="quality-dialog" aria-label="搭子提醒"></dialog>
   <noscript><p class="noscript">这个互动需要浏览器启用JavaScript；所有答案只在本机处理。</p></noscript>
   <script>
-function question(id, tag, title, options, sub = '') {
-  return {id, tag, title, sub, options: options.map(([text, kind, human, note]) => ({text, kind, human, note}))};
+const DIMENSIONS = {
+  delegation: {label: '重复任务怎么分', low: '更多亲自处理', high: '更多交给搭子'},
+  verification: {label: '结果怎么核对', low: '较少核对', high: '核对更充分'},
+  learning: {label: '练习怎么参与', low: '更多先看答案', high: '更多先自己尝试'},
+  stopping: {label: '达标后怎么收工', low: '倾向继续加改', high: '倾向按时收工'}
+};
+
+const OPTIONS = {
+  delegation: [
+    ['self', '主要自己整理，搭子帮点小忙。', 0],
+    ['small-part', '自己做大半，分一小段给搭子。', 1],
+    ['first-draft', '让搭子先整理一版，我接着改。', 2],
+    ['delegate', '重复整理交给搭子，我检查成品。', 3]
+  ],
+  verification: [
+    ['accept', '看着能用，就直接放进成品。', 0],
+    ['skim', '大致读一遍，改明显不对的地方。', 1],
+    ['sample-check', '抽几处，对着原资料或实际结果查。', 2],
+    ['key-check', '关键内容逐项核对，有问题先修好。', 3]
+  ],
+  learning: [
+    ['answer-first', '让搭子给完整答案，先把这题结束。', 0],
+    ['read-then-try', '先看搭子的完整解法，再自己做。', 1],
+    ['hint', '自己先试，卡住时问一步提示。', 2],
+    ['try-then-compare', '先独立做一遍，再让搭子对照检查。', 3]
+  ],
+  stopping: [
+    ['redo', '再重做一版，今晚晚点睡也行。', 0],
+    ['keep-tweaking', '继续改一会儿，感觉还能更好。', 1],
+    ['last-check', '按要求最后查一遍，没漏就收工。', 2],
+    ['finish', '已经检查合格，保存提交，去做别的。', 3]
+  ]
+};
+
+function item(id, dimension, role, title, sub, buddy = null) {
+  const options = OPTIONS[dimension].map(([optionId, text, value]) => ({id: optionId, text, value}));
+  options.push({id: 'unsure', text: '没遇到过，暂时说不准。', value: null});
+  return {id, dimension, role, buddy, title, sub, options,
+    tag: role === 'anchor' ? '校园日常' : '搭子出题'};
 }
 
-const COMMON_QUESTIONS = {
-  work: [
-    question('format', '交作业前', '40 页文档的标题格式全乱了。你先干嘛？', [
-      ['从第一页开始改。', 'manual', 95, '文档有 40 页，你有一晚上。'],
-      ['让工具批量改，我抽几页看看。', 'adapt', 25, '这种活，抽查几页比改四十页快。'],
-      ['先弄懂样式怎么设，下次自己就会了。', 'craft', 85, '有人改格式，有人趁机学 Word。'],
-      ['发给 AI，趁这会儿去洗个澡。', 'delegate', 15, '回来的时候记得看一眼目录。']
-    ]),
-    question('slides', '交作业前', '组员发来四份 PPT，一人用了一个模板。明早上台。', [
-      ['自己合。谁也别再碰原文件。', 'manual', 90, '从现在起，这个文件只许有一位祖宗。'],
-      ['让 AI 先列一下重复和缺的页。', 'adapt', 35, '先数数哪几页在讲同一件事。'],
-      ['我想练排版，正好拿这次试试。', 'craft', 85, '比看二十分钟排版教程更有手感。'],
-      ['找份模板让工具统一，我只管讲顺。', 'delegate', 20, '主题统一了，明早别四个人讲四遍背景。']
-    ])
-  ],
-  judgment: [
-    question('citation', '交上去之前', 'AI 给了你一篇正好能用的论文，链接却是 404。', [
-      ['搜题名和作者，找到原文再引。', 'check', 45, '论文写得再对胃口，也得先查到它。'],
-      ['信息这么全，先把它放进参考文献。', 'unchecked', 5, '最像真的那篇，可能还是它现写的。'],
-      ['让它补 DOI，我再打开核对。', 'check', 35, '有 DOI 了。下一步是点开。'],
-      ['这条删了，我自己找一篇。', 'manual', 85, '找不到这篇，未必找不到能用的。']
-    ]),
-    question('credit', '交上去之前', '你写了一晚上的摘要，AI 改完后，室友说改过的更好懂。', [
-      ['把我那两句换回来，总得留点自己的。', 'proof', 90, '可疑痕迹：作者在摘要上刻了个到此一游。'],
-      ['通读一遍，有用就留。', 'delegate', 20, '行，改得好这条记它头上。'],
-      ['对照着看它删了什么，自己再写一遍。', 'craft', 85, '这回题目是摘要，下回题目是少写两句。'],
-      ['让另一个模型看看原意有没有跑偏。', 'router', 40, '第二位审稿人已加入群聊。']
-    ])
-  ],
-  ritual: [
-    question('ritual', '打开聊天框', '就想让 AI 帮你起个标题。发送前的第一步？', [
-      ['先写“你是一位有 20 年经验的编辑”。', 'wizard', 55, '来应聘的编辑目前还不知道要起什么标题。'],
-      ['翻收藏夹，里面有一条专门起标题的。', 'collector', 65, '保存它的时候你就知道会有今天。'],
-      ['开几家，同时发。', 'router', 35, '一个标题获得了四份报价。'],
-      ['贴两句正文，说给我三个标题。', 'direct', 20, '起标题前省下了一次起提示词。']
-    ]),
-    question('toolbox', '打开聊天框', '同学发来一条「写论文必备 Prompt」，有三屏长。', [
-      ['先套上专家设定，顺手再补两条。', 'wizard', 55, '正文还没写，提示词已经可以分页了。'],
-      ['加入收藏。以后写到这儿一定会用。', 'collector', 65, '“以后会用”文件夹又多了一位住户。'],
-      ['拿同一个小任务测三家，看谁好用。', 'router', 35, '你的模型横评比任务本身先交稿。'],
-      ['先用自己的话问一遍。', 'direct', 20, '三分钟后，三屏提示词还没拆封。']
-    ])
-  ],
-  revision: [
-    question('revision', '稿子来了', '你说“这句改顺一点”，AI 把整段重写了。', [
-      ['再开一轮。反正才第十七版。', 'again', 55, '第十八版，命名为「真不改了」。'],
-      ['把那句单拎出来，只改这一句。', 'efficient', 30, '今晚最大的进展，是终于选中了修改范围。'],
-      ['把两版丢给另一家，问它选哪个。', 'router', 35, '恭喜，获得了第三版。'],
-      ['先放着，等截止前五分钟再看。', 'deadline', 75, '你真正的系统提示词是倒计时。']
-    ]),
-    question('deadline', '稿子来了', '群里问“能交了吗”，你手上已经有一版能用的。', [
-      ['再来一版，感觉还能更好看。', 'again', 55, '「能交」和「愿意交」隔着一整个版本库。'],
-      ['过一遍要求，没漏就发。', 'efficient', 30, '提交文件的手并没有发抖。'],
-      ['交给另一个 AI 当评委，票数高的发。', 'router', 35, '评委建议参考第一版和第二版。'],
-      ['回个“马上”，离截止还有半小时呢。', 'deadline', 75, '嘴上的马上，电脑上的稍后。']
-    ])
+const ANCHORS = [
+  item('v2-anchor-delegation', 'delegation', 'anchor',
+    '小组展示内容都定了，还剩 30 页 PPT 要统一格式。',
+    '这是一次允许使用 AI 的任务，内容不用重写。你通常会怎样安排？'),
+  item('v2-anchor-verification', 'verification', 'anchor',
+    'AI 整理出一份复习卡，下周就靠它复习了。',
+    '课件和教材都在手边。开始背之前，你会检查到哪一步？'),
+  item('v2-anchor-learning', 'learning', 'anchor',
+    '课上留了一道练习，今天有时间慢慢做。',
+    '这次目的是学会解法，老师也允许问 AI。你会怎么开始？'),
+  item('v2-anchor-stopping', 'stopping', 'anchor',
+    '课设已经按要求检查完，演示也顺利跑过了。',
+    '明天下午才交，今晚还剩两小时。你通常会怎样安排？')
+];
+
+const SCENARIOS = {
+  deepseek: {
+    delegation: [
+      ['干饭鲸看着六份小组笔记，问你要不要先去吃饭。', '笔记内容已经核实，剩下的是合并、去重和排版。你把多少交给它？'],
+      ['活动报名表收齐了，干饭鲸说它可以边吃边整理。', '名单已确认，剩下的只是按场次排序和统一格式。你怎么分工？']
+    ],
+    verification: [
+      ['干饭鲸吐出一页考点，还附赠一句“包会的”。', '这是它根据你上传的课件做的。你会怎样查过这份考点再复习？'],
+      ['干饭鲸说这道例题想明白了，写了满满一屏。', '你手上有老师给的参考解答。把它放进复习笔记前，你会怎么核对？']
+    ],
+    learning: [
+      ['干饭鲸已经想好这道练习的解法，等你开口。', '你今天要练会这个方法，有时间自己试。你会怎么用它？'],
+      ['考前还有一周，干饭鲸问“要不要我把这题做了”。', '今天安排的是理解一道例题，允许 AI 辅助。你会选哪种方式？']
+    ],
+    stopping: [
+      ['课设已按要求检查合格，干饭鲸端起了饭碗。', '它问你还要不要“再想深一点”。明天下午才交，今晚还有两小时。'],
+      ['复习清单里的任务都做完了，干饭鲸说它下班了。', '你也按计划检查过今天的练习了。剩下两小时，你会继续加任务吗？']
+    ]
+  },
+  claude: {
+    delegation: [
+      ['打工蟹想接手小组展示稿，钳子已经伸到文件夹了。', '内容已经定稿，只需统一标题、字号和目录。你让它负责多少？'],
+      ['课设说明书只差整理格式，打工蟹说“这回只动排版”。', '内容和图表都已核实。剩下的重复整理，你怎么安排？']
+    ],
+    verification: [
+      ['打工蟹说课设演示已经测过，测试全绿。', '它还给了演示稿。你会怎样确认里面的关键说明确实和成品一致？'],
+      ['你只让打工蟹改个颜色，它说顺手处理了几个文件。', '改动即将用于课程展示。你会怎样核对它交回来的结果？']
+    ],
+    learning: [
+      ['打工蟹把答案敲好了，问要不要现在发给你。', '这道课堂练习的目的是学会方法，今天时间充足。你会怎么用它？'],
+      ['打工蟹看了你的课设练习，说“我能直接写出来”。', '这次小练习是为了让你掌握其中一个步骤，允许求助。你怎么开始？']
+    ],
+    stopping: [
+      ['课设已按要求验收，打工蟹又想“顺便重构一下”。', '明天下午才交，今晚还有两小时。你已经检查过当前版本能用。'],
+      ['展示文件都检查好了，打工蟹递来第五套改进计划。', '规定的内容已经齐全，演练也通过了。今晚你会接着做吗？']
+    ]
+  },
+  gemini: {
+    delegation: [
+      ['香蕉星接到了小组作业，先抖出六套配色。', '实际只要把已定稿的 PPT 套进指定模板。你把多少整理工作交给它？'],
+      ['社团的活动素材收齐了，香蕉星说能整理得漂漂亮亮。', '图片和文案已经确认，只剩按时间排序、统一尺寸。你怎么安排？']
+    ],
+    verification: [
+      ['香蕉星画的复习图挺好看，里面还写着公式。', '原课件就在旁边。把图用进复习资料前，你会检查到哪一步？'],
+      ['香蕉星交了活动海报，字看起来都很像汉字。', '时间、地点和活动名在原通知里都有。发到班群前，你怎样核对？']
+    ],
+    learning: [
+      ['香蕉星可以直接给你画出这道题的完整示意图。', '你今天想练会自己分析这类题，允许工具辅助。你先做什么？'],
+      ['香蕉星说能三秒讲完这个知识点，顺便画四张图。', '今天安排的是自己练一遍方法。时间够，你怎么和它配合？']
+    ],
+    stopping: [
+      ['海报已按要求检查完，香蕉星说还能再来一套渐变。', '明天下午发，今天该有的内容和格式都已合格。你怎么安排剩下两小时？'],
+      ['小组展示已经演练通过，香蕉星又做了第六套封面。', '当前版本符合所有要求。今晚你会接着换吗？']
+    ]
+  },
+  gpt: {
+    delegation: [
+      ['白龙卷说“你说得对”，接着准备帮你合并笔记。', '几份课堂笔记都已核实，只剩去重和统一格式。你会交给它多少？'],
+      ['白龙卷给活动安排写了三点，实际只需整理报名名单。', '名单内容已确认，按日期和场次排序就好。你怎么分工？']
+    ],
+    verification: [
+      ['你说解答有问题，白龙卷马上同意了你。', '它给出新版答案，教材和老师的例题都在。你会怎样核对再用？'],
+      ['白龙卷给课程报告配齐了参考资料，排得很整齐。', '你能查原文和课程资料。提交前，你会检查到哪一步？']
+    ],
+    learning: [
+      ['你还没读完题，白龙卷已经开始写“首先”。', '这是一道用来练会方法的课后题，允许 AI 辅助，时间充足。你会怎么用它？'],
+      ['白龙卷问你，要详细解法还是一句话答案。', '今天的目标是自己学会这道练习。你先做什么？']
+    ],
+    stopping: [
+      ['报告已按要求检查合格，白龙卷说还可以“进一步提升”。', '明天下午才交，今晚剩两小时。你会接着改吗？'],
+      ['今天的复习计划已完成，白龙卷又列了三点拓展。', '你已经核对过学习任务都完成了。接下来怎么安排？']
+    ]
+  },
+  qwen: {
+    delegation: [
+      ['千问小狐给了十一种整理方案，你只需要一份活动表。', '内容已确认，只剩按日期排序和统一格式。你把多少交给它？'],
+      ['小组展示稿定了，千问小狐举手说还能帮忙。', '剩下的都是按模板排版、合并目录。你怎么分工？']
+    ],
+    verification: [
+      ['千问小狐说活动周日截止，群里好像说的是周一。', '原通知可以打开。你会怎样核对它整理的时间表？'],
+      ['千问小狐把考点列成了十一条，标题都很工整。', '它依据的是你上传的课件。正式开始背之前，你会检查到哪一步？']
+    ],
+    learning: [
+      ['千问小狐准备换个问法，把课堂练习的解法告诉你。', '你要练会这个方法，今天有时间试，老师允许 AI 辅助。你怎么开始？'],
+      ['千问小狐可以一步步带你做课设里的一个小练习。', '这次练习主要为了理解，先不赶交成品。你会怎么配合？']
+    ],
+    stopping: [
+      ['展示稿已检查合格，千问小狐又递来了十一条优化建议。', '明天下午才交，今晚还有两小时。你怎么安排？'],
+      ['今天的复习任务都核对完了，小狐问要不要加练一组。', '原计划已经完成，今晚剩两小时。你会怎样决定？']
+    ]
+  },
+  kimi: {
+    delegation: [
+      ['月亮猫面前摞着几份课堂笔记，尾巴快被压住了。', '内容都已确认，只要合并、去重、统一格式。你把多少工作交给它？'],
+      ['活动资料夹装满了，月亮猫问先看哪个。', '资料内容已确认，剩下的是按主题分类和排目录。你怎么安排？']
+    ],
+    verification: [
+      ['月亮猫读完 90 页课件，说重点在第 91 页。', '原课件在你手上。把它的摘要用于复习前，你会怎么核对？'],
+      ['月亮猫把课堂材料压成一页，看来省了不少时间。', '原文和图表都能查。你准备怎样检查再用进作业？']
+    ],
+    learning: [
+      ['月亮猫把例题所在页翻开，答案就在下一页。', '你今天想自己学会这一类题，允许 AI 辅助，时间也够。你怎么开始？'],
+      ['月亮猫看完讲义，说能直接给你讲完整道练习。', '学习目标是掌握方法。你通常怎样参与？']
+    ],
+    stopping: [
+      ['报告已检查合格，月亮猫却又翻到一叠拓展资料。', '明天下午才交，今晚还有两小时。你会接着加吗？'],
+      ['复习计划上的勾都打完了，月亮猫还在翻课外附录。', '你已经确认今天的任务完成。剩下两小时怎么过？']
+    ]
+  },
+  doubao: {
+    delegation: [
+      ['豆包团子想把活动清单念给你听，越念越长。', '你只需要把已确认的内容整理成一张表。你让它承担多少？'],
+      ['小组演示定了，团子问要不要先来段开场白。', '现在只剩把文件合并、统一格式。你怎么安排这些工作？']
+    ],
+    verification: [
+      ['团子把复习卡读得像喜讯，每一句都很肯定。', '课件和教材都在。开始复习前，你会怎么检查这些内容？'],
+      ['团子把校园活动排进了日程，安排得满满当当。', '报名截止和上课时间都有原始通知。你会核对到哪一步？']
+    ],
+    learning: [
+      ['豆包团子已经准备好讲解练习，开场还没念完。', '今天你想练会这道题，允许 AI 辅助，时间充足。你怎么开始？'],
+      ['团子说可以替你把课堂小练习写完。', '这道练习主要是帮你掌握方法。你会怎样配合？']
+    ],
+    stopping: [
+      ['视频稿已按要求演练通过，团子又想加三十秒开场。', '当前版本已经合格，明天下午才交。你会怎么安排今晚剩下两小时？'],
+      ['活动材料已核对完，团子又写了一段“更精彩的结尾”。', '原版本满足全部要求。今晚你会继续改吗？']
+    ]
+  },
+  grok: {
+    delegation: [
+      ['嘴硬蝠先吐槽了小组 PPT，又说它能帮你整理。', '内容已经定了，只剩合并目录和统一格式。你交给它多少？'],
+      ['蝙蝠看着活动通知说“这排版也能交”。', '通知内容已核实，只需照指定模板重新整理。你怎么分工？']
+    ],
+    verification: [
+      ['嘴硬蝠搬来一张热传截图，说这下可以写进课程报告。', '你能找原帖和原始资料。你会怎样核对再用？'],
+      ['蝙蝠把活动规则总结了一遍，语气很像已经替你问过老师。', '学院原通知可以打开。你会检查到哪一步？']
+    ],
+    learning: [
+      ['嘴硬蝠看了练习题，先笑你两声，又准备给答案。', '你今天的目标是学会方法，允许 AI 辅助。时间充足，你怎么开始？'],
+      ['蝙蝠说“这题也要问”，接着要把整套解法发给你。', '这是一次为了理解而安排的课后练习。你通常怎么参与？']
+    ],
+    stopping: [
+      ['海报已检查合格，嘴硬蝠仍有十条审美意见。', '当前版本符合要求，明天下午才交。今晚剩两小时，你会怎样安排？'],
+      ['今天的复习计划已完成，蝙蝠又找来一组“就这也不会”的题。', '原计划和练习都检查完了。你会继续加任务吗？']
+    ]
+  }
+};
+
+const COMPANION_ITEMS = Object.fromEntries(Object.entries(SCENARIOS).map(([buddy, groups]) => [
+  buddy, Object.fromEntries(Object.entries(groups).map(([dimension, scenarios]) => [dimension,
+    scenarios.map(([title, sub], index) => item(`v2-${buddy}-${dimension}-${index}`, dimension, 'companion', title, sub, buddy))
+  ]))
+]));
+
+const SUPPORT_ITEM = {
+  id: 'v2-support', role: 'support', tag: '校园活动',
+  title: '学校如果办一次 AI 小活动，你最希望带走什么？',
+  sub: '选眼下最需要的一项。',
+  options: [
+    {id: 'rules', text: '具体例子，弄清哪些作业可以怎样用 AI。'},
+    {id: 'checking', text: '核对答案、资料和代码的方法。'},
+    {id: 'workflow', text: '当场做一个复习或课设小任务。'},
+    {id: 'planning', text: '试试怎样分工、安排活动和学习时间。'},
+    {id: 'none', text: '暂时没这个需求，先玩到这里就好。'}
   ]
 };
 
-const BUDDY_QUESTIONS = {
-  deepseek: [
-    question('whale-busy', '干饭鲸出题', '你问一道题，鲸鱼转了半天，最后说服务器繁忙。', [['再点一次。都等这么久了。','again',55,'等了十分钟的人很难放下这一分钟。'],['先把能写的写了，卡住那步留着。','adapt',55,'鲸在排队，你不用跟它一起排。'],['换一家，顺便比较两家的解法。','router',35,'鲸鱼工位暂由另一位同事接管。'],['我也去吃饭，回来再说。','delegate',20,'你和鲸鱼这次排班一致。']]),
-    question('whale-long', '干饭鲸出题', '你问宵夜吃啥，鲸鱼把你的饮食偏好分了六种情况。', [['看完。它都写了，我也不好意思不看。','manual',75,'等看完，第七种情况是店关了。'],['让它报两家店名，然后我选。','efficient',30,'店名限定在十个字以内。'],['把菜单发给另一家，也问一遍。','router',35,'宵夜项目已成立评审团。'],['关掉窗口，去楼下吃碗面。','delegate',20,'没有方案文档，只有面。']]),
-    question('whale-rice', '干饭鲸出题', '鲸鱼给你留了一份待检查的表，说它先去吃饭。', [['自己重算一遍，放心。','manual',90,'两个人各做了一次同一张表。'],['抽三行算算，看数字是不是对得上。','check',45,'检查有了，饭也还有时间吃。'],['总数看着顺眼，直接交。','unchecked',5,'总数没有义务长得可疑。'],['约好回来一起看，我也去吃。','delegate',20,'暂时没人开工，大家都开饭。']]),
-    question('whale-steps', '干饭鲸出题', '鲸鱼给了三种解法，你只看得懂最慢的那种。', [['照最慢的做，我想弄明白。','craft',85,'慢那几步正好是你要学的。'],['让它用同一题把快方法讲一遍。','adapt',45,'能用这个例子讲清楚，再换方法。'],['选最快的，跑个小例子对一下。','check',30,'速度和验收都保住了。'],['自己从头算，先不看答案。','manual',90,'鲸鱼在一旁等你对答案。']])
-  ],
-  claude: [
-    question('crab-files','打工蟹出题','你让螃蟹改按钮颜色。它顺手改了 14 个文件。',[['先撤回，我自己改 CSS。','manual',90,'十四个文件没能进入你的变更名单。'],['打开 diff，挑出该留的那几行。','check',45,'颜色通过，顺手装修另议。'],['问另一家：这 14 个文件有必要动吗？','router',40,'临时聘请第二位装修监理。'],['它说测试过了，就合进去吧。','unchecked',5,'按钮换色，项目也换了个性格。']]),
-    question('crab-plan','打工蟹出题','你让螃蟹修一个错别字。它先发来一份修复计划。',[['直接把字改了，计划留给下一个错别字。','manual',90,'从立项到交付只按了两下键。'],['说“改这一个字就行”，让它继续。','efficient',30,'会议取消，修复继续。'],['看完计划，觉得好像还能再优化。','again',55,'错别字进入第二轮立项。'],['先让它改，回来看结果。','delegate',20,'只需要留意它有没有改动旁边那句。']]),
-    question('crab-quota','打工蟹出题','螃蟹刚说“我找到问题了”，今天的额度就用完了。',[['顺着最后一句继续查。','craft',80,'最贵的一句提示是半句。'],['把复现步骤整理一下，换一个接手。','router',40,'交接单比聊天记录好懂多了。'],['先写个最小例子，明天再接着看。','adapt',50,'今晚留下一张能接着走的地图。'],['我也下班，明天再修。','delegate',20,'额度和人都需要刷新。']]),
-    question('crab-test','打工蟹出题','螃蟹说 Bug 修完了。你点一下，还是同一个报错。',[['把复现步骤录下来，让它照着走。','efficient',30,'同事终于看到了你点的是哪个按钮。'],['自己跟一遍调用，弄明白再改。','craft',85,'问题没走，你先走了一遍代码。'],['让它加一个能复现的测试再改。','check',45,'这下“修完”有了能核对的东西。'],['叫另一家看看它漏了什么。','router',35,'又一只钳子加入了排查。']])
-  ],
-  gemini: [
-    question('star-banana','香蕉星出题','你让香蕉星换背景，回来发现你也换了张脸。',[['把原图和改图一起贴回去，只圈背景。','efficient',30,'谁能动，谁不能动，这次标清了。'],['我自己扣图，今晚就这么过了。','manual',90,'工具省下的时间，被头发丝拿回去了。'],['这张也挺好，另外存。再跑一张。','again',55,'原计划一张图，现库存十七张。'],['让另一个工具换背景，保留脸。','router',40,'角色本人要求保留本人。']]),
-    question('star-menu','香蕉星出题','新海报真好看，唯一的问题是菜单写着「宫保鸡钉」。',[['留下插图，文字自己排。','adapt',50,'鸡丁回来了，背景保住了。'],['再抽一张，总会抽到对的。','again',55,'第九张叫宫保扣丁。'],['把菜名放大逐个核对，再发。','check',45,'出菜前先核菜单。'],['同学看得懂就行，发吧。','unchecked',5,'食堂收到一份新的五金采购单。']]),
-    question('star-photo','香蕉星出题','你只传了一张教室照片，星星还给你设计了椅子、毕业照和校徽。',[['把要识别的那块先裁出来。','efficient',30,'这回它只看屏幕右上角。'],['有点意思，顺手试两张风格。','again',50,'原任务跑偏，但偏到了你想试的地方。'],['请另一家只描述图里看得见的东西。','router',40,'想象力暂时让位给视力。'],['对着照片自己标，一分钟就好了。','manual',85,'一分钟作品没有衍生宇宙。']]),
-    question('star-colors','香蕉星出题','你说配色简单点，星星发回六套渐变，每套还取了名字。',[['留一套，其余关掉。','delegate',20,'你的桌面恢复了可用面积。'],['给两种参考色，请它重做。','efficient',35,'“简单点”终于被翻译成人话了。'],['都另存，改天做素材。','collector',65,'这六套渐变又住进了一个文件夹。'],['直接开画板，我想自己配。','craft',85,'命名环节：蓝、黄。完毕。']])
-  ],
-  gpt: [
-    question('dragon-agree','白龙卷出题','你说答案有问题，它立刻说你对。你反过来说，它也同意。',[['拿个反例让它算，再看哪边对。','check',45,'今天的裁判是一道小题。'],['自己查原文，两句都先不信。','manual',85,'两次认同都不能折算成一条出处。'],['把问题原样问另一家。','router',35,'集齐三票之前，你先不点头。'],['它都改口了，那就用新版。','unchecked',5,'改口和改对，今天只发生了一件。']]),
-    question('dragon-three','白龙卷出题','你只问「能不能」，白龙卷给你分了三部分、七小点。',[['追问一句：能，还是不能？','efficient',30,'七个小点折叠成了一个字。'],['开始精炼提示词，“只许回答一句话”。','wizard',55,'你的限制比问题长了一点点。'],['算了，我自己搜。','manual',85,'你最终收到了搜索引擎的十条答案。'],['看第一行。能用就先办。','delegate',20,'第一段还没进入“首先”。']]),
-    question('dragon-style','白龙卷出题','你说“写得像我一点”，它把你的朋友圈改成了品牌发布会。',[['贴两句我平时写的，叫它照那个节奏。','adapt',45,'你提供了一个实际存在的你。'],['再来一版，再口语，再少点排比。','again',55,'嘴上已经很像人了，距离像你还有一点。'],['我把开头写了，后面的错字交给它。','craft',80,'这次写朋友圈的人总算上线了。'],['改两字发出去，就当换个月的文风。','delegate',20,'今天朋友圈确实像有新品上市。']]),
-    question('dragon-memory','白龙卷出题','聊了半小时，它突然问你“这个项目叫什么”。',[['把项目和要求压成四行，重新发。','efficient',35,'四行交接单救了半小时长聊。'],['开个新对话，把收藏的交接模板贴进去。','collector',65,'收藏夹今天终于出了一次工。'],['截个图找另一家接手。','router',40,'项目有史以来第二位同事。'],['把剩下的写完，就差两句了。','manual',90,'两句的工作暂时不再开会。']])
-  ],
-  qwen: [
-    question('fox-eleven','千问小狐出题','你问小狐一个方案，它给了十一个，还问要不要继续。',[['只留两个，再选一个试。','efficient',30,'今天的第十二种方案是少选几个。'],['十一条先收藏，以后用。','collector',65,'收藏夹新增了一支足球队。'],['把十一个发另一家，让它选。','router',35,'第二位评委建议先删九条。'],['我已经想好一个，就照我的做。','manual',85,'看完菜单，还是点了老三样。']]),
-    question('fox-expression','千问小狐出题','你问小狐怎么委婉催组员，它写得像一封正式公函。',[['改成“你那页弄好没，我要合了”。','craft',80,'两句话后，对方回了“来了”。'],['给它看两句群聊，再写一次。','adapt',50,'参考资料终于来自这个群。'],['试三个版本，选最不像催人的。','again',55,'草稿箱忙着工作，群消息还没发。'],['把称谓删掉，发。','delegate',20,'各位尊敬的同学成功变成了各位同学。']]),
-    question('fox-angle','千问小狐出题','小狐让你换个问法。你已经换了第四种。',[['贴一个我实际想要的例子。','efficient',30,'终于聊到一件看得见的东西。'],['先翻收藏里那条提问模板。','collector',65,'模板文件夹再次打开。'],['同样的问题原样发另一家。','router',35,'不换问法，今天换人。'],['这个细节我自己做，其他让它接着帮。','adapt',50,'一件卡住的事没有拖走整个任务。']]),
-    question('fox-check','千问小狐出题','小狐说活动周日截止。群通知写着周一。',[['打开最新通知，对时间和版本。','check',45,'日历暂时听发布人的。'],['让它把看过的通知链接列出来。','check',35,'两份通知可能真有两个日期。'],['信群里，先让它改提醒。','adapt',35,'确认后可以把录入交出去。'],['周一听着宽裕，就按周一。','unchecked',5,'宽裕度没有资格当证据。']])
-  ],
-  kimi: [
-    question('cat-pdf','月亮猫出题','猫读完你上传的 90 页 PDF，说重点在第 91 页。',[['让它贴原句，我在 PDF 里搜。','check',45,'第九十一页的住户终于需要出示房本了。'],['先用它给的摘要，这数字可能是排版问题。','unchecked',5,'摘要先过，页码暂时在宇宙之外。'],['给另一家同一份 PDF 对一下。','router',35,'两位读书搭子请先对齐页数。'],['直接翻原文，把那段自己找出来。','manual',85,'这回文献页数由你亲自点名。']]),
-    question('cat-tabs','月亮猫出题','你传了八个文件，猫问「你想先看哪份？」',[['叫它先按课程和日期列清单。','efficient',30,'八份文件先领八张号。'],['先存一套读 PDF 的提示词。','collector',65,'看文件之前先看怎么让猫看文件。'],['按课分给两家，交叉看最重要的。','router',35,'资料室开始分窗口办理。'],['我挑两份自己读，其他明天说。','craft',80,'两个文件获得了完整注意力。']]),
-    question('cat-summary','月亮猫出题','猫把讲座压成五条，但你记得老师说的笑话恰好没了。',[['把那个笑话补进去，我就想记这段。','craft',85,'机器记了结论，你记了当时的人。'],['让它把现场故事单列一次。','again',55,'同一场讲座现在有两个版本。'],['我只交要点，笑话留给室友听。','delegate',20,'讲座作业和宿舍节目分别归档。'],['找录音时间戳，看它是不是漏了别的。','check',45,'被删的故事成了抽查入口。']]),
-    question('cat-file','月亮猫出题','猫总结得很好。你突然发现，发给它的是去年的通知。',[['换今年的，顺手让它列出两版差异。','efficient',30,'去年的工作也没完全白做。'],['两个版本我都打开，逐条核日期。','check',45,'年份检查终于排在日期前面。'],['请另一家帮我搜今年的原文。','router',35,'叫一位同事找文件，一位读文件。'],['先拿去年的当参考，去吃饭。','delegate',20,'真正提交以前还得补看今年。']])
-  ],
-  doubao: [
-    question('bun-short','豆包团子出题','你说「简短一点」，团子把一句话扩成了朋友圈小作文。',[['我把多出来的全删了。','manual',85,'字数经历了一次涨停和跌停。'],['说“十二个字以内”，再来。','efficient',30,'这一回，“短”终于有个长度。'],['让它写三条，选最短的。','again',55,'总字数增加，目标字数减少。'],['能读懂就拿去用，我还有事。','delegate',20,'发布会上少了一轮会。']]),
-    question('bun-video','豆包团子出题','你让团子写一分钟视频稿，它给开场安排了三十秒自我介绍。',[['掐表读一遍，开头自己换掉。','check',50,'你好，观众暂时还在线。'],['单独做一条十五秒的开场。','efficient',30,'自我介绍终于有了结束时间。'],['发给另一家压缩，最好别再多一段。','router',35,'现在有两位剪辑顾问在场。'],['那就不要开场了，第一秒进正题。','adapt',35,'观众什么都没错过。']]),
-    question('bun-food','豆包团子出题','团子给了你七天食谱。你家现在只有两颗蛋。',[['把库存列清楚，让它按现有食材出一道。','efficient',30,'冰箱正式参与了需求评审。'],['煎蛋。再想就凉了。','manual',85,'食谱最终只有两个字。'],['试一下那道离煎蛋最近的菜。','adapt',45,'创意今天只改一项调料。'],['七天食谱先收藏，外卖已经下单了。','collector',65,'收藏夹的伙食比你丰富。']]),
-    question('bun-voice','豆包团子出题','团子在读你的广播稿，每句话都像在播报喜讯。',[['示范一句，再让它试。','adapt',45,'参考终于从“自然点”变成了能听的自然。'],['自己录，试三遍就发。','craft',85,'第三遍的停顿还有点像你。'],['换一家读读看。','router',35,'广播播音员开始试用。'],['这股劲挺带感，就留吧。','delegate',20,'今天连天气都像得了奖。']])
-  ],
-  grok: [
-    question('bat-source','嘴硬蝠出题','蝙蝠搬来一张热传截图，说事情实锤了。',[['找截图里的原帖和时间。','check',45,'有截图和有原文暂时分开。'],['这么多人转，先信一次。','unchecked',5,'转发量正在申请担任证人。'],['叫另一家从头查，先不贴截图。','router',35,'给第二位选手一次盲评。'],['不追了，等真要用再查。','adapt',40,'不参与每一次全网大考。']]),
-    question('bat-joke','嘴硬蝠出题','你让蝙蝠润一句通知，它先吐槽了通知，再吐槽你。',[['笑完把原句发了。','manual',85,'今天的润色成果是一个笑。'],['留那个好笑的点，重写成同学能看懂的。','craft',80,'笑点可以借，用词你来。'],['让它只改病句，别评价我。','efficient',30,'出题人被要求坐回工位。'],['发给另一个 AI，让它判断谁更过分。','router',35,'现在三方都在看同一条通知。']]),
-    question('bat-trend','嘴硬蝠出题','蝙蝠给你讲了十分钟最新热梗，忘了你只是问原来的梗。',[['把原图贴回去，问它一句出处。','efficient',30,'找梗先从这一张图开始。'],['十个梗全存，课上慢慢看。','collector',65,'你收获了一份还没打算看的周报。'],['它讲到哪儿我跟到哪儿，原题明天再问。','deadline',75,'热点结束时，待办原封不动。'],['自己找这个梗最早的一条。','check',60,'十分钟速成暂时让位给原帖。']]),
-    question('bat-roast','嘴硬蝠出题','你让蝙蝠吐槽你的海报。它吐槽得挺准，你有点生气。',[['先改最有道理的那一条。','adapt',45,'意见留一条，情绪留给晚饭。'],['要求它再审一遍，必须体面。','again',55,'海报二审结束，语气一审开始。'],['问另一家，只给海报，不给吐槽。','router',35,'不给第二个评委看参考答案。'],['我先放一晚，明天自己看。','craft',75,'半夜的最后一条修改没能过审。']])
+const LIFE_ITEM = {
+  id: 'v2-life', role: 'life', tag: '交卷之前',
+  title: '今天的活提前两小时做完，你想把这点时间留给谁？', sub: '',
+  options: [
+    {id: 'walk', text: '出去逛逛，操场、街边、食堂都算。', life: '出去走走，看看今天的校园'},
+    {id: 'people', text: '和喜欢的人见个面，或者打通电话。', life: '见见想见的人，好好说会儿话'},
+    {id: 'hobby', text: '玩个小爱好，弄得一般也开心。', life: '做一点喜欢的事，允许它很普通'},
+    {id: 'rest', text: '休息。手机静音，想躺就躺。', life: '给自己休息的时间'}
   ]
 };
-
-const LEISURE_QUESTIONS = [
-  question('draw', '闲下来', '你想随便画两笔。搭子说它也能画。', [
-    ['我画我的，画歪也留着。', 'enjoy', undefined, '这张图不用评奖。'],
-    ['它画一张，我也画一张，对着看。', 'explore', undefined, '桌上又多了一张纸。'],
-    ['让它画张背景，我接着往上添。', 'outcome', undefined, '这张可以画到一半转个弯。'],
-    ['都先别画，躺一会儿。', 'rest', undefined, '也可以什么都没画。']
-  ]),
-  question('photo', '闲下来', '它能做一张下雨的图。窗外突然真的下雨了。', [
-    ['我出去看一眼。', 'enjoy', undefined, '手机可以晚一点再拿。'],
-    ['先拍一张，回来玩玩怎么做成明信片。', 'explore', undefined, '先看天，排版一会儿再说。'],
-    ['请它做张图发给朋友，我去吃饭。', 'outcome', undefined, '朋友收到的是一张雨天明信片。'],
-    ['今天不拍，坐一会儿就好。', 'rest', undefined, '看过就算看过。']
-  ])
-];
-
-
-const CLOSING_QUESTIONS = [
-  { id:'future', tag:'假如以后', title:'有一天，搭子做你最擅长的事，也做得挺好。', sub:'你第一反应是什么？', options:[
-    {text:'有点慌，我还得找一件它不会的事。',note:'换我也会愣一下。',kind:'anxious'},
-    {text:'好奇。想试试新的分工会是什么样。',note:'也许可以先一起试一件小事。',kind:'curious'},
-    {text:'也许能轻松一点，去做一直想做的事。',note:'空出来的周末，终于还给周末。',kind:'relieved'},
-    {text:'还不知道，到了那天再说。',note:'这题可以先放着。',kind:'uncertain'}
-  ]},
-  { id:'life', tag:'最后一题', title:'活比预想早两小时做完。你想干嘛？', sub:'', options:[
-    {text:'出去走走，看看天和路边的小东西。',note:'天没黑，刚好赶上。',kind:'walk',life:'散步、看天，发现路边的小东西'},
-    {text:'和喜欢的人吃顿饭，慢慢聊。',note:'这顿饭可以吃久一点。',kind:'people',life:'和喜欢的人吃饭，慢慢聊天'},
-    {text:'做点小爱好，做得一般也没关系。',note:'材料摊开，先玩再说。',kind:'hobby',life:'做一点喜欢的事，允许它很普通'},
-    {text:'休息。什么都不产出。',note:'闹钟先别定。',kind:'rest',life:'休息，允许自己什么都不产出'}
-  ]}
-];
 
 
 const QUESTION_COUNT = 10;
-const QUESTION_BY_ID = new Map(
-  [...Object.values(COMMON_QUESTIONS).flat(), ...Object.values(BUDDY_QUESTIONS).flat(),
-    ...LEISURE_QUESTIONS, ...CLOSING_QUESTIONS].map(question => [question.id, question])
-);
-
-function shuffle(items, random) {
-  const shuffled = [...items];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
+const FORM_VERSION = 2;
+const REPORT_TYPES = ['MANUAL UNIVERSE', 'HUMAN BY CHOICE', 'TIME RECLAIMER',
+  'FLEXIBLE PARTNER', 'AUTO-PILOT', 'ONE MORE'];
+const dimensionIds = Object.keys(DIMENSIONS);
+const allItems = [...ANCHORS, ...Object.values(COMPANION_ITEMS).flatMap(groups => Object.values(groups).flat()),
+  SUPPORT_ITEM, LIFE_ITEM];
+const itemById = new Map(allItems.map(question => [question.id, question]));
 
 function drawQuestions(buddyId, random = Math.random) {
-  const buddyQuestions = BUDDY_QUESTIONS[buddyId] ?? BUDDY_QUESTIONS.deepseek;
-  const [first, ...otherBuddyQuestions] = shuffle(buddyQuestions, random).slice(0, 3);
-  const common = Object.values(COMMON_QUESTIONS).map(group => shuffle(group, random)[0]);
-  return [first, ...shuffle([...common, ...otherBuddyQuestions], random),
-    shuffle(LEISURE_QUESTIONS, random)[0], ...CLOSING_QUESTIONS];
+  const groups = COMPANION_ITEMS[buddyId] ?? COMPANION_ITEMS.deepseek;
+  const selected = dimensionIds.map(dimension => {
+    const candidates = groups[dimension];
+    const index = Math.min(candidates.length - 1, Math.floor(random() * candidates.length));
+    return candidates[Math.max(0, index)];
+  });
+  return [selected[0], ANCHORS[1], selected[2], ANCHORS[3],
+    ANCHORS[0], selected[1], ANCHORS[2], selected[3], SUPPORT_ITEM, LIFE_ITEM];
 }
 
 function restoreQuestions(ids, buddyId) {
-  if (!Array.isArray(ids) || ids.length !== QUESTION_COUNT || new Set(ids).size !== QUESTION_COUNT) return null;
-  const questions = ids.map(id => QUESTION_BY_ID.get(id));
-  if (questions.some(q => !q)) return null;
-  const scored = questions.slice(0, 7);
-  const buddyQuestions = BUDDY_QUESTIONS[buddyId];
-  if (!buddyQuestions?.includes(scored[0]) || scored.filter(q => buddyQuestions.includes(q)).length !== 3) return null;
-  if (!Object.values(COMMON_QUESTIONS).every(group => scored.filter(q => group.includes(q)).length === 1)) return null;
-  if (!LEISURE_QUESTIONS.includes(questions[7]) || questions[8] !== CLOSING_QUESTIONS[0] || questions[9] !== CLOSING_QUESTIONS[1]) return null;
-  return questions;
+  if (!COMPANION_ITEMS[buddyId] || !Array.isArray(ids) || ids.length !== QUESTION_COUNT ||
+      new Set(ids).size !== QUESTION_COUNT) return null;
+  const questions = ids.map(id => itemById.get(id));
+  if (questions.some(question => !question)) return null;
+  const expected = drawQuestions(buddyId, () => 0);
+  const valid = questions.every((question, index) => {
+    const slot = expected[index];
+    if (slot.role !== 'companion') return question === slot;
+    return COMPANION_ITEMS[buddyId][slot.dimension].includes(question);
+  });
+  return valid ? questions : null;
 }
 
 function isValidAnswers(answers, questions, complete = true) {
   if (!Array.isArray(questions) || questions.length !== QUESTION_COUNT ||
       !Array.isArray(answers) || answers.length !== QUESTION_COUNT) return false;
-  return questions.every((q, i) => {
-    const answer = answers[i];
-    return answer === null ? !complete : Number.isInteger(answer) && answer >= 0 && answer < q.options.length;
+  return questions.every((question, index) => {
+    const answer = answers[index];
+    return answer === null ? !complete : Number.isInteger(answer) && answer >= 0 && answer < question.options.length;
   });
+}
+
+function dimensionResult(id, answers, questions) {
+  const evidence = questions.flatMap((question, index) => {
+    if (question.dimension !== id) return [];
+    const option = question.options[answers[index]];
+    return [{questionId: question.id, role: question.role, title: question.title,
+      optionId: option.id, text: option.text, value: option.value}];
+  });
+  const available = evidence.filter(answer => answer.value !== null);
+  const value = available.length ? available.reduce((sum, answer) => sum + answer.value, 0) / available.length : null;
+  const complete = available.length === 2;
+  const low = complete && available.every(answer => answer.value <= 1);
+  const high = complete && available.every(answer => answer.value >= 2);
+  let interpretation = '这两处的选择有差别，可以展开看看具体情境。';
+  if (!available.length) interpretation = '这两题暂时说不准，本次先留空。';
+  else if (!complete) interpretation = '目前只有一处明确选择，先看这一题的具体回答。';
+  else if (low) interpretation = DIMENSIONS[id].low + '，两处情境的选择一致。';
+  else if (high) interpretation = DIMENSIONS[id].high + '，两处情境的选择一致。';
+  return {id, ...DIMENSIONS[id], evidence, available: available.length, value, low, high, interpretation};
 }
 
 function makeReport(answers, questions) {
   if (!isValidAnswers(answers, questions)) throw new TypeError('请完成全部场景题。');
-  const selected = questions.map((q, i) => q.options[answers[i]]);
-  const scoreParts = questions.flatMap((q, i) =>
-    typeof selected[i].human === 'number' ? [{label: q.tag, value: selected[i].human}] : []
-  );
-  const score = Math.round(scoreParts.reduce((sum, part) => sum + part.value, 0) / scoreParts.length);
-  const count = kind => selected.filter(option => option.kind === kind).length;
-  let code;
-  if (count('unchecked')) code = 'AUTO-PILOT';
-  else if (count('router') >= 2) code = 'MODEL ROUTER';
-  else if (count('again')) code = 'ONE MORE';
-  else if (count('deadline')) code = 'DDL GHOST';
-  else if (count('wizard')) code = 'PROMPT WIZARD';
-  else if (count('collector')) code = 'PROMPT ARCHIVE';
-  else if (count('craft') >= 2) code = 'HUMAN BY CHOICE';
-  else if (score >= 67) code = 'MANUAL UNIVERSE';
-  else if (score <= 33) code = 'TIME RECLAIMER';
-  else code = 'FLEXIBLE PARTNER';
- const profiles={
- 'AUTO-PILOT':['已阅但没看','验收环节好像也被你外包了。','稿子很完整，链接很神秘。下次让“确认过”三个字真的经过确认，少给未来的自己留悬疑片。'],
- 'MODEL ROUTER':['模型端水大师','你不生产答案，你是答案的搬运工。','问鲸鱼，拿去给螃蟹审，再让星星润色。窗口开成联合国，最后还得由你宣布今天用哪版。'],
- 'ONE MORE':['再改一版仙人','最终版，是一种暂时状态。','你说“差一点点”，AI说“收到”。改到第十八轮，第一版突然又有了独特的美。再不交，第一版都要过保了。'],
- 'DDL GHOST':['DDL招魂师','提示词没叫醒你，截止时间做到了。','平时潜水，最后五分钟开始召唤整个AI小队。原来你的深度思考模式，需要倒计时触发。'],
- 'PROMPT WIZARD':['提示词道士','任务还没开始，咒语已经念完了。','世界顶级专家、二十年经验、一步步思考。提示词敲完才想起来：这回只要起个标题。'],
- 'PROMPT ARCHIVE':['赛博囤囤鼠','你收藏的生产力，足够再造一个你。','提示词、工作流、神级工具：先存着，总有一天用得上。不如今天挑一个，真的让它帮你完成一件小事。'],
- 'HUMAN BY CHOICE':['手作犟种','含人量高？我自愿的。','你知道捷径，也愿意亲自玩。画得一般、写得慢，都可以是过程的一部分。工具在旁边，不耽误你享受自己的手艺。'],
- 'MANUAL UNIVERSE':['人肉CPU','含人量偏高，建议适当降人。','AI在旁边待机，你已经热到风扇起飞。先把一小段重复劳动交出去吧，看看它能不能给你腾出一个下午。'],
- 'TIME RECLAIMER':['甩手掌柜','工作已转交，本人有别的事要活。','能委托的交出去，该验收的看一眼。你省下来的时间，也可以不再塞进另一份待办清单。'],
- 'FLEXIBLE PARTNER':['AI甲方','今天谁合适，今天就谁上。','你在自己动手和找AI帮忙之间切换，分工合同随时更新。有时候一句“先把这行改了”就够开工。']};
- const [name,verdict,description]=profiles[code];
-
-  const takesOnMore = count('manual') + count('proof') + count('again') + count('deadline') >= 3;
-  const endingTitle = takesOnMore ? '今天给自己放个假。' : '这两个小时归你。';
-  const scene = {
-    walk: takesOnMore ? '把电脑合上，沿着校园随便走一圈。路过操场就坐一会儿，今天不用把步数走够。' : '从平时不走的那扇门出去。听一会儿风吹树叶，顺路买个热乎的烤红薯。',
-    people: takesOnMore ? '把待办留到明天，约个熟人吃顿热饭。手机扣在桌上，听对方讲完最近那件小事。' : '约个很久没见的人吃碗面。聊到店里开始收桌也行，今天刚好多出这点时间。',
-    hobby: takesOnMore ? '挑件早就想玩的小事，涂张画、拼一会儿积木都行。玩累了就收起来，今天不用做完。' : '放一张喜欢的唱片，翻几页闲书，或者把那支一直舍不得用的笔拆开。挑一样就好。',
-    rest: takesOnMore ? '把电脑合上，消息静音，睡一觉。醒了饿就吃点东西，今天剩下的时间都算放假。' : '冲个热水澡，换件软乎的衣服。往沙发上一倒，想睡就睡。'
-  }[selected[9].kind];
-  return {score, profile: {code, name, verdict, description},
-    life: selected[9].life, future: selected[8].kind, scoreParts, endingTitle, scene};
+  const dimensions = Object.fromEntries(dimensionIds.map(id => [id, dimensionResult(id, answers, questions)]));
+  const {delegation, verification, learning, stopping} = dimensions;
+  let code = 'FLEXIBLE PARTNER';
+  let basis = dimensionIds;
+  if (delegation.high && verification.low) {
+    code = 'AUTO-PILOT'; basis = ['delegation', 'verification'];
+  } else if (delegation.low && stopping.low) {
+    code = 'MANUAL UNIVERSE'; basis = ['delegation', 'stopping'];
+  } else if (learning.high) {
+    code = 'HUMAN BY CHOICE'; basis = ['learning'];
+  } else if (stopping.low) {
+    code = 'ONE MORE'; basis = ['stopping'];
+  } else if (delegation.high && stopping.high && verification.high) {
+    code = 'TIME RECLAIMER'; basis = ['delegation', 'stopping', 'verification'];
+  }
+  const profiles = {
+    'AUTO-PILOT': ['已阅但没看', '活交出去挺快，检查这步可以再留一点时间。',
+      '两道整理任务你都愿意让搭子先上，两道核对题里你都选择了较少检查。下回可以抽一处原资料对照，试试能不能找出点差别。'],
+    'MANUAL UNIVERSE': ['人肉CPU', '自己做的多，达标后还想接着改。',
+      '两道重复任务里你都留了大半给自己，两道收工题里又选了继续。下一次不妨只交出一小段格式整理，看看腾出的半小时去哪儿了。'],
+    'HUMAN BY CHOICE': ['手作犟种', '这回想学会，所以先自己动手。',
+      '两道以练会方法为目标的题，你都选择先尝试，再求助或对照。至于整理格式、安排时间怎么做，下面另外两组回答也各有依据。'],
+    'ONE MORE': ['再改一版仙人', '已经够交了，手还是想再点两下。',
+      '两道题都说明当前版本已经检查合格，你仍然选了继续修改。这只是你对这两种情境的选择，今晚也可以试一次保存后就关机。'],
+    'TIME RECLAIMER': ['甩手掌柜', '交给搭子，查过，再收工。',
+      '在整理、查证和收工这三组里，你都给了相近的选择。搭子处理重复部分，你核对结果，达标后就去做自己的事。'],
+    'FLEXIBLE PARTNER': ['混合搭班型', '你的分工要看具体任务。',
+      '这次的选择没有集中到单一组合。可以看下面四组情境，哪些想自己来，哪些愿意交出去，每一条都回到你刚才选的答案。']
+  };
+  const availableCount = Object.values(dimensions).reduce((count, dimension) => count + dimension.available, 0);
+  const incompleteOnly = code === 'FLEXIBLE PARTNER' && !Object.values(dimensions).some(dimension => dimension.available === 2);
+  const [name, verdict, description] = incompleteOnly
+    ? ['搭班待观察', '说不准的部分，先留着。', `八道分工题里，这次有 ${availableCount} 处明确选择，暂时还凑不成一组完整配对。下面保留了你的回答，遇到相应情境后可以再来试试。`]
+    : profiles[code];
+  const life = questions[9].options[answers[9]];
+  const support = questions[8].options[answers[8]];
+  const needsBreak = stopping.low;
+  const scenes = {
+    walk: needsBreak ? '电脑先合上，去操场坐会儿。今天可以只看看人来人往，不用再给散步定个目标。' : '从平时不走的门出去，买个烤红薯，逛到哪儿算哪儿。看看街边新开的小店，也看看今天的树。',
+    people: needsBreak ? '约个熟人吃顿热饭，消息晚点回也行。让对方讲讲最近那件小事，这顿饭慢慢吃。' : '给想见的人发条消息，或者打通电话。从今天食堂吃了什么聊起，想聊久一点就聊久一点。',
+    hobby: needsBreak ? '把那件小爱好拿出来，画两笔、拼两块都行。玩到一半也能收起来，今天不用完成作品。' : '放首喜欢的歌，翻几页闲书，或者去打两局游戏。你想做的事，现在有了一小段时间。',
+    rest: needsBreak ? '把电脑合上，消息静音，给自己放半天假。睡醒了再吃点东西，剩下的任务明天再说。' : '冲个热水澡，换件软乎的衣服。往床上一倒，想睡就睡。'
+  };
+  const scoredEvidence = basis.flatMap(id => dimensions[id].evidence.filter(item => item.value !== null));
+  const score = delegation.available === 2 ? Math.round((3 - delegation.value) / 3 * 100) : null;
+  return {score, scoreText: score === null ? '—' : String(score), scoreLabel: '重复任务亲自处理倾向',
+    profile: {code, name, verdict, description, tag: verdict}, dimensions,
+    evidence: scoredEvidence, support: {id: support.id, text: support.text},
+    life: life.life, future: 'campus', scene: scenes[life.id],
+    endingTitle: needsBreak ? '今天给自己放个假。' : '这两个小时归你。',
+    scoreParts: Object.values(dimensions).map(dimension => ({label: dimension.label, value: dimension.value})),
+    version: FORM_VERSION};
 }
 
 function narrativeFor(report) {
-  return {
-    anxious: '那点慌很正常。今天可以先回家吃饭，明天再想下一步。',
-    curious: '下回找件小事搭伙试试。谁顺手，谁就多做一点。',
-    relieved: '多出来的时间，你已经想好一件要做的事了。',
-    uncertain: '以后再说也行。今天这两个小时倒是可以先收下。'
-  }[report.future];
+  return report.dimensions.stopping.low
+    ? '刚才两道已经达标的情境，你都选了继续改。这一回也可以给自己留个空档。'
+    : '这十题做完，安排回到你手里。下面这件小事，是你刚才自己选的。';
+}
+
+function qualitySignals(questions, answers, timings) {
+  const answered = questions.slice(0, 8).map((question, i) => ({question, answer: answers[i], ms: timings[i] ?? 0}))
+    .filter(item => item.answer !== null);
+  const rapid = answered.filter(item => item.ms < 1000).length;
+  const flags = [];
+  if (rapid >= 3) flags.push('several-quick-pages');
+  if (rapid >= 3 && answered.some((item, i) => i >= 3 &&
+      answered.slice(i - 3, i + 1).every(other => other.answer === item.answer))) flags.push('quick-repeated-position');
+  const differing = dimensionIds.flatMap(id => {
+    const pair = answered.filter(item => item.question.dimension === id);
+    if (pair.length !== 2) return [];
+    const values = pair.map(item => item.question.options[item.answer].value);
+    return values.every(value => value !== null) && Math.abs(values[0] - values[1]) === 3
+      ? [{dimension: id, questionIds: pair.map(item => item.question.id)}] : [];
+  });
+  if (differing.length >= 2) flags.push('several-context-differences');
+  return {flags, differing, quickPages: rapid};
 }
 
 const colors={manual:'#f8db45',craft:'#f8b9c9',delegate:'#b8a5ed',adapt:'#b7d6f0',unchecked:'#a8d7ba',human:'#f6a665'};
@@ -404,19 +563,60 @@ async function renderPoster(report,c,reportId,permit,buddyId='deepseek'){
  if(permit){
   ctx.font='bold 70px "Microsoft YaHei", sans-serif';ctx.fillText('生活不用申请。',62,250);ctx.font='27px "Microsoft YaHei", sans-serif';wrapPoster(ctx,'即使以后AI会得越来越多，你依旧有享受生活、发现美的权利。',65,327,860,47);ctx.drawImage(await posterCharacter('human'),550,470,355,344);ctx.fillStyle='#f8db45';ctx.fillRect(60,490,470,180);ctx.strokeRect(60,490,470,180);ctx.fillStyle=ink;ctx.font='23px "Microsoft YaHei", sans-serif';ctx.fillText('我想把时间留给',85,538);ctx.font='bold 28px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.life+'。',85,590,415,43);ctx.font='29px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.scene,65,865,860,49);ctx.font='bold 32px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.endingTitle,65,1005,860,54);
  }else{
-  ctx.textAlign='center';ctx.font='900 126px Consolas, monospace';ctx.fillText(c.short,500,280);ctx.drawImage(await posterCharacter(c.kind),225,285,550,533);ctx.font='bold 76px "Microsoft YaHei", sans-serif';ctx.fillText(c.name,500,870);ctx.font='26px "Microsoft YaHei", sans-serif';ctx.fillText(c.quote,500,930);ctx.font='23px "Microsoft YaHei", sans-serif';ctx.fillText(c.tags.map(x=>'#'+x).join('   '),500,989);ctx.textAlign='left';ctx.fillStyle=c.color;ctx.fillRect(26,1040,948,120);ctx.beginPath();ctx.moveTo(24,1040);ctx.lineTo(976,1040);ctx.moveTo(24,1160);ctx.lineTo(976,1160);ctx.stroke();ctx.fillStyle=ink;ctx.font='27px "Microsoft YaHei", sans-serif';ctx.fillText('本次含人量',65,1110);ctx.font='bold 57px Consolas, monospace';ctx.fillText(String(report.score),710,1120);ctx.font='23px Consolas, monospace';ctx.fillText('/100',810,1120);ctx.font='25px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.profile.verdict,65,1230,865,44);ctx.fillStyle='#66635b';ctx.font='23px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.profile.description,65,1300,865,39);ctx.fillStyle=ink;ctx.font='bold 26px "Microsoft YaHei", sans-serif';ctx.fillText('每个人都可以过一会儿自己的日子。',65,1425);
+  ctx.textAlign='center';ctx.font='900 126px Consolas, monospace';ctx.fillText(c.short,500,280);ctx.drawImage(await posterCharacter(c.kind),225,285,550,533);ctx.font='bold 76px "Microsoft YaHei", sans-serif';ctx.fillText(c.name,500,870);ctx.font='26px "Microsoft YaHei", sans-serif';ctx.fillText(c.quote,500,930);ctx.font='23px "Microsoft YaHei", sans-serif';ctx.fillText(c.tags.map(x=>'#'+x).join('   '),500,989);ctx.textAlign='left';ctx.fillStyle=c.color;ctx.fillRect(26,1040,948,120);ctx.beginPath();ctx.moveTo(24,1040);ctx.lineTo(976,1040);ctx.moveTo(24,1160);ctx.lineTo(976,1160);ctx.stroke();ctx.fillStyle=ink;ctx.font='27px "Microsoft YaHei", sans-serif';ctx.fillText('重复整理亲自处理倾向',65,1110);ctx.font='bold 57px Consolas, monospace';ctx.fillText(report.scoreText ?? String(report.score),710,1120);ctx.font='23px Consolas, monospace';ctx.fillText('/100',810,1120);ctx.font='25px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.profile.verdict,65,1230,865,44);ctx.fillStyle='#66635b';ctx.font='23px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.profile.description,65,1300,865,39);ctx.fillStyle=ink;ctx.font='bold 24px "Microsoft YaHei", sans-serif';ctx.fillText('每个人都可以过一会儿自己的日子。',65,1425);
  }
  if(!permit)ctx.drawImage(await posterBuddy(buddyId),727,630,220,205);
  ctx.fillStyle='#726d63';ctx.font='18px "Microsoft YaHei", sans-serif';ctx.fillText('今日硅基同事：'+AI_BUDDIES[buddyId].nick,62,canvas.height-74);ctx.font='17px Consolas, monospace';ctx.fillText('#'+(reportId||'LOCAL')+' / HCL · HUMAN CONTENT LAB',62,canvas.height-42);
  return new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('export failed')),'image/png'));
 }
 
+function submissionEndpoint(documentRoot = document) {
+  const value = documentRoot.querySelector('meta[name="survey-endpoint"]')?.content;
+  if (!value) return '';
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' && url.pathname === '/api/responses' &&
+      !url.username && !url.password && !url.search && !url.hash ? url.href : '';
+  } catch {
+    return '';
+  }
+}
+
+function newResponseId() {
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+async function sendResponse(endpoint, payload, fetcher = fetch) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12000);
+  try {
+    const response = await fetcher(endpoint, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      credentials: 'omit',
+      referrerPolicy: 'no-referrer',
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    });
+    if (!response.ok) throw new Error('Submission failed');
+    const receipt = await response.json();
+    if (receipt.ok !== true || receipt.id !== payload.id) throw new Error('Invalid receipt');
+    return receipt;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 
 const app=document.querySelector('#app');
-const KEY = 'human-content-lab:session:buddy-quiz';
+const KEY = 'human-content-lab:session:campus-v2';
 const blank = (buddy = 'deepseek') => ({
   screen: 'home', index: 0, answers: Array(QUESTION_COUNT).fill(null),
-  questionIds: [], revealed: false, reportId: null, buddy
+  questionIds: [], revealed: false, reportId: null, buddy,
+  responseId: null, submitted: false,
+  timings: Array(QUESTION_COUNT).fill(0), revisions: Array(QUESTION_COUNT).fill(0),
+  qualityReviewed: false, qualityReason: '', population: 'unspecified', aiUse: 'unspecified'
 });
 let state = blank();
 let questions = [];
@@ -433,17 +633,120 @@ try {
       const index = Number.isInteger(saved.index) ? Math.max(0, Math.min(lastReachable, saved.index)) : 0;
       const screen = saved.screen === 'report' && firstUnanswered < 0 ? 'report' : 'quiz';
       Object.assign(state, {screen, index, answers: saved.answers, questionIds: saved.questionIds,
-        revealed: saved.revealed === true, reportId: saved.reportId});
+        revealed: saved.revealed === true, reportId: saved.reportId,
+        responseId: /^[a-f0-9]{32}$/.test(saved.responseId ?? '') ? saved.responseId : null,
+        submitted: saved.submitted === true});
+      state.timings = sanitizeCounts(saved.timings, 3600000);
+      state.revisions = sanitizeCounts(saved.revisions, 1000);
+      state.qualityReviewed = saved.qualityReviewed === true;
+      state.qualityReason = ['confirmed', 'context-difference', 'reviewed'].includes(saved.qualityReason) ? saved.qualityReason : '';
+      state.population = ['sdu-student', 'other-student', 'other', 'unspecified'].includes(saved.population) ? saved.population : 'unspecified';
+      state.aiUse = ['never', 'monthly', 'weekly', 'daily', 'unspecified'].includes(saved.aiUse) ? saved.aiUse : 'unspecified';
     }
   }
 } catch { /* Session storage is optional. */ }
 let scanTimer;
 let toastTimer;
+let submitting = false;
+const endpoint = submissionEndpoint();
+let pageActiveSince = null;
+function sanitizeCounts(values, maximum) {
+  return Array.from({length: QUESTION_COUNT}, (_, index) =>
+    Number.isFinite(values?.[index]) ? Math.max(0, Math.min(maximum, Math.round(values[index]))) : 0);
+}
+function recordReadingTime() {
+  if (pageActiveSince !== null && state.screen === 'quiz') {
+    state.timings[state.index] = Math.min(3600000, state.timings[state.index] + Math.max(0, Math.round(performance.now() - pageActiveSince)));
+  }
+  pageActiveSince = null;
+}
+document.addEventListener('visibilitychange', () => {
+  recordReadingTime();
+  persist();
+  if (!document.hidden && state.screen === 'quiz' && !submitting) pageActiveSince = performance.now();
+});
+
+function confirmReview() {
+  const quality = qualitySignals(questions, state.answers, state.timings);
+  if (state.qualityReviewed || quality.flags.length === 0) return Promise.resolve(true);
+  const reminder = document.querySelector('#quality-dialog');
+  const hasSpeedFlag = quality.flags.includes('several-quick-pages');
+  reminder.innerHTML = `<div class="review-buddy">${buddyFigure(state.buddy)}</div>
+    <h2>搭子探个头</h2>
+    <p>${hasSpeedFlag ? '刚才有几题一下就翻过去啦。要不要回头瞅一眼？' : '有两组情境，你两次的选择差得挺多。是情境不同，还是想回头改一项？'}</p>
+    <button class="button primary" id="confirm-choices">${hasSpeedFlag ? '我看过啦，就这样' : '情境不同，我确实这样选'}</button>
+    <button class="text-button" id="review-choices">回头看看</button>`;
+  return new Promise(resolve => {
+    let resolved = false;
+    const settle = goAhead => {
+      if (resolved) return;
+      resolved = true;
+      state.qualityReviewed = true;
+      state.qualityReason = goAhead ? (hasSpeedFlag ? 'confirmed' : 'context-difference') : 'reviewed';
+      persist();
+      reminder.close();
+      if (!goAhead) {
+        state.index = hasSpeedFlag ? 0 : questions.findIndex(q => q.id === quality.differing[0].questionIds[0]);
+        persist();
+        render();
+        focusTitle();
+      }
+      resolve(goAhead);
+    };
+    reminder.querySelector('#confirm-choices').onclick = () => settle(true);
+    reminder.querySelector('#review-choices').onclick = () => settle(false);
+    reminder.oncancel = event => { event.preventDefault(); settle(false); };
+    reminder.showModal();
+  });
+}
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const arrow='<span aria-hidden="true">↗</span>';
 function persist(){try{sessionStorage.setItem(KEY,JSON.stringify(state));}catch{/* 答题不依赖存储权限。 */}}
 function toast(message){const el=document.querySelector('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);}
 function focusTitle(){const title=app.querySelector('h1');if(title){title.tabIndex=-1;title.focus({preventScroll:true});}window.scrollTo({top:0,behavior:'instant'});}
+
+async function submitAndShowReport() {
+  if (submitting) return;
+  if (!endpoint || state.submitted) {
+    startScan();
+    return;
+  }
+  submitting = true;
+  const submitButton = app.querySelector('#next');
+  const backButton = app.querySelector('#back');
+  submitButton.disabled = true;
+  backButton.disabled = true;
+  app.querySelectorAll('input[name="answer"]').forEach(input => input.disabled = true);
+  submitButton.textContent = '正在交卷…';
+  state.responseId ??= newResponseId();
+  persist();
+  try {
+    await sendResponse(endpoint, {
+      id: state.responseId, version: FORM_VERSION, buddy: state.buddy,
+      questionIds: state.questionIds, answers: state.answers,
+      context: {population: state.population, aiUse: state.aiUse},
+      quality: {timings: state.timings, revisions: state.revisions, reviewed: state.qualityReviewed, reason: state.qualityReason},
+      isTest: new URL(location.href).searchParams.get('test') === '1'
+    });
+    state.submitted = true;
+    persist();
+    startScan();
+  } catch {
+    submitButton.disabled = false;
+    backButton.disabled = false;
+    app.querySelectorAll('input[name="answer"]').forEach(input => input.disabled = false);
+    submitButton.textContent = '重新提交并看结果 ↗';
+    const feedback = app.querySelector('#feedback');
+    feedback.replaceChildren(document.createTextNode('刚才没收到交卷回执，答案还在，可以再试一次。'));
+    const viewButton = document.createElement('button');
+    viewButton.className = 'text-button';
+    viewButton.textContent = '先看结果';
+    viewButton.addEventListener('click', startScan);
+    feedback.append(document.createElement('br'), viewButton);
+  } finally {
+    submitting = false;
+  }
+}
 
 function home() {
   const buddy = AI_BUDDIES[state.buddy];
@@ -451,15 +754,24 @@ function home() {
     <div class="home-grid">
       <div>
         <h1>AI率测腻了？<br>查查你的<span class="highlight">含人量</span></h1>
-        <p class="home-lead">先选个搭子。它会从自己的糗事里抽三道题。</p>
+        <p class="home-lead">选个搭子，聊聊上课、复习、课设和你的课余时间。</p>
         <div class="hero-actions">
           <div class="buddy-picks" aria-label="选择出题搭子">
             ${Object.entries(AI_BUDDIES).map(([id, item]) => `<button class="buddy-pick ${state.buddy === id ? 'active' : ''}" data-buddy="${id}" aria-pressed="${state.buddy === id}" aria-label="${item.nick}">
               <span aria-hidden="true">${buddySVG(id)}</span><strong>${item.nick}</strong>
             </button>`).join('')}
           </div>
-          <button class="button primary start" id="start">让${buddy.nick}出题 ${arrow}</button>
-          <p class="micro">每局 10 题 · 约 3 分钟</p>
+          <div class="context-card">
+  <label>你的校园身份（可选）<select id="population">
+    <option value="unspecified">暂不填写</option><option value="sdu-student">山东大学在读学生</option>
+    <option value="other-student">其他高校在读学生</option><option value="other">已毕业或其他</option>
+  </select></label>
+  <label>平时用 AI 的频率（可选）<select id="ai-use">
+    <option value="unspecified">暂不填写</option><option value="never">还没用过</option>
+    <option value="monthly">每月偶尔用</option><option value="weekly">每周会用</option><option value="daily">几乎每天用</option>
+  </select></label>
+</div><button class="button primary start" id="start">让${buddy.nick}出题 ${arrow}</button>
+          <p class="micro">每局 10 题 · 约 3 分钟</p>${endpoint ? `<p class="collection-note">完成后提交匿名答卷，供本次活动统计。</p>` : ''}
         </div>
       </div>
       <div class="stage" aria-label="当前出题搭子">
@@ -469,15 +781,19 @@ function home() {
       </div>
     </div>
   </section>`;
+  app.querySelector('#population').value = state.population;
+  app.querySelector('#ai-use').value = state.aiUse;
+  app.querySelector('#population').onchange = event => { state.population = event.target.value; persist(); };
+  app.querySelector('#ai-use').onchange = event => { state.aiUse = event.target.value; persist(); };
   app.querySelectorAll('[data-buddy]').forEach(button => button.addEventListener('click', () => {
-    state = blank(button.dataset.buddy);
+    state = {...blank(button.dataset.buddy), population: state.population, aiUse: state.aiUse};
     questions = [];
     persist();
     home();
     app.querySelector(`[data-buddy="${state.buddy}"]`).focus({preventScroll: true});
   }));
   app.querySelector('#start').addEventListener('click', () => {
-    state = blank(state.buddy);
+    state = {...blank(state.buddy), population: state.population, aiUse: state.aiUse};
     questions = drawQuestions(state.buddy);
     state.questionIds = questions.map(q => q.id);
     state.screen = 'quiz';
@@ -488,17 +804,31 @@ function home() {
 }
 
 function quiz(){
+  recordReadingTime();
+  pageActiveSince = document.hidden ? null : performance.now();
   const q=questions[state.index];
-  app.innerHTML=`<section class="question-layout fade-in"><div class="question-top"><button class="back" id="back"><span aria-hidden="true">←</span> ${state.index?'上一题':'返回首页'}</button><span class="progress-count"><strong>${String(state.index+1).padStart(2,'0')}</strong> / ${String(QUESTION_COUNT).padStart(2,'0')}</span></div><div class="progress" role="progressbar" aria-label="答题进度" aria-valuenow="${state.index+1}" aria-valuemin="0" aria-valuemax="${QUESTION_COUNT}"><span style="width:${(state.index+1)/QUESTION_COUNT*100}%"></span></div><div class="question-label"><span class="eyebrow">${String(state.index+1).padStart(2,'0')} / ${esc(q.tag)}</span>${q.tag.endsWith('出题') ? `<div class="question-mini" aria-hidden="true">${buddyFigure(state.buddy)}</div>` : ''}</div><h1>${esc(q.title)}</h1><p class="question-sub" id="question-sub" ${q.sub ? '' : 'hidden'}>${esc(q.sub)}</p><fieldset class="choices" aria-describedby="question-sub"><legend>${esc(q.title)}</legend>${q.options.map((o,i)=>`<label class="choice ${state.answers[state.index]===i?'selected':''}"><input type="radio" name="answer" value="${i}" ${state.answers[state.index]===i?'checked':''}><span class="choice-letter" aria-hidden="true">${'ABCD'[i]}</span><span class="choice-text">${esc(o.text)}</span></label>`).join('')}</fieldset><div class="feedback" id="feedback" aria-live="polite">${state.answers[state.index]!==null?esc(q.options[state.answers[state.index]].note):''}</div><div class="question-action"><button class="button primary" id="next" ${state.answers[state.index]===null?'disabled':''}>${state.index===QUESTION_COUNT-1?'看看我是啥':'下一题'} ${arrow}</button></div></section>`;
+  app.innerHTML=`<section class="question-layout fade-in"><div class="question-top"><button class="back" id="back"><span aria-hidden="true">←</span> ${state.index?'上一题':'返回首页'}</button><span class="progress-count"><strong>${String(state.index+1).padStart(2,'0')}</strong> / ${String(QUESTION_COUNT).padStart(2,'0')}</span></div><div class="progress" role="progressbar" aria-label="答题进度" aria-valuenow="${state.index+1}" aria-valuemin="0" aria-valuemax="${QUESTION_COUNT}"><span style="width:${(state.index+1)/QUESTION_COUNT*100}%"></span></div><div class="question-label"><span class="eyebrow">${String(state.index+1).padStart(2,'0')} / ${esc(q.tag)}</span>${q.tag.endsWith('出题') ? `<div class="question-mini" aria-hidden="true">${buddyFigure(state.buddy)}</div>` : ''}</div><h1>${esc(q.title)}</h1><p class="question-sub" id="question-sub" ${q.sub ? '' : 'hidden'}>${esc(q.sub)}</p><fieldset class="choices" aria-describedby="question-sub"><legend>${esc(q.title)}</legend>${q.options.map((o,i)=>`<label class="choice ${state.answers[state.index]===i?'selected':''}"><input type="radio" name="answer" value="${i}" ${state.answers[state.index]===i?'checked':''}><span class="choice-letter" aria-hidden="true">${'ABCDE'[i]}</span><span class="choice-text">${esc(o.text)}</span></label>`).join('')}</fieldset><div class="feedback" id="feedback" aria-live="polite">${state.answers[state.index]!==null?esc((q.options[state.answers[state.index]].note ?? '')):''}</div>${endpoint && state.index===QUESTION_COUNT-1 ? `<p class="collection-note">交卷将保存本次选择和结果，供活动作者统计。</p>` : ''}<div class="question-action"><button class="button primary" id="next" ${state.answers[state.index]===null?'disabled':''}>${state.index===QUESTION_COUNT-1?(endpoint ? '提交并看结果' : '看看我是啥'):'下一题'} ${arrow}</button></div></section>`;
   app.querySelectorAll('input[name="answer"]').forEach(input=>input.addEventListener('change',()=>{
-    const value=Number(input.value);state.answers[state.index]=value;state.reportId=null;state.revealed=false;persist();
+    const value=Number(input.value);
+    if (state.answers[state.index] !== value) {
+      if (state.answers[state.index] !== null) state.revisions[state.index]++;
+      state.responseId=null; state.submitted=false;
+    }
+    state.answers[state.index]=value;state.reportId=null;state.revealed=false;persist();
     app.querySelectorAll('.choice').forEach(c=>c.classList.toggle('selected',c.contains(input)));
-    document.querySelector('#feedback').textContent=q.options[value].note;document.querySelector('#next').disabled=false;
+    document.querySelector('#feedback').textContent=q.options[value].note ?? '';document.querySelector('#next').disabled=false;
   }));
-  document.querySelector('#back').addEventListener('click',()=>{if(state.index)state.index--;else state.screen='home';persist();render();focusTitle();});
-  document.querySelector('#next').addEventListener('click',()=>{
+  document.querySelector('#back').addEventListener('click',()=>{recordReadingTime();if(state.index)state.index--;else state.screen='home';persist();render();focusTitle();});
+  document.querySelector('#next').addEventListener('click',async()=>{
     if(state.answers[state.index]===null)return;
-    if(state.index<QUESTION_COUNT-1){state.index++;persist();render();focusTitle();}else if(isValidAnswers(state.answers, questions)){startScan();}
+    recordReadingTime();
+    if(state.index<QUESTION_COUNT-1){state.index++;persist();render();focusTitle();}else if(isValidAnswers(state.answers, questions)) {
+      const button = app.querySelector('#next');
+      button.disabled = true;
+      const confirmed = await confirmReview();
+      if (button.isConnected) button.disabled = false;
+      if (confirmed) submitAndShowReport();
+    }
   });
 }
 
@@ -509,31 +839,84 @@ function startScan(){
   scanTimer=setTimeout(step,500);
 }
 
-function reportPage(){
- const report=makeReport(state.answers, questions),p=report.profile,c=CHARACTERS[p.code];
- const buddyAnswer = questions[0].options[state.answers[0]];
- app.innerHTML=`<section class="result-layout fade-in"><div class="result-intro"><div><h1>查明了，你属于——</h1><span class="eyebrow">HUMAN CONTENT REPORT / ${esc(state.reportId||'LOCAL')}</span></div><span class="pill">今日成分</span></div><div class="result-grid"><article class="ticket" aria-label="你的检测报告" style="--type-color:${c.color}"><div class="ticket-head"><span>你的含人量类型</span><span>HCL / 今日归档</span></div><div class="type-poster"><div class="short-code">${c.short}</div>${characterSVG(c.kind,c.name+'原创结果角色')}<div class="poster-sticker">人类样本<br>已归档 ✓</div><h2>${c.name}</h2><p class="type-quote">${c.quote}</p><div class="type-tags">${c.tags.map(t=>`<span>#${t}</span>`).join('')}</div></div><div class="score-strip"><span>本次含人量<br><small>碳基出勤指数</small></span><strong>${report.score}<small> /100</small></strong></div><div class="ticket-tail"><span>含人量检测站<br>${AI_BUDDIES[state.buddy].nick}协助出具</span><span class="barcode" aria-hidden="true"></span></div></article><div class="result-copy"><span class="eyebrow">本所批注</span><h2>${esc(p.verdict)}</h2><p class="result-description">${esc(p.description)}</p><div class="diagnosis"><h3>本次主要症状</h3><p>${esc(symptom(p.code))}</p></div><div class="buddy-report">${buddyFigure(state.buddy)}<div><small>出题搭子的评语</small><strong>${AI_BUDDIES[state.buddy].nick}</strong><p>${esc(buddyAnswer.note)}</p></div></div><div class="result-actions"><button class="button primary" id="save-report">带走我的成分 ${arrow}</button><button class="button secondary" id="revise">我不服，重选 ↶</button></div><details class="rules"><summary>看看题目是怎么设定的</summary><div class="rules-content"><p>前 7 题参与计分，其中 3 题由搭子出。分数取选项值的平均数，角色类型还会参考具体选择。</p>${report.scoreParts.map(part=>`<div class="rule-row"><span>${esc(part.label)}</span><span>${part.value}</span></div>`).join('')}<p>最后 3 题留给生活。</p></div></details><p class="reveal-prompt">等等。这就能证明你有多少价值了？</p><button class="button reveal-button" id="reveal" ${state.revealed?'hidden':''}>不能。那还测个啥？ ${arrow}</button></div></div><section class="epilogue" id="epilogue" aria-labelledby="epilogue-title" ${state.revealed?'':'hidden'}><div class="epilogue-head"><span>彩蛋 / 检测仪失灵了</span><span>NO MORE SCORING</span></div><div class="epilogue-body"><div><span class="eyebrow">本所决定，撤回对你的打分。</span><h2 id="epilogue-title" tabindex="-1">含人量可以降低。<br>生活不用申请。</h2><p>刚才我们把“AI率”倒过来，<br>一本正经地又评判了你一次。</p><div class="life-permit">生活许可证 · 长期有效</div><p>合作可以慢慢试。<br>人不必靠“不可替代”才配活得开心。</p></div><div class="right"><p>${esc(narrativeFor(report))}</p><p style="margin-top:13px">你说，多出来的时间想留给：</p><strong class="life-choice">${esc(report.life)}。</strong><p>${esc(report.scene)}</p><p class="final-line">${esc(report.endingTitle)}</p><button class="button" id="save-permit">领一张生活许可证 ${arrow}</button></div></div></section><div class="completed-samples"><div class="types-heading"><h2>本所常见人类样本</h2><button class="text-button sample-toggle" id="sample-toggle" aria-expanded="false">展开 10 种样本 ↗</button></div>
-    <div class="types-preview">${Object.values(CHARACTERS).map(c => `<article class="mini-type" style="--type-color:${c.color}">${characterSVG(c.kind, c.name)}<strong>${c.name}</strong><small>${c.short}</small></article>`).join('')}</div></div><div class="afterword"><button class="text-button" id="restart">换个姿势，再测一次 ↗</button></div></section>`;
-  app.querySelector('#sample-toggle').addEventListener('click', event => {
-    const open = app.querySelector('.types-preview').classList.toggle('expanded');
-    event.currentTarget.setAttribute('aria-expanded', String(open));
-    event.currentTarget.textContent = open ? '收起样本 ↶' : '展开 10 种样本 ↗';
-  });
- document.querySelector('#save-report').addEventListener('click',()=>saveCard(report,false));
- document.querySelector('#save-permit').addEventListener('click',()=>saveCard(report,true));
- document.querySelector('#revise').addEventListener('click',()=>{state.screen='quiz';state.index=QUESTION_COUNT-1;persist();render();focusTitle();});
- document.querySelector('#restart').addEventListener('click',()=>{state=blank(state.buddy);questions=[];persist();render();focusTitle();});
- document.querySelector('#reveal').addEventListener('click',()=>{state.revealed=true;persist();document.querySelector('#epilogue').hidden=false;document.querySelector('#reveal').hidden=true;document.querySelector('#epilogue-title').focus({preventScroll:true});document.querySelector('#epilogue').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});});
+function reportPage() {
+  const report = makeReport(state.answers, questions);
+  const profile = report.profile;
+  const character = {...CHARACTERS[profile.code], name: profile.name, quote: profile.tag,
+    ...(profile.code === 'FLEXIBLE PARTNER' ? {short: 'MIX', tags: ['看事分工', '各有安排', '慢慢试试']} : {})};
+  const buddyAnswer = questions[0].options[state.answers[0]];
+  app.innerHTML = `<section class="result-layout fade-in">
+    <div class="result-intro"><h1>这次，你怎么和搭子配合？</h1><span class="pill">校园搭班记录</span></div>
+    <div class="result-grid">
+      <article class="ticket" aria-label="你的检测报告" style="--type-color:${character.color}">
+        <div class="ticket-head"><span>你的搭班样本</span><span>HCL</span></div>
+        <div class="type-poster"><div class="short-code">${character.short}</div>
+          ${characterSVG(character.kind, character.name)}<h2>${character.name}</h2>
+          <p class="type-quote">${esc(character.quote)}</p>
+        </div>
+        <div class="score-strip"><span>重复整理任务<br><small>亲自处理倾向</small></span><strong>${report.scoreText}<small> /100</small></strong></div>
+        <div class="ticket-tail"><span>${AI_BUDDIES[state.buddy].nick}出题</span><span class="barcode" aria-hidden="true"></span></div>
+      </article>
+      <div class="result-copy">
+        <h2>${esc(profile.verdict)}</h2><p class="result-description">${esc(profile.description)}</p>
+        <div class="buddy-report">${buddyFigure(state.buddy)}<div><small>开场那一题</small>
+          <strong>${AI_BUDDIES[state.buddy].nick}</strong><p>你选择了“${esc(buddyAnswer.text)}”</p></div></div>
+        <div class="result-actions"><button class="button primary" id="save-report">带走这份记录 ${arrow}</button>
+          <button class="button secondary" id="revise">回去改答案 ↶</button></div>
+        <p class="support-choice">如果学校办活动，你最想要的帮助是<br><strong>${esc(report.support.text)}</strong></p>
+        <p class="reveal-prompt">这些题聊完了，接下来想怎么过？</p>
+        <button class="button reveal-button" id="reveal" ${state.revealed ? 'hidden' : ''}>把时间留给自己 ${arrow}</button>
+      </div>
+    </div>
+    <section class="dimension-panel" aria-label="逐项回答依据">
+      <h2>这份记录从哪里来</h2>
+      ${Object.values(report.dimensions).map(dimension => `<details>
+        <summary>${dimension.label}<small>${dimension.available}/2 处明确选择</small></summary>
+        <p>${esc(dimension.interpretation)}</p>
+        ${dimension.evidence.map(answer => `<p class="answer-evidence">${esc(answer.title)}<strong>${esc(answer.text)}</strong></p>`).join('')}
+      </details>`).join('')}
+    </section>
+    <section class="epilogue" id="epilogue" aria-labelledby="epilogue-title" ${state.revealed ? '' : 'hidden'}>
+      <div class="epilogue-head"><span>交卷以后</span><span>今天还有别的事</span></div>
+      <div class="epilogue-body"><div><h2 id="epilogue-title" tabindex="-1">含人量可以降低。<br>生活不用申请。</h2>
+        <p>刚才那些选择，只说得了这几件事。<br>你还可以有许多种生活。</p><div class="life-permit">生活许可证 · 长期有效</div>
+        <p>即使有一天，很多工作都能由 AI 完成，<br>你依旧有享受生活、发现美的权利。</p></div>
+        <div class="right"><p>${esc(narrativeFor(report))}</p><strong class="life-choice">${esc(report.life)}。</strong>
+          <p>${esc(report.scene)}</p><p class="final-line">${esc(report.endingTitle)}</p>
+          <button class="button" id="save-permit">带走这张生活许可证 ${arrow}</button></div>
+      </div>
+    </section>
+    <div class="completed-samples"><div class="types-heading"><h2>其他搭班样本</h2>
+      <button class="text-button" id="sample-toggle" aria-expanded="false">展开看看 ↗</button></div>
+      <div class="types-preview">${REPORT_TYPES.map(code => ({...CHARACTERS[code], ...(code === 'FLEXIBLE PARTNER' ? {name: '混合搭班型', short: 'MIX'} : {})})).map(item => `<article class="mini-type" style="--type-color:${item.color}">
+        ${characterSVG(item.kind, item.name)}<strong>${item.name}</strong><small>${item.short}</small></article>`).join('')}</div>
+    </div>
+    <div class="afterword"><button class="text-button" id="restart">换个搭子，再来一次 ↗</button></div>
+  </section>`;
+  app.querySelector('#sample-toggle').onclick = event => {
+    const expanded = app.querySelector('.types-preview').classList.toggle('expanded');
+    event.currentTarget.setAttribute('aria-expanded', String(expanded));
+    event.currentTarget.textContent = expanded ? '收起来 ↶' : '展开看看 ↗';
+  };
+  app.querySelector('#save-report').onclick = () => saveCard(report, false);
+  app.querySelector('#save-permit').onclick = () => saveCard(report, true);
+  app.querySelector('#revise').onclick = () => { state.screen='quiz'; state.index=QUESTION_COUNT-1; persist(); render(); focusTitle(); };
+  app.querySelector('#restart').onclick = () => { state={...blank(state.buddy), population: state.population, aiUse: state.aiUse}; questions=[]; persist(); render(); focusTitle(); };
+  app.querySelector('#reveal').onclick = () => {
+    state.revealed=true; persist(); app.querySelector('#epilogue').hidden=false; app.querySelector('#reveal').hidden=true;
+    app.querySelector('#epilogue-title').focus({preventScroll:true});
+    app.querySelector('#epilogue').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
+  };
 }
-function symptom(code){return {'MANUAL UNIVERSE':'遇到重复劳动，第一反应是“我再努努力”。AI在旁边待机，你已经热到风扇起飞。','HUMAN BY CHOICE':'知道有捷径，仍然想亲自走走。不是舍不得用工具，是这段路本来就挺好玩。','TIME RECLAIMER':'该委托的委托，该验收的验收。至于省下来的时间——你有自己的安排。','FLEXIBLE PARTNER':'一边试着自己做，一边和AI来回改。分工合同每天更新，具体谁主导，看情况。','AUTO-PILOT':'材料已读，来源未读。漂亮的引用列表里，可能住着几篇平行宇宙论文。','MODEL ROUTER':'鲸鱼写，螃蟹审，白龙总结。三家AI争论了半小时，人类负责复制粘贴。','ONE MORE':'最终版第十八次修订。你突然发现，第一版其实就挺好。','DDL GHOST':'白天离线，23:55突然召唤全部硅基同事。','PROMPT WIZARD':'任务只有两行，咒语写了三屏。你对提示词的敬畏，AI都看在眼里。','PROMPT ARCHIVE':'收藏夹的生产力已经爆表，今天真正用过的只有搜索框。'}[code];}
 
 async function saveCard(report,permit){
  const buttons=[...app.querySelectorAll('#save-report,#save-permit')];buttons.forEach(b=>b.disabled=true);
- try{const blob=await renderPoster(report,CHARACTERS[report.profile.code],state.reportId,permit,state.buddy);const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=(permit?'生活许可证':'我的含人量')+'-'+(state.reportId||'本机')+'.png';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);toast('成分已装裱，去下载列表领图。');}
+ try{const blob=await renderPoster(report,{...CHARACTERS[report.profile.code],name:report.profile.name,quote:report.profile.tag,...(report.profile.code==='FLEXIBLE PARTNER'?{short:'MIX',tags:['看事分工','各有安排','慢慢试试']}:{})},state.reportId,permit,state.buddy);const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=(permit?'生活许可证':'我的含人量')+'-'+(state.reportId||'本机')+'.png';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);toast('成分已装裱，去下载列表领图。');}
  catch{toast('这次装裱失败了，先截图带走也行。');}finally{buttons.forEach(b=>b.disabled=false);}
 }
 
 function render() {
+  if (submitting) return;
   clearTimeout(scanTimer);
   document.querySelector('#squad-button').hidden = state.screen !== 'home';
   if (state.screen === 'quiz') quiz();
@@ -541,7 +924,8 @@ function render() {
   else home();
 }
 const dialog=document.querySelector('#about-dialog');
-document.querySelector('.brand').addEventListener('click',event=>{event.preventDefault();state.screen='home';persist();render();focusTitle();});
+document.querySelector('#collection-detail').hidden = !endpoint;
+document.querySelector('.brand').addEventListener('click',event=>{event.preventDefault();if(submitting)return;recordReadingTime();state.screen='home';persist();render();focusTitle();});
 document.querySelector('#about-button').addEventListener('click',()=>dialog.showModal());
 document.querySelector('#close-dialog').addEventListener('click',()=>dialog.close());
 document.querySelector('#understood').addEventListener('click',()=>dialog.close());
