@@ -786,8 +786,12 @@ function submissionEndpoint(documentRoot = document) {
   if (!value) return '';
   try {
     const url = new URL(value);
-    return url.protocol === 'https:' && url.pathname === '/api/responses' &&
-      !url.username && !url.password && !url.search && !url.hash ? url.href : '';
+    if (url.protocol !== 'https:' || url.pathname !== '/api/responses' ||
+        url.username || url.password || url.search || url.hash) return '';
+    if (documentRoot.location?.origin === 'https://humancontentlab-10o353r7.maozi.io') {
+      return new URL('/api/responses', documentRoot.location.origin).href;
+    }
+    return url.href;
   } catch {
     return '';
   }
