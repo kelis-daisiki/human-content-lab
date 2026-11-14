@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f8db45">
-  <meta name="survey-endpoint" content="">
+  <meta name="survey-endpoint" content="https://human-content-survey.handsomezhang23333.workers.dev/api/responses">
   <meta name="description" content="含人量过高，建议适当降低。10道轻松场景题，一份倒过来的AI率报告。">
   <title>含人量检测站 · 请适当降低无效坚持</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2217%22%20fill%3D%22%23f05a32%22%2F%3E%3Cpath%20d%3D%22M17%2017v30m22-30v30M17%2032h22%22%20fill%3D%22none%22%20stroke%3D%22%23fff9ec%22%20stroke-width%3D%227%22%2F%3E%3Ccircle%20cx%3D%2249%22%20cy%3D%2244%22%20r%3D%224%22%20fill%3D%22%2322251f%22%2F%3E%3C%2Fsvg%3E%0A" type="image/svg+xml">
@@ -100,12 +100,12 @@
     <p>每局 10 题，包含 4 道公共情境、4 道搭子情境，以及校园支持需求和课余安排各 1 题。相同方面会问两次，场景各有不同。</p>
     <p>请按课程允许使用 AI 的情形作答。没遇到过的情境可以选“暂时说不准”。</p>
     <p>题目里的鲸鱼、螃蟹和其他小动物都是本所的出题搭子。</p>
-    <p id="collection-detail" hidden>交卷后，搭子、题目、选项、结果和提交时间会保存到活动作者的答卷库，用于本次活动统计。</p>
+    <p id="collection-detail" hidden>交卷会保存搭子、题目与选择、结果、可选校园身份与AI使用频率、分题用时和回改次数，供活动作者统计。无需填写姓名或学号。</p>
     <button class="button primary" id="understood">明白，允许整活 <span aria-hidden="true">↗</span></button>
   </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <dialog id="quality-dialog" aria-label="搭子提醒"></dialog>
-  <noscript><p class="noscript">这个互动需要浏览器启用JavaScript；所有答案只在本机处理。</p></noscript>
+  <noscript><p class="noscript">这个互动需要浏览器启用JavaScript。</p></noscript>
   <script>
 const DIMENSIONS = {
   delegation: {label: '重复任务怎么分', low: '更多亲自处理', high: '更多交给搭子'},
@@ -847,6 +847,7 @@ function reportPage() {
   const buddyAnswer = questions[0].options[state.answers[0]];
   app.innerHTML = `<section class="result-layout fade-in">
     <div class="result-intro"><h1>这次，你怎么和搭子配合？</h1><span class="pill">校园搭班记录</span></div>
+    ${endpoint ? `<p class="collection-note" role="status">${state.submitted ? '答卷已收好，谢谢你来玩。' : '这次还未交卷，答案留在当前标签页。可返回最后一题重试。'}</p>` : ''}
     <div class="result-grid">
       <article class="ticket" aria-label="你的检测报告" style="--type-color:${character.color}">
         <div class="ticket-head"><span>你的搭班样本</span><span>HCL</span></div>
