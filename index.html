@@ -281,12 +281,39 @@ const ASIDES = {
   ]
 };
 
+// Existing question IDs keep their original dialogue for saved and submitted forms.
+const REVISED_ASIDES = {
+  kimi: [
+    ['「活动表我排好了。你按时间看，我按歌单听。」', '「我给每页 PPT 配了首歌。现在全班需要坐满两小时。」'],
+    ['「地址我有点拿不准。散场放哪首歌我已经定了。」', '「这张卡的公式我还在查。背它的时候别放鼓点，我刚才数着数着就进副歌了。」'],
+    ['「先用自己的话讲一遍。想不起来也别急，乐队彩排还有人忘进拍呢。」', '「草图先画，我给你放首适合画图的。画完了？等等，才到吉他独奏。」'],
+    ['「PPT 都演完了。轮到我的谢幕曲了吧？我从第一页就开始等。」', '「你把推文定时。我去听 Pink Floyd。歌还没播完，谁也别跟我提第九稿。」']
+  ],
+  doubao: [
+    ['「我直接说。你这是活动安排，不是寻宝图。时间和地点放一行。」', '「最直白的话就一句：你们组每个人都带了自己的字体来上课。」'],
+    ['「宝宝我说句实话，周六和周日差的不是一个字，是一天。」', '「我可以很肯定地念出来。不代表它很肯定地对。翻课件。」'],
+    ['「我不绕弯子，你刚才那句是把题目又念了一遍。举个例子试试。」', '「直说了：看我画完，和你会画，中间还差你画一遍。」'],
+    ['「你已经改到第八版了。老师还没看第一版。」', '「最直接、最明白、最不卖关子的一句话：发吧。」']
+  ],
+  grok: [
+    ['「兄弟，表我能排。两场都给你排周六八点这事，你最好亲眼看一眼。」', '「兄弟，哪一页难看你尽管问。我刚数了一下，得从封面开始聊。」'],
+    ['「兄弟，群里转了九遍我都能帮你看。问题是九遍都是同一张截图。」', '「兄弟，哪张卡看不懂就发哪张。第一张？行，咱从头来。」'],
+    ['「兄弟，这题不丢人。你讲到哪儿卡住了？从那儿问，我陪你往下捋。」', '「你问从哪下笔我也回。你问我能不能假装没看见你把图画倒了……能，转过来再说。」'],
+    ['「哥们，封面你要非改，我还能给你想一版。你要问我现在干啥：走，吃点东西。」', '「兄弟，推文发完你问我宵夜吃啥我也回。这个问题比改第九稿重要多了。」']
+  ]
+};
+
 const COMPANION_ITEMS = Object.fromEntries(Object.entries(ASIDES).map(([buddy, asides]) => [
   buddy, Object.fromEntries(Object.entries(TASKS).map(([dimension, tasks], index) => [
     dimension, tasks.map((task, variant) =>
-      item(buddy + '-' + dimension + '-' + variant, dimension, 'companion', task, buddy, asides[index][variant]))
+      item(buddy + '-' + dimension + '-' + variant + (REVISED_ASIDES[buddy] ? '-voice2' : ''),
+        dimension, 'companion', task, buddy, (REVISED_ASIDES[buddy] ?? asides)[index][variant]))
   ]))
 ]));
+
+const PREVIOUS_COMPANION_ITEMS = Object.entries(REVISED_ASIDES).flatMap(([buddy]) =>
+  Object.entries(TASKS).flatMap(([dimension, tasks], index) => tasks.map((task, variant) =>
+    item(buddy + '-' + dimension + '-' + variant, dimension, 'companion', task, buddy, ASIDES[buddy][index][variant]))));
 
 const HABIT_ITEMS = [
   {
@@ -346,7 +373,7 @@ const REPORT_TYPES = ['MANUAL UNIVERSE', 'HUMAN BY CHOICE', 'TIME RECLAIMER',
   'FLEXIBLE PARTNER', 'AUTO-PILOT', 'ONE MORE', 'MODEL ROUTER', 'DDL GHOST', 'PROMPT WIZARD', 'PROMPT ARCHIVE'];
 const dimensionIds = Object.keys(DIMENSIONS);
 const allItems = [...ANCHORS, ...Object.values(COMPANION_ITEMS).flatMap(groups => Object.values(groups).flat()),
-  ...HABIT_ITEMS, SUPPORT_ITEM, LIFE_ITEM];
+  ...PREVIOUS_COMPANION_ITEMS, ...HABIT_ITEMS, SUPPORT_ITEM, LIFE_ITEM];
 const itemById = new Map(allItems.map(question => [question.id, question]));
 
 function drawQuestions(buddyId, random = Math.random) {
@@ -369,7 +396,7 @@ function restoreQuestions(ids, buddyId) {
   const valid = questions.every((question, index) => {
     const slot = expected[index];
     if (slot.role !== 'companion') return question === slot;
-    return COMPANION_ITEMS[buddyId][slot.dimension].includes(question);
+    return question.role === 'companion' && question.buddy === buddyId && question.dimension === slot.dimension;
   });
   return valid ? questions : null;
 }
@@ -551,9 +578,9 @@ const AI_BUDDIES={
  gemini:{name:'Gemini',nick:'香蕉星',color:'#cdbbf4',line:'背景换了。你脸也换了。',kind:'star'},
  gpt:{name:'ChatGPT',nick:'白龙卷',color:'#c2dcca',line:'你说得对。你反过来说也对。',kind:'dragon'},
  qwen:{name:'Qwen',nick:'千问小狐',color:'#d0c4f0',line:'你要一个方案？我写了十一个。',kind:'fox'},
- kimi:{name:'Kimi',nick:'月亮猫',color:'#c2cee1',line:'把 PDF 放这儿，我翻翻。',kind:'mooncat'},
- doubao:{name:'豆包',nick:'豆包团子',color:'#f7d7ac',line:'我来把这句简单的话扩写一下。',kind:'bun'},
- grok:{name:'Grok',nick:'嘴硬蝠',color:'#c8c7ee',line:'先让我看看这图是谁发的。',kind:'bat'}
+ kimi:{name:'Kimi',nick:'月亮猫',color:'#c2cee1',line:'题等一下，这张专辑还没听完。',kind:'mooncat'},
+ doubao:{name:'豆包',nick:'豆包团子',color:'#f7d7ac',line:'我用最直白、最不绕弯的话告诉你：选我。',kind:'bun'},
+ grok:{name:'Grok',nick:'兄弟蝠',color:'#c8c7ee',line:'兄弟，有啥你直接问。',kind:'bat'}
 };
 function buddySVG(id='deepseek'){
  const b=AI_BUDDIES[id]||AI_BUDDIES.deepseek;let art='';const st='stroke="#202020" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"';
