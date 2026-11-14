@@ -28,7 +28,7 @@
 .buddy-pick strong { font-size: 11px; }
 .buddy-pick small { font-size: 9px; }
 .home .start { margin-top: 18px; }
-.home .types-heading { margin-top: 28px; padding-top: 18px; border-top: 2px solid; }
+.completed-samples { margin-top: 32px; padding-top: 20px; border-top: 2px solid; }
 .squad-hero { position: relative; width: min(100%, 320px); }
 .ai-character { width: 100%; height: 100%; }
 .stage .bubble.top { max-width: 170px; top: 0; right: 0; }
@@ -71,7 +71,7 @@
     <div class="header-actions"><button class="text-button" id="squad-button">AI小队 ↗</button><button class="text-button" id="about-button">关于</button></div>
   </header>
   <main id="app"><p class="noscript" role="status">正在加载含人量检测站。如果一直停在这里，请刷新页面。</p></main>
-  <footer class="footer"><span>HCL 民间人类成分观察所</span><span>下班以后，去看晚霞。</span></footer>
+  <footer class="footer"><span>HCL 民间人类成分观察所</span></footer>
   <dialog id="about-dialog" aria-labelledby="about-title">
     <button class="dialog-close" id="close-dialog" aria-label="关闭说明">×</button>
     <span class="eyebrow">HUMAN CONTENT LAB</span>
@@ -190,10 +190,10 @@ const BUDDY_QUESTIONS = {
     question('bun-voice','豆包团子出题','团子在读你的广播稿，每句话都像在播报喜讯。',[['示范一句，再让它试。','adapt',45,'参考终于从“自然点”变成了能听的自然。'],['自己录，试三遍就发。','craft',85,'第三遍的停顿还有点像你。'],['换一家读读看。','router',35,'广播播音员开始试用。'],['这股劲挺带感，就留吧。','delegate',20,'今天连天气都像得了奖。']])
   ],
   grok: [
-    question('bat-source','Grok蝙蝠出题','蝙蝠搬来一张热传截图，说事情实锤了。',[['找截图里的原帖和时间。','check',45,'有截图和有原文暂时分开。'],['这么多人转，先信一次。','unchecked',5,'转发量正在申请担任证人。'],['叫另一家从头查，先不贴截图。','router',35,'给第二位选手一次盲评。'],['不追了，等真要用再查。','adapt',40,'不参与每一次全网大考。']]),
-    question('bat-joke','Grok蝙蝠出题','你让蝙蝠润一句通知，它先吐槽了通知，再吐槽你。',[['笑完把原句发了。','manual',85,'今天的润色成果是一个笑。'],['留那个好笑的点，重写成同学能看懂的。','craft',80,'笑点可以借，用词你来。'],['让它只改病句，别评价我。','efficient',30,'出题人被要求坐回工位。'],['发给另一个 AI，让它判断谁更过分。','router',35,'现在三方都在看同一条通知。']]),
-    question('bat-trend','Grok蝙蝠出题','蝙蝠给你讲了十分钟最新热梗，忘了你只是问原来的梗。',[['把原图贴回去，问它一句出处。','efficient',30,'找梗先从这一张图开始。'],['十个梗全存，课上慢慢看。','collector',65,'你收获了一份还没打算看的周报。'],['它讲到哪儿我跟到哪儿，原题明天再问。','deadline',75,'热点结束时，待办原封不动。'],['自己找这个梗最早的一条。','check',60,'十分钟速成暂时让位给原帖。']]),
-    question('bat-roast','Grok蝙蝠出题','你让蝙蝠吐槽你的海报。它吐槽得挺准，你有点生气。',[['先改最有道理的那一条。','adapt',45,'意见留一条，情绪留给晚饭。'],['要求它再审一遍，必须体面。','again',55,'海报二审结束，语气一审开始。'],['问另一家，只给海报，不给吐槽。','router',35,'不给第二个评委看参考答案。'],['我先放一晚，明天自己看。','craft',75,'半夜的最后一条修改没能过审。']])
+    question('bat-source','嘴硬蝠出题','蝙蝠搬来一张热传截图，说事情实锤了。',[['找截图里的原帖和时间。','check',45,'有截图和有原文暂时分开。'],['这么多人转，先信一次。','unchecked',5,'转发量正在申请担任证人。'],['叫另一家从头查，先不贴截图。','router',35,'给第二位选手一次盲评。'],['不追了，等真要用再查。','adapt',40,'不参与每一次全网大考。']]),
+    question('bat-joke','嘴硬蝠出题','你让蝙蝠润一句通知，它先吐槽了通知，再吐槽你。',[['笑完把原句发了。','manual',85,'今天的润色成果是一个笑。'],['留那个好笑的点，重写成同学能看懂的。','craft',80,'笑点可以借，用词你来。'],['让它只改病句，别评价我。','efficient',30,'出题人被要求坐回工位。'],['发给另一个 AI，让它判断谁更过分。','router',35,'现在三方都在看同一条通知。']]),
+    question('bat-trend','嘴硬蝠出题','蝙蝠给你讲了十分钟最新热梗，忘了你只是问原来的梗。',[['把原图贴回去，问它一句出处。','efficient',30,'找梗先从这一张图开始。'],['十个梗全存，课上慢慢看。','collector',65,'你收获了一份还没打算看的周报。'],['它讲到哪儿我跟到哪儿，原题明天再问。','deadline',75,'热点结束时，待办原封不动。'],['自己找这个梗最早的一条。','check',60,'十分钟速成暂时让位给原帖。']]),
+    question('bat-roast','嘴硬蝠出题','你让蝙蝠吐槽你的海报。它吐槽得挺准，你有点生气。',[['先改最有道理的那一条。','adapt',45,'意见留一条，情绪留给晚饭。'],['要求它再审一遍，必须体面。','again',55,'海报二审结束，语气一审开始。'],['问另一家，只给海报，不给吐槽。','router',35,'不给第二个评委看参考答案。'],['我先放一晚，明天自己看。','craft',75,'半夜的最后一条修改没能过审。']])
   ]
 };
 
@@ -204,10 +204,10 @@ const LEISURE_QUESTIONS = [
     ['让它画张背景，我接着往上添。', 'outcome', undefined, '这张可以画到一半转个弯。'],
     ['都先别画，躺一会儿。', 'rest', undefined, '也可以什么都没画。']
   ]),
-  question('photo', '闲下来', '它三秒钟就能做张晚霞图。外面现在也刚好是晚霞。', [
+  question('photo', '闲下来', '它能做一张下雨的图。窗外突然真的下雨了。', [
     ['我出去看一眼。', 'enjoy', undefined, '手机可以晚一点再拿。'],
     ['先拍一张，回来玩玩怎么做成明信片。', 'explore', undefined, '先看天，排版一会儿再说。'],
-    ['请它做张图发给朋友，我去吃饭。', 'outcome', undefined, '朋友收到了一份今天的颜色。'],
+    ['请它做张图发给朋友，我去吃饭。', 'outcome', undefined, '朋友收到的是一张雨天明信片。'],
     ['今天不拍，坐一会儿就好。', 'rest', undefined, '看过就算看过。']
   ])
 ];
@@ -305,8 +305,16 @@ function makeReport(answers, questions) {
  'FLEXIBLE PARTNER':['AI甲方','今天谁合适，今天就谁上。','你在自己动手和找AI帮忙之间切换，分工合同随时更新。有时候一句“先把这行改了”就够开工。']};
  const [name,verdict,description]=profiles[code];
 
+  const takesOnMore = count('manual') + count('proof') + count('again') + count('deadline') >= 3;
+  const endingTitle = takesOnMore ? '今天给自己放个假。' : '这两个小时归你。';
+  const scene = {
+    walk: takesOnMore ? '把电脑合上，沿着校园随便走一圈。路过操场就坐一会儿，今天不用把步数走够。' : '从平时不走的那扇门出去。听一会儿风吹树叶，顺路买个热乎的烤红薯。',
+    people: takesOnMore ? '把待办留到明天，约个熟人吃顿热饭。手机扣在桌上，听对方讲完最近那件小事。' : '约个很久没见的人吃碗面。聊到店里开始收桌也行，今天刚好多出这点时间。',
+    hobby: takesOnMore ? '挑件早就想玩的小事，涂张画、拼一会儿积木都行。玩累了就收起来，今天不用做完。' : '放一张喜欢的唱片，翻几页闲书，或者把那支一直舍不得用的笔拆开。挑一样就好。',
+    rest: takesOnMore ? '把电脑合上，消息静音，睡一觉。醒了饿就吃点东西，今天剩下的时间都算放假。' : '冲个热水澡，换件软乎的衣服。往沙发上一倒，想睡就睡。'
+  }[selected[9].kind];
   return {score, profile: {code, name, verdict, description},
-    life: selected[9].life, future: selected[8].kind, scoreParts};
+    life: selected[9].life, future: selected[8].kind, scoreParts, endingTitle, scene};
 }
 
 function narrativeFor(report) {
@@ -381,7 +389,7 @@ function buddySVG(id='deepseek'){
  if(b.kind==='mooncat')art=`<path d="M211 82q-13 78 55 104-34 45-84 17-53-32-33-79 18-39 62-42Z" fill="#f8db45" ${st}/><path d="m78 143 8-58 38 37 44-37 8 58 4 70q-48 36-105-1Z" fill="#424d71" ${st}/><path d="M99 155h11m34 0h11m-39 27 9 5 9-5" fill="none" stroke="#fffdf5" stroke-width="4" stroke-linecap="round"/><path d="m96 231-4 14m67-14 4 14m-78-51-33-3m119 5 25-3" fill="none" ${st}/><path d="M106 206h40v28h-40Z" fill="#fffdf5" stroke="#202020" stroke-width="3"/>`;
  if(b.kind==='bun')art=`<path d="M64 199q-16-51 35-86 24-17 48-41 18 22 48 32 55 26 47 76-5 53-100 54-60 0-78-35Z" fill="#f7d7ac" ${st}/><path d="M120 115q16-14 27-43m0 0q6 26 29 43" fill="none" ${st}/><circle cx="114" cy="164" r="5" fill="#202020"/><circle cx="179" cy="164" r="5" fill="#202020"/><path d="M135 181q12 13 25 0m49-23 20-17m-6-8 12 10" fill="none" ${st}/><path d="M138 232v13m40-13v13" ${st}/>`;
  if(b.kind==='bat')art=`<path d="M103 155Q71 94 30 114q30 28 26 68 25-15 43 10m98-37q32-61 73-41-30 28-26 68-25-15-43 10" fill="#766da4" ${st}/><path d="m105 135 4-59 38 35 42-35 8 59q26 73-47 86-68-9-45-86Z" fill="#a9a0d2" ${st}/><path d="M122 147h15m24 0h16m-38 26q13 7 25-4l-5 12Z" fill="#fffdf5" ${st}/><path d="m137 219-6 22m38-22 6 22" ${st}/><path d="m228 74 8-14 6 14 15 6-15 5-6 14-8-14-14-5Z" fill="#f8db45" ${st}/>`;
- return `<svg class="ai-character" viewBox="0 0 300 280" role="img" aria-label="${b.name} ${b.nick}" xmlns="http://www.w3.org/2000/svg"><ellipse cx="150" cy="248" rx="91" ry="10" fill="#202020" opacity=".08"/>${art}</svg>`;
+ return `<svg class="ai-character" viewBox="0 0 300 280" role="img" aria-label="${b.nick}" xmlns="http://www.w3.org/2000/svg"><ellipse cx="150" cy="248" rx="91" ry="10" fill="#202020" opacity=".08"/>${art}</svg>`;
 }
 function buddyFigure(id,className=''){
  return `<div class="${className}">${buddySVG(id)}</div>`;
@@ -394,12 +402,12 @@ async function renderPoster(report,c,reportId,permit,buddyId='deepseek'){
  const canvas=document.createElement('canvas');canvas.width=1000;canvas.height=permit?1330:1550;const ctx=canvas.getContext('2d');if(!ctx)throw Error('canvas unavailable');const paper='#fffdf5',ink='#202020';
  ctx.fillStyle=paper;ctx.fillRect(0,0,1000,canvas.height);ctx.strokeStyle=ink;ctx.lineWidth=4;ctx.strokeRect(24,24,952,canvas.height-48);ctx.fillStyle=permit?'#b7d6f0':c.color;ctx.fillRect(26,26,948,100);ctx.fillStyle=ink;ctx.font='bold 29px "Microsoft YaHei", sans-serif';ctx.fillText(permit?'含人量检测站 / 生活许可证':'含人量检测站 / 人类样本档案',62,89);ctx.beginPath();ctx.moveTo(24,128);ctx.lineTo(976,128);ctx.stroke();
  if(permit){
-  ctx.font='bold 70px "Microsoft YaHei", sans-serif';ctx.fillText('生活不用申请。',62,250);ctx.font='27px "Microsoft YaHei", sans-serif';wrapPoster(ctx,'即使以后AI会得越来越多，你依旧有享受生活、发现美的权利。',65,327,860,47);ctx.drawImage(await posterCharacter('human'),550,470,355,344);ctx.fillStyle='#f8db45';ctx.fillRect(60,490,470,180);ctx.strokeRect(60,490,470,180);ctx.fillStyle=ink;ctx.font='23px "Microsoft YaHei", sans-serif';ctx.fillText('我想把时间留给',85,538);ctx.font='bold 28px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.life+'。',85,590,415,43);ctx.font='29px "Microsoft YaHei", sans-serif';wrapPoster(ctx,'看晚霞，不用先证明你比AI更懂晚霞。',65,865,860,49);ctx.font='bold 32px "Microsoft YaHei", sans-serif';wrapPoster(ctx,'你可以认真地喜欢这个世界。',65,1005,860,54);
+  ctx.font='bold 70px "Microsoft YaHei", sans-serif';ctx.fillText('生活不用申请。',62,250);ctx.font='27px "Microsoft YaHei", sans-serif';wrapPoster(ctx,'即使以后AI会得越来越多，你依旧有享受生活、发现美的权利。',65,327,860,47);ctx.drawImage(await posterCharacter('human'),550,470,355,344);ctx.fillStyle='#f8db45';ctx.fillRect(60,490,470,180);ctx.strokeRect(60,490,470,180);ctx.fillStyle=ink;ctx.font='23px "Microsoft YaHei", sans-serif';ctx.fillText('我想把时间留给',85,538);ctx.font='bold 28px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.life+'。',85,590,415,43);ctx.font='29px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.scene,65,865,860,49);ctx.font='bold 32px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.endingTitle,65,1005,860,54);
  }else{
-  ctx.textAlign='center';ctx.font='900 126px Consolas, monospace';ctx.fillText(c.short,500,280);ctx.drawImage(await posterCharacter(c.kind),225,285,550,533);ctx.font='bold 76px "Microsoft YaHei", sans-serif';ctx.fillText(c.name,500,870);ctx.font='26px "Microsoft YaHei", sans-serif';ctx.fillText(c.quote,500,930);ctx.font='23px "Microsoft YaHei", sans-serif';ctx.fillText(c.tags.map(x=>'#'+x).join('   '),500,989);ctx.textAlign='left';ctx.fillStyle=c.color;ctx.fillRect(26,1040,948,120);ctx.beginPath();ctx.moveTo(24,1040);ctx.lineTo(976,1040);ctx.moveTo(24,1160);ctx.lineTo(976,1160);ctx.stroke();ctx.fillStyle=ink;ctx.font='27px "Microsoft YaHei", sans-serif';ctx.fillText('本次含人量',65,1110);ctx.font='bold 57px Consolas, monospace';ctx.fillText(String(report.score),710,1120);ctx.font='23px Consolas, monospace';ctx.fillText('/100',810,1120);ctx.font='25px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.profile.verdict,65,1230,865,44);ctx.fillStyle='#66635b';ctx.font='23px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.profile.description,65,1300,865,39);ctx.fillStyle=ink;ctx.font='bold 26px "Microsoft YaHei", sans-serif';ctx.fillText('含人量多少，都不影响你看晚霞。',65,1425);
+  ctx.textAlign='center';ctx.font='900 126px Consolas, monospace';ctx.fillText(c.short,500,280);ctx.drawImage(await posterCharacter(c.kind),225,285,550,533);ctx.font='bold 76px "Microsoft YaHei", sans-serif';ctx.fillText(c.name,500,870);ctx.font='26px "Microsoft YaHei", sans-serif';ctx.fillText(c.quote,500,930);ctx.font='23px "Microsoft YaHei", sans-serif';ctx.fillText(c.tags.map(x=>'#'+x).join('   '),500,989);ctx.textAlign='left';ctx.fillStyle=c.color;ctx.fillRect(26,1040,948,120);ctx.beginPath();ctx.moveTo(24,1040);ctx.lineTo(976,1040);ctx.moveTo(24,1160);ctx.lineTo(976,1160);ctx.stroke();ctx.fillStyle=ink;ctx.font='27px "Microsoft YaHei", sans-serif';ctx.fillText('本次含人量',65,1110);ctx.font='bold 57px Consolas, monospace';ctx.fillText(String(report.score),710,1120);ctx.font='23px Consolas, monospace';ctx.fillText('/100',810,1120);ctx.font='25px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.profile.verdict,65,1230,865,44);ctx.fillStyle='#66635b';ctx.font='23px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.profile.description,65,1300,865,39);ctx.fillStyle=ink;ctx.font='bold 26px "Microsoft YaHei", sans-serif';ctx.fillText('每个人都可以过一会儿自己的日子。',65,1425);
  }
  if(!permit)ctx.drawImage(await posterBuddy(buddyId),727,630,220,205);
- ctx.fillStyle='#726d63';ctx.font='18px "Microsoft YaHei", sans-serif';ctx.fillText('今日硅基同事：'+AI_BUDDIES[buddyId].name+' · '+AI_BUDDIES[buddyId].nick,62,canvas.height-74);ctx.font='17px Consolas, monospace';ctx.fillText('#'+(reportId||'LOCAL')+' / HCL · HUMAN CONTENT LAB',62,canvas.height-42);
+ ctx.fillStyle='#726d63';ctx.font='18px "Microsoft YaHei", sans-serif';ctx.fillText('今日硅基同事：'+AI_BUDDIES[buddyId].nick,62,canvas.height-74);ctx.font='17px Consolas, monospace';ctx.fillText('#'+(reportId||'LOCAL')+' / HCL · HUMAN CONTENT LAB',62,canvas.height-42);
  return new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('export failed')),'image/png'));
 }
 
@@ -446,8 +454,8 @@ function home() {
         <p class="home-lead">先选个搭子。它会从自己的糗事里抽三道题。</p>
         <div class="hero-actions">
           <div class="buddy-picks" aria-label="选择出题搭子">
-            ${Object.entries(AI_BUDDIES).map(([id, item]) => `<button class="buddy-pick ${state.buddy === id ? 'active' : ''}" data-buddy="${id}" aria-pressed="${state.buddy === id}" aria-label="${item.name} · ${item.nick}">
-              <span aria-hidden="true">${buddySVG(id)}</span><strong>${item.name}</strong><small>${item.nick}</small>
+            ${Object.entries(AI_BUDDIES).map(([id, item]) => `<button class="buddy-pick ${state.buddy === id ? 'active' : ''}" data-buddy="${id}" aria-pressed="${state.buddy === id}" aria-label="${item.nick}">
+              <span aria-hidden="true">${buddySVG(id)}</span><strong>${item.nick}</strong>
             </button>`).join('')}
           </div>
           <button class="button primary start" id="start">让${buddy.nick}出题 ${arrow}</button>
@@ -460,8 +468,6 @@ function home() {
         <div class="bubble top">${buddy.line}</div>
       </div>
     </div>
-    <div class="types-heading"><h2>本所常见人类样本</h2><button class="text-button sample-toggle" id="sample-toggle" aria-expanded="false">展开 10 种样本 ↗</button></div>
-    <div class="types-preview">${Object.values(CHARACTERS).map(c => `<article class="mini-type" style="--type-color:${c.color}">${characterSVG(c.kind, c.name)}<strong>${c.name}</strong><small>${c.short}</small></article>`).join('')}</div>
   </section>`;
   app.querySelectorAll('[data-buddy]').forEach(button => button.addEventListener('click', () => {
     state = blank(button.dataset.buddy);
@@ -470,11 +476,6 @@ function home() {
     home();
     app.querySelector(`[data-buddy="${state.buddy}"]`).focus({preventScroll: true});
   }));
-  app.querySelector('#sample-toggle').addEventListener('click', event => {
-    const open = app.querySelector('.types-preview').classList.toggle('expanded');
-    event.currentTarget.setAttribute('aria-expanded', String(open));
-    event.currentTarget.textContent = open ? '收起样本 ↶' : '展开 10 种样本 ↗';
-  });
   app.querySelector('#start').addEventListener('click', () => {
     state = blank(state.buddy);
     questions = drawQuestions(state.buddy);
@@ -511,7 +512,13 @@ function startScan(){
 function reportPage(){
  const report=makeReport(state.answers, questions),p=report.profile,c=CHARACTERS[p.code];
  const buddyAnswer = questions[0].options[state.answers[0]];
- app.innerHTML=`<section class="result-layout fade-in"><div class="result-intro"><div><h1>查明了，你属于——</h1><span class="eyebrow">HUMAN CONTENT REPORT / ${esc(state.reportId||'LOCAL')}</span></div><span class="pill">今日成分</span></div><div class="result-grid"><article class="ticket" aria-label="你的检测报告" style="--type-color:${c.color}"><div class="ticket-head"><span>你的含人量类型</span><span>HCL / 今日归档</span></div><div class="type-poster"><div class="short-code">${c.short}</div>${characterSVG(c.kind,c.name+'原创结果角色')}<div class="poster-sticker">人类样本<br>已归档 ✓</div><h2>${c.name}</h2><p class="type-quote">${c.quote}</p><div class="type-tags">${c.tags.map(t=>`<span>#${t}</span>`).join('')}</div></div><div class="score-strip"><span>本次含人量<br><small>碳基出勤指数</small></span><strong>${report.score}<small> /100</small></strong></div><div class="ticket-tail"><span>含人量检测站<br>${AI_BUDDIES[state.buddy].nick}协助出具</span><span class="barcode" aria-hidden="true"></span></div></article><div class="result-copy"><span class="eyebrow">本所批注</span><h2>${esc(p.verdict)}</h2><p class="result-description">${esc(p.description)}</p><div class="diagnosis"><h3>本次主要症状</h3><p>${esc(symptom(p.code))}</p></div><div class="buddy-report">${buddyFigure(state.buddy)}<div><small>出题搭子的评语</small><strong>${AI_BUDDIES[state.buddy].name} · ${AI_BUDDIES[state.buddy].nick}</strong><p>${esc(buddyAnswer.note)}</p></div></div><div class="result-actions"><button class="button primary" id="save-report">带走我的成分 ${arrow}</button><button class="button secondary" id="revise">我不服，重选 ↶</button></div><details class="rules"><summary>看看题目是怎么设定的</summary><div class="rules-content"><p>前 7 题参与计分，其中 3 题由搭子出。分数取选项值的平均数，角色类型还会参考具体选择。</p>${report.scoreParts.map(part=>`<div class="rule-row"><span>${esc(part.label)}</span><span>${part.value}</span></div>`).join('')}<p>最后 3 题留给生活。</p></div></details><p class="reveal-prompt">等等。这就能证明你有多少价值了？</p><button class="button reveal-button" id="reveal" ${state.revealed?'hidden':''}>不能。那还测个啥？ ${arrow}</button></div></div><section class="epilogue" id="epilogue" aria-labelledby="epilogue-title" ${state.revealed?'':'hidden'}><div class="epilogue-head"><span>彩蛋 / 检测仪失灵了</span><span>NO MORE SCORING</span></div><div class="epilogue-body"><div><span class="eyebrow">本所决定，撤回对你的打分。</span><h2 id="epilogue-title" tabindex="-1">含人量可以降低。<br>生活不用申请。</h2><p>刚才我们把“AI率”倒过来，<br>一本正经地又评判了你一次。</p><div class="life-permit">生活许可证 · 长期有效</div><p>合作可以慢慢试。<br>人不必靠“不可替代”才配活得开心。</p></div><div class="right"><p>${esc(narrativeFor(report))}</p><p style="margin-top:13px">你说，多出来的时间想留给：</p><strong class="life-choice">${esc(report.life)}。</strong><p>就算以后AI会得越来越多，你依旧有享受生活、发现美的权利。看晚霞，不用先证明你比AI更懂晚霞。</p><p class="final-line">好了，去过一会儿自己的日子吧。</p><button class="button" id="save-permit">领一张生活许可证 ${arrow}</button></div></div></section><div class="afterword"><button class="text-button" id="restart">换个姿势，再测一次 ↗</button></div></section>`;
+ app.innerHTML=`<section class="result-layout fade-in"><div class="result-intro"><div><h1>查明了，你属于——</h1><span class="eyebrow">HUMAN CONTENT REPORT / ${esc(state.reportId||'LOCAL')}</span></div><span class="pill">今日成分</span></div><div class="result-grid"><article class="ticket" aria-label="你的检测报告" style="--type-color:${c.color}"><div class="ticket-head"><span>你的含人量类型</span><span>HCL / 今日归档</span></div><div class="type-poster"><div class="short-code">${c.short}</div>${characterSVG(c.kind,c.name+'原创结果角色')}<div class="poster-sticker">人类样本<br>已归档 ✓</div><h2>${c.name}</h2><p class="type-quote">${c.quote}</p><div class="type-tags">${c.tags.map(t=>`<span>#${t}</span>`).join('')}</div></div><div class="score-strip"><span>本次含人量<br><small>碳基出勤指数</small></span><strong>${report.score}<small> /100</small></strong></div><div class="ticket-tail"><span>含人量检测站<br>${AI_BUDDIES[state.buddy].nick}协助出具</span><span class="barcode" aria-hidden="true"></span></div></article><div class="result-copy"><span class="eyebrow">本所批注</span><h2>${esc(p.verdict)}</h2><p class="result-description">${esc(p.description)}</p><div class="diagnosis"><h3>本次主要症状</h3><p>${esc(symptom(p.code))}</p></div><div class="buddy-report">${buddyFigure(state.buddy)}<div><small>出题搭子的评语</small><strong>${AI_BUDDIES[state.buddy].nick}</strong><p>${esc(buddyAnswer.note)}</p></div></div><div class="result-actions"><button class="button primary" id="save-report">带走我的成分 ${arrow}</button><button class="button secondary" id="revise">我不服，重选 ↶</button></div><details class="rules"><summary>看看题目是怎么设定的</summary><div class="rules-content"><p>前 7 题参与计分，其中 3 题由搭子出。分数取选项值的平均数，角色类型还会参考具体选择。</p>${report.scoreParts.map(part=>`<div class="rule-row"><span>${esc(part.label)}</span><span>${part.value}</span></div>`).join('')}<p>最后 3 题留给生活。</p></div></details><p class="reveal-prompt">等等。这就能证明你有多少价值了？</p><button class="button reveal-button" id="reveal" ${state.revealed?'hidden':''}>不能。那还测个啥？ ${arrow}</button></div></div><section class="epilogue" id="epilogue" aria-labelledby="epilogue-title" ${state.revealed?'':'hidden'}><div class="epilogue-head"><span>彩蛋 / 检测仪失灵了</span><span>NO MORE SCORING</span></div><div class="epilogue-body"><div><span class="eyebrow">本所决定，撤回对你的打分。</span><h2 id="epilogue-title" tabindex="-1">含人量可以降低。<br>生活不用申请。</h2><p>刚才我们把“AI率”倒过来，<br>一本正经地又评判了你一次。</p><div class="life-permit">生活许可证 · 长期有效</div><p>合作可以慢慢试。<br>人不必靠“不可替代”才配活得开心。</p></div><div class="right"><p>${esc(narrativeFor(report))}</p><p style="margin-top:13px">你说，多出来的时间想留给：</p><strong class="life-choice">${esc(report.life)}。</strong><p>${esc(report.scene)}</p><p class="final-line">${esc(report.endingTitle)}</p><button class="button" id="save-permit">领一张生活许可证 ${arrow}</button></div></div></section><div class="completed-samples"><div class="types-heading"><h2>本所常见人类样本</h2><button class="text-button sample-toggle" id="sample-toggle" aria-expanded="false">展开 10 种样本 ↗</button></div>
+    <div class="types-preview">${Object.values(CHARACTERS).map(c => `<article class="mini-type" style="--type-color:${c.color}">${characterSVG(c.kind, c.name)}<strong>${c.name}</strong><small>${c.short}</small></article>`).join('')}</div></div><div class="afterword"><button class="text-button" id="restart">换个姿势，再测一次 ↗</button></div></section>`;
+  app.querySelector('#sample-toggle').addEventListener('click', event => {
+    const open = app.querySelector('.types-preview').classList.toggle('expanded');
+    event.currentTarget.setAttribute('aria-expanded', String(open));
+    event.currentTarget.textContent = open ? '收起样本 ↶' : '展开 10 种样本 ↗';
+  });
  document.querySelector('#save-report').addEventListener('click',()=>saveCard(report,false));
  document.querySelector('#save-permit').addEventListener('click',()=>saveCard(report,true));
  document.querySelector('#revise').addEventListener('click',()=>{state.screen='quiz';state.index=QUESTION_COUNT-1;persist();render();focusTitle();});
