@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f8db45">
+  <meta name="description" content="含人量过高，建议适当降低。10道轻松场景题，一份倒过来的AI率报告。">
+  <title>含人量检测站 · 请适当降低无效坚持</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2217%22%20fill%3D%22%23f05a32%22%2F%3E%3Cpath%20d%3D%22M17%2017v30m22-30v30M17%2032h22%22%20fill%3D%22none%22%20stroke%3D%22%23fff9ec%22%20stroke-width%3D%227%22%2F%3E%3Ccircle%20cx%3D%2249%22%20cy%3D%2244%22%20r%3D%224%22%20fill%3D%22%2322251f%22%2F%3E%3C%2Fsvg%3E%0A" type="image/svg+xml">
+  <style>
+:root{--paper:#fffdf5;--ink:#202020;--muted:#72716b;--line:#202020;--yellow:#f8db45;--mono:Consolas,'SFMono-Regular',monospace;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',sans-serif;color:var(--ink);background:var(--paper);font-synthesis:none}*{box-sizing:border-box}body{margin:0;min-width:320px}button,input,a{-webkit-tap-highlight-color:transparent}button{font:inherit;cursor:pointer;color:inherit}button:disabled{cursor:not-allowed}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #f06943;outline-offset:5px}button,a{touch-action:manipulation}a{color:inherit}h1,h2,h3,p{margin:0}p{line-height:1.8}button{border:0}svg{display:block}::selection{background:#f8db45}.ambient{position:fixed;inset:0;pointer-events:none;z-index:-1;background-image:radial-gradient(#2828201c .8px,transparent .8px);background-size:16px 16px}.masthead{max-width:1120px;margin:auto;padding:22px 34px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--ink)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;font-size:14px;font-weight:800}.brand small{font:8px var(--mono);letter-spacing:.14em;display:block;margin-top:4px}.brand-mark{display:grid;place-items:center;background:var(--yellow);border:2px solid;border-radius:50%;width:36px;height:36px;font:900 22px var(--mono);transform:rotate(-10deg)}.brand-mark>span{display:none}.text-button{background:none;font-size:11px;text-decoration:underline;text-underline-offset:4px;padding:9px 0}.text-button:hover{color:#777}main{min-height:calc(100svh - 150px);max-width:1120px;margin:auto}.eyebrow{font:10px var(--mono);letter-spacing:.08em}.pill{display:inline-flex;border:1.5px solid;border-radius:30px;padding:5px 10px;font-size:10px;font-weight:600;background:var(--paper)}.button{display:inline-flex;align-items:center;justify-content:space-between;gap:25px;border:2px solid var(--ink);border-radius:10px;padding:16px 23px;min-height:54px;font-size:14px;font-weight:800;text-decoration:none;transition:transform .16s,box-shadow .16s;box-shadow:4px 4px 0 var(--ink)}.button:hover:not(:disabled){transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}.button:active:not(:disabled){transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}.button.primary{background:var(--yellow)}.button.secondary{background:var(--paper)}.button:disabled{background:#e4e3dd;color:#999;box-shadow:none;border-color:#c9c8c1}.button.full{width:100%}.footer{max-width:1120px;margin:auto;border-top:2px solid var(--ink);display:flex;justify-content:space-between;padding:19px 34px;gap:12px;font-size:9px;color:var(--muted)}.home{padding:41px 34px 34px}.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:35px;align-items:center}.issue{display:inline-flex;gap:14px;align-items:center;font:10px var(--mono)}.issue:before{content:'●';font-size:8px}.home h1{font-size:clamp(43px,5.5vw,68px);letter-spacing:-.065em;line-height:1.15;margin:22px 0 19px;font-weight:900}.highlight{position:relative;display:inline-block;z-index:0}.highlight:before{content:'';position:absolute;left:-3px;right:-5px;bottom:3px;height:30%;background:var(--yellow);z-index:-1;transform:rotate(-2deg)}.home-lead{font-size:14px;line-height:1.9}.home-lead strong{font-weight:800}.home .start{margin-top:26px;min-width:265px;font-size:16px;padding:17px 23px}.micro{font-size:10px;color:var(--muted);margin-top:14px}.stage{position:relative;min-height:355px;display:grid;place-items:center}.stage-back{position:absolute;width:280px;height:280px;border:2px solid;background:var(--yellow);border-radius:50%;background-image:linear-gradient(#20202008 1px,transparent 1px),linear-gradient(90deg,#20202008 1px,transparent 1px);background-size:16px 16px}.stage .character{position:relative;width:300px;transform:rotate(-3deg)}.bubble{position:absolute;background:var(--paper);border:2px solid;border-radius:16px;padding:12px 17px;font-size:12px;font-weight:750;line-height:1.6;box-shadow:3px 3px 0;z-index:1}.bubble:after{content:'';position:absolute;width:12px;height:12px;background:inherit;border:2px solid;border-top:0;border-left:0;bottom:-8px;left:27px;transform:skewY(35deg)}.bubble.top{top:6px;right:3px;transform:rotate(5deg)}.bubble.bottom{bottom:5px;left:4px;transform:rotate(-6deg);background:#b8a5ed}.stamp{position:absolute;bottom:26px;right:5px;width:74px;height:74px;border:2px dashed;border-radius:50%;display:grid;place-content:center;text-align:center;font:11px/1.5 var(--mono);transform:rotate(15deg)}.warning-tape{margin:30px 0 29px;border-top:2px solid;border-bottom:2px solid;background:var(--yellow);padding:10px 0;font-size:11px;font-weight:650;overflow:hidden;white-space:nowrap;display:flex;justify-content:space-around;gap:30px}.types-preview{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.types-heading{display:flex;justify-content:space-between;align-items:center;margin:0 0 15px}.types-heading h2{font-size:13px;font-weight:800}.types-heading>span{font:9px var(--mono);color:var(--muted)}.mini-type{border:1.5px solid;border-radius:11px;padding:10px 6px 12px;text-align:center;background:var(--paper);position:relative;overflow:hidden}.mini-type:before{content:'';position:absolute;left:0;right:0;bottom:0;height:7px;background:var(--type-color)}.mini-type .character{width:100%;height:115px;margin:auto}.mini-type strong{font-size:12px;display:block;margin:1px 0 5px}.mini-type small{font:9px var(--mono);color:var(--muted)}.question-layout{max-width:660px;margin:auto;padding:26px 30px 42px}.question-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.back{font-size:11px;padding:12px 0;background:none;display:flex;gap:10px}.progress-count{font:11px var(--mono)}.progress-count strong{font-size:16px}.progress{height:9px;border:1.5px solid;border-radius:30px;overflow:hidden;background:var(--paper);margin-bottom:24px}.progress>span{display:block;background:var(--yellow);height:100%;border-right:1.5px solid;transition:width .2s}.question-label{display:flex;justify-content:space-between;align-items:center}.question-label .eyebrow{font-size:9px}.question-mini{width:64px;height:63px;margin:-9px 0 -13px}.question-layout h1{font-size:30px;letter-spacing:-.04em;line-height:1.45;margin:16px 0 11px;font-weight:850}.question-sub{font-size:12px;color:#74716a;line-height:1.8;margin-bottom:24px}.choices{border:0;margin:0;padding:0;display:grid;gap:11px}.choices legend{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.choice{border:1.5px solid;border-radius:9px;background:var(--paper);padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;min-height:67px;transition:transform .15s,box-shadow .15s,background .15s}.choice:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0;background:#fff7cd}.choice.selected{background:var(--yellow);box-shadow:3px 3px 0}.choice input{position:absolute;width:1px;height:1px;opacity:0}.choice:has(input:focus-visible){outline:3px solid #f06943;outline-offset:4px}.choice-letter{width:27px;height:27px;flex-shrink:0;border:1.5px solid;border-radius:50%;display:grid;place-items:center;font:11px var(--mono);background:var(--paper)}.choice.selected .choice-letter{background:var(--ink);color:var(--paper)}.choice-text{font-size:13px;line-height:1.65}.feedback{min-height:55px;padding:16px 2px 12px;color:#777164;font-size:10px;line-height:1.9}.question-action{display:flex;justify-content:space-between;align-items:center;gap:10px}.question-action>span{font-size:10px;color:var(--muted)}.question-action .button{min-width:166px;font-size:13px;padding:14px 20px;min-height:49px}.stage-note{font-size:9px;color:var(--muted);margin-top:23px}.scan{max-width:530px;margin:auto;padding:55px 28px;text-align:center}.scan .character{width:205px;margin:auto}.scan h1{font-size:26px;margin:15px 0 10px;letter-spacing:-.04em}.scan p{font-size:12px;color:var(--muted)}.scan .scan-line{margin-top:25px;font-size:12px;min-height:23px}.scan .fake-label{font-size:9px;margin-top:25px}.scan-meter{width:180px;height:9px;border:1.5px solid;border-radius:30px;overflow:hidden;margin:20px auto}.scan-meter:before{content:'';display:block;width:60%;height:100%;background:var(--yellow);animation:scan 1.1s ease-in-out infinite alternate}@keyframes scan{from{transform:translateX(-100%)}to{transform:translateX(170%)}}.result-layout{padding:32px 34px 45px;max-width:1030px;margin:auto}.result-intro{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;gap:15px}.result-intro h1{font-size:21px;font-weight:800;letter-spacing:-.035em}.result-intro .eyebrow{display:block;margin-top:7px;font-size:9px;color:var(--muted)}.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}.ticket{border:2px solid;border-radius:15px;overflow:hidden;background:var(--paper);box-shadow:6px 6px 0}.ticket-head{background:var(--type-color);border-bottom:2px solid;padding:13px 20px;display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700}.ticket-head span:last-child{font:9px var(--mono)}.type-poster{position:relative;padding:22px 20px 0;text-align:center;background-image:radial-gradient(#20202012 .8px,transparent .8px);background-size:12px 12px}.type-poster .short-code{font:900 72px/1 var(--mono);letter-spacing:-.05em}.type-poster .character{height:224px;width:100%;position:relative;margin:-7px 0 -12px}.poster-sticker{position:absolute;right:20px;top:111px;transform:rotate(10deg);font-size:10px;line-height:1.5;background:var(--type-color);border:1.5px solid;padding:7px 10px;box-shadow:2px 2px 0}.type-poster h2{font-size:37px;letter-spacing:-.05em;font-weight:900;margin:1px 0 9px}.type-quote{font-size:12px;line-height:1.9;min-height:28px}.type-tags{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin:17px 0 20px}.type-tags span{border:1px solid;border-radius:4px;padding:4px 7px;background:var(--paper);font-size:9px}.score-strip{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:var(--type-color);border-top:2px solid}.score-strip>span{font-size:11px;line-height:1.7}.score-strip strong{font:800 31px var(--mono)}.score-strip strong small{font-size:13px;font-weight:400}.ticket-tail{display:flex;justify-content:space-between;padding:12px 20px;gap:10px;font-size:8px;color:var(--muted);border-top:1px dashed}.barcode{width:55px;height:18px;opacity:.6;background:repeating-linear-gradient(90deg,#202020 0 2px,transparent 2px 4px,#202020 4px 5px,transparent 5px 8px)}.result-copy{padding-top:5px}.result-copy .eyebrow{font-size:9px;color:var(--muted)}.result-copy h2{font-size:25px;font-weight:850;line-height:1.6;letter-spacing:-.04em;margin:13px 0 14px}.result-description{font-size:12px;line-height:2;color:#66635b}.diagnosis{margin:22px 0 21px;padding:15px 0;border-top:1.5px solid;border-bottom:1.5px solid}.diagnosis h3{font-size:11px;margin-bottom:10px}.diagnosis p{font-size:12px;line-height:1.9}.result-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}.result-actions .button{font-size:11px;padding:13px 14px;gap:8px;min-height:47px;box-shadow:3px 3px 0}.rules{font-size:10px;color:#726d63;border-top:1px solid #d0cec4;margin-top:23px}.rules summary{padding:14px 0;cursor:pointer}.rules-content{padding-bottom:14px;line-height:1.9}.rules-content p{margin:8px 0}.rule-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #ddd7cb;font:9px var(--mono)}.reveal-prompt{font-size:11px;margin:25px 0 10px;line-height:1.8}.reveal-button{width:100%;font-size:12px;gap:10px;padding:15px;background:#b7d6f0;line-height:1.6}.epilogue{border:2px solid;border-radius:13px;overflow:hidden;margin-top:38px;background:#b7d6f0;box-shadow:5px 5px 0}.epilogue-head{padding:12px 23px;border-bottom:2px solid;font:10px var(--mono);display:flex;justify-content:space-between}.epilogue-body{padding:30px;display:grid;grid-template-columns:1fr 1fr;gap:32px}.epilogue h2{font-size:30px;line-height:1.4;letter-spacing:-.04em;margin:16px 0}.epilogue p{font-size:12px;line-height:2}.epilogue .eyebrow{font-size:9px}.life-choice{font-size:15px;display:block;margin:14px 0 18px;line-height:1.7}.life-permit{font:10px var(--mono);background:var(--yellow);padding:9px 13px;border:1.5px solid;display:inline-block;transform:rotate(-4deg);margin:15px 0}.epilogue .button{margin-top:20px;background:var(--paper);font-size:11px;min-height:48px;padding:12px 18px}.epilogue .final-line{font-weight:750;margin-top:15px}.afterword{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-top:28px;font-size:9px;color:var(--muted);line-height:1.9}.afterword .text-button{font-size:10px;white-space:nowrap}dialog{background:var(--paper);color:var(--ink);border:2px solid;border-radius:14px;width:calc(100% - 32px);max-width:480px;max-height:85svh;overflow:auto;padding:30px;box-shadow:7px 7px 0}dialog::backdrop{background:#20202066;backdrop-filter:blur(3px)}dialog h2{font-size:28px;line-height:1.45;letter-spacing:-.04em;margin:17px 0 20px}dialog p{font-size:12px;line-height:1.95;color:#66635b;margin:13px 0}dialog .dialog-ending{color:var(--ink);font-weight:700}dialog .button{margin-top:14px;width:100%;font-size:12px}.dialog-close{position:absolute;right:13px;top:8px;background:none;padding:5px;font-size:26px}.toast{position:fixed;bottom:25px;left:50%;transform:translate(-50%,10px);background:var(--ink);color:var(--paper);padding:13px 18px;border-radius:8px;font-size:11px;max-width:calc(100% - 35px);opacity:0;pointer-events:none;z-index:20;transition:opacity .2s,transform .2s}.toast.show{opacity:1;transform:translate(-50%,0)}[hidden]{display:none!important}.fade-in{animation:fade .25s ease-out}@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}.noscript{padding:30px;text-align:center}
+@media(max-width:750px){.home-grid{gap:18px}.home h1{font-size:45px}.home-lead{font-size:12px}.stage{min-height:320px}.stage-back{width:230px;height:230px}.stage .character{width:265px}.bubble{font-size:10px;padding:10px 13px}.bubble.top{right:-6px}.stamp{width:63px;height:63px;font-size:9px;right:-4px}.home .start{min-width:240px}.mini-type .character{height:95px}.result-grid{gap:25px}.result-copy h2{font-size:22px}.type-poster h2{font-size:31px}.type-poster .short-code{font-size:62px}.type-poster .character{height:195px}}
+@media(max-width:600px){.masthead{padding:17px 21px}.brand{font-size:12px}.brand-mark{width:32px;height:32px;font-size:20px}.brand small{font-size:7px}.text-button{font-size:10px}main{min-height:calc(100svh - 130px)}.home{padding:28px 23px 29px}.home-grid{display:flex;flex-direction:column;gap:0;align-items:stretch}.home h1{font-size:clamp(39px,11.4vw,52px);line-height:1.14;margin:20px 0 16px;letter-spacing:-.065em}.home-lead{font-size:12px}.issue{font-size:8px;gap:10px}.stage{min-height:261px;margin:15px 0 0}.stage-back{width:218px;height:218px}.stage .character{width:248px;height:246px;transform:rotate(-3deg)}.bubble.top{top:3px;right:5px;font-size:10px;padding:9px 12px}.bubble.bottom{bottom:5px;left:2px;padding:8px 10px;font-size:10px}.stamp{bottom:11px;right:0;width:58px;height:58px;font-size:8px}.hero-actions{margin-top:20px}.home .start{width:100%;margin:0;min-height:55px;font-size:15px;padding:16px 20px}.micro{text-align:center;font-size:9px;margin-top:13px}.warning-tape{margin:25px 0 24px;padding:9px 0;font-size:9px;justify-content:flex-start;gap:24px}.types-heading{margin-bottom:12px}.types-heading h2{font-size:12px}.types-heading>span{font-size:8px}.types-preview{grid-template-columns:repeat(3,1fr);gap:9px}.mini-type{padding:8px 3px 13px}.mini-type .character{height:90px}.mini-type strong{font-size:10px}.mini-type small{font-size:8px}.types-preview .mini-type:nth-child(n+4){display:none}.footer{padding:17px 22px;flex-direction:column;gap:6px;font-size:8px}.question-layout{padding:19px 22px 35px}.question-top{margin-bottom:11px}.progress{margin-bottom:25px;height:8px}.question-layout h1{font-size:25px;line-height:1.5;margin-top:16px}.question-sub{font-size:11px;margin-bottom:22px}.choice{padding:14px 13px;gap:12px;min-height:71px}.choice-text{font-size:12px}.choice-letter{width:25px;height:25px;font-size:10px}.feedback{min-height:58px;font-size:9px;padding-top:15px}.question-action>span{font-size:9px}.question-action .button{min-width:152px;font-size:12px;padding:14px 18px}.stage-note{font-size:9px;line-height:1.8}.question-mini{width:56px}.result-layout{padding:24px 22px 35px}.result-intro{margin-bottom:23px;align-items:center}.result-intro h1{font-size:19px}.result-intro .eyebrow{font-size:8px}.result-intro .pill{font-size:8px;padding:5px 8px}.result-grid{display:block}.ticket{max-width:390px;margin:0 auto 34px;box-shadow:5px 5px 0}.type-poster{padding-top:23px}.type-poster .short-code{font-size:75px}.type-poster .character{height:235px;margin-top:-8px}.type-poster h2{font-size:36px}.type-quote{font-size:11px}.poster-sticker{top:119px;font-size:9px}.type-tags span{font-size:9px}.result-copy h2{font-size:23px}.result-copy .eyebrow{font-size:9px}.result-description{font-size:12px}.result-actions .button{font-size:11px}.rules{font-size:10px}.reveal-prompt{font-size:11px}.reveal-button{font-size:12px}.epilogue{margin-top:30px}.epilogue-head{font-size:8px;padding:12px 18px}.epilogue-body{display:block;padding:24px}.epilogue h2{font-size:28px;margin-top:13px}.epilogue p{font-size:12px}.epilogue .right{margin-top:20px;padding-top:19px;border-top:1px solid #2020204d}.epilogue .button{width:100%}.afterword{display:block;font-size:9px;margin-top:24px}.afterword .text-button{margin-top:12px}.scan{padding:45px 24px}.scan h1{font-size:23px}.scan .character{width:180px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+@media(max-width:600px){.home-grid{display:grid;grid-template-columns:1fr}.home-grid>div:first-child{display:contents}.home-grid .issue{order:0}.home-grid h1{order:1}.home-lead{order:2}.stage{order:3}.hero-actions{order:4;margin-top:19px}.stage{min-height:246px;margin-top:12px}}
+
+</style>
+  <style>
+.header-actions { display: flex; align-items: center; gap: 20px; }
+.home-grid > div:first-child { min-width: 0; }
+.home-lead { max-width: 400px; }
+.buddy-picks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; max-width: 410px; }
+.buddy-pick { min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; border: 1.5px solid #d3d0c5; border-radius: 9px; padding: 3px 2px 8px; background: var(--paper); }
+.buddy-pick:hover { border-color: var(--ink); }
+.buddy-pick.active { background: var(--yellow); border-color: var(--ink); box-shadow: 2px 2px 0; }
+.buddy-pick .ai-character { width: 50px; height: 46px; }
+.buddy-pick strong { font-size: 11px; }
+.buddy-pick small { font-size: 9px; }
+.home .start { margin-top: 18px; }
+.home .types-heading { margin-top: 28px; padding-top: 18px; border-top: 2px solid; }
+.squad-hero { position: relative; width: min(100%, 320px); }
+.ai-character { width: 100%; height: 100%; }
+.stage .bubble.top { max-width: 170px; top: 0; right: 0; }
+.question-mini .ai-character { width: 60px; height: 55px; }
+.question-layout h1 { margin-bottom: 22px; }
+.question-layout h1:has(+ .question-sub:not([hidden])) { margin-bottom: 10px; }
+.question-action { justify-content: flex-end; }
+.scan-buddy { width: 210px; height: 200px; margin: 0 auto 25px; }
+.buddy-report { display: flex; gap: 14px; align-items: center; padding: 8px 15px; margin: 20px 0; border: 1.5px solid; border-radius: 9px; background: #f8efda; }
+.buddy-report > div:first-child { width: 72px; height: 72px; flex-shrink: 0; }
+.buddy-report small { display: block; font-size: 10px; color: var(--muted); }
+.buddy-report strong { display: block; font-size: 12px; margin: 5px 0; }
+.buddy-report p { font-size: 12px; line-height: 1.65; }
+.types-preview:not(.expanded) .mini-type:nth-child(n+6) { display: none; }
+.types-preview.expanded .mini-type { display: block; }
+.afterword { justify-content: flex-end; }
+@media (max-width: 600px) {
+  .header-actions { gap: 14px; }
+  .home-grid .stage { min-height: 0; height: 175px; }
+  .stage-back { width: 158px; height: 158px; }
+  .squad-hero { width: 183px; }
+  .stage .bubble.top { font-size: 9px; max-width: 130px; padding: 8px 9px; right: 0; }
+  .hero-actions { margin-top: 10px; }
+  .buddy-picks { gap: 7px; margin: 0 auto; }
+  .buddy-pick .ai-character { width: 43px; height: 37px; }
+  .buddy-pick strong { font-size: 10px; }
+  .buddy-pick small { font-size: 8px; }
+  .home .start { margin-top: 14px; }
+  .types-preview:not(.expanded) .mini-type:nth-child(n+4) { display: none; }
+  .type-poster .short-code { font-size: 64px; }
+  .type-poster h2 { font-size: 29px; }
+}
+
+</style>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"></div>
+  <header class="masthead">
+    <a class="brand" href="./" aria-label="含人量检测站首页"><span class="brand-mark" aria-hidden="true">H<span>?</span></span><span>含人量检测站<small>HUMAN CONTENT LAB</small></span></a>
+    <div class="header-actions"><button class="text-button" id="squad-button">AI小队 ↗</button><button class="text-button" id="about-button">关于</button></div>
+  </header>
+  <main id="app"><p class="noscript" role="status">正在加载含人量检测站。如果一直停在这里，请刷新页面。</p></main>
+  <footer class="footer"><span>HCL 民间人类成分观察所</span><span>下班以后，去看晚霞。</span></footer>
+  <dialog id="about-dialog" aria-labelledby="about-title">
+    <button class="dialog-close" id="close-dialog" aria-label="关闭说明">×</button>
+    <span class="eyebrow">HUMAN CONTENT LAB</span>
+    <h2 id="about-title">给人类和AI，<br>重新排个班。</h2>
+    <p>选个搭子，每局抽 10 道题。它出 3 道专属题，其他题也会换。回到结果页改答案时，还是这一套。</p>
+    <p>题目里的鲸鱼、螃蟹和其他小动物都是本所的出题搭子。</p>
+    <button class="button primary" id="understood">明白，允许整活 <span aria-hidden="true">↗</span></button>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <noscript><p class="noscript">这个互动需要浏览器启用JavaScript；所有答案只在本机处理。</p></noscript>
+  <script>
+function question(id, tag, title, options, sub = '') {
+  return {id, tag, title, sub, options: options.map(([text, kind, human, note]) => ({text, kind, human, note}))};
+}
+
+const COMMON_QUESTIONS = {
+  work: [
+    question('format', '交作业前', '40 页文档的标题格式全乱了。你先干嘛？', [
+      ['从第一页开始改。', 'manual', 95, '文档有 40 页，你有一晚上。'],
+      ['让工具批量改，我抽几页看看。', 'adapt', 25, '这种活，抽查几页比改四十页快。'],
+      ['先弄懂样式怎么设，下次自己就会了。', 'craft', 85, '有人改格式，有人趁机学 Word。'],
+      ['发给 AI，趁这会儿去洗个澡。', 'delegate', 15, '回来的时候记得看一眼目录。']
+    ]),
+    question('slides', '交作业前', '组员发来四份 PPT，一人用了一个模板。明早上台。', [
+      ['自己合。谁也别再碰原文件。', 'manual', 90, '从现在起，这个文件只许有一位祖宗。'],
+      ['让 AI 先列一下重复和缺的页。', 'adapt', 35, '先数数哪几页在讲同一件事。'],
+      ['我想练排版，正好拿这次试试。', 'craft', 85, '比看二十分钟排版教程更有手感。'],
+      ['找份模板让工具统一，我只管讲顺。', 'delegate', 20, '主题统一了，明早别四个人讲四遍背景。']
+    ])
+  ],
+  judgment: [
+    question('citation', '交上去之前', 'AI 给了你一篇正好能用的论文，链接却是 404。', [
+      ['搜题名和作者，找到原文再引。', 'check', 45, '论文写得再对胃口，也得先查到它。'],
+      ['信息这么全，先把它放进参考文献。', 'unchecked', 5, '最像真的那篇，可能还是它现写的。'],
+      ['让它补 DOI，我再打开核对。', 'check', 35, '有 DOI 了。下一步是点开。'],
+      ['这条删了，我自己找一篇。', 'manual', 85, '找不到这篇，未必找不到能用的。']
+    ]),
+    question('credit', '交上去之前', '你写了一晚上的摘要，AI 改完后，室友说改过的更好懂。', [
+      ['把我那两句换回来，总得留点自己的。', 'proof', 90, '可疑痕迹：作者在摘要上刻了个到此一游。'],
+      ['通读一遍，有用就留。', 'delegate', 20, '行，改得好这条记它头上。'],
+      ['对照着看它删了什么，自己再写一遍。', 'craft', 85, '这回题目是摘要，下回题目是少写两句。'],
+      ['让另一个模型看看原意有没有跑偏。', 'router', 40, '第二位审稿人已加入群聊。']
+    ])
+  ],
+  ritual: [
+    question('ritual', '打开聊天框', '就想让 AI 帮你起个标题。发送前的第一步？', [
+      ['先写“你是一位有 20 年经验的编辑”。', 'wizard', 55, '来应聘的编辑目前还不知道要起什么标题。'],
+      ['翻收藏夹，里面有一条专门起标题的。', 'collector', 65, '保存它的时候你就知道会有今天。'],
+      ['开几家，同时发。', 'router', 35, '一个标题获得了四份报价。'],
+      ['贴两句正文，说给我三个标题。', 'direct', 20, '起标题前省下了一次起提示词。']
+    ]),
+    question('toolbox', '打开聊天框', '同学发来一条「写论文必备 Prompt」，有三屏长。', [
+      ['先套上专家设定，顺手再补两条。', 'wizard', 55, '正文还没写，提示词已经可以分页了。'],
+      ['加入收藏。以后写到这儿一定会用。', 'collector', 65, '“以后会用”文件夹又多了一位住户。'],
+      ['拿同一个小任务测三家，看谁好用。', 'router', 35, '你的模型横评比任务本身先交稿。'],
+      ['先用自己的话问一遍。', 'direct', 20, '三分钟后，三屏提示词还没拆封。']
+    ])
+  ],
+  revision: [
+    question('revision', '稿子来了', '你说“这句改顺一点”，AI 把整段重写了。', [
+      ['再开一轮。反正才第十七版。', 'again', 55, '第十八版，命名为「真不改了」。'],
+      ['把那句单拎出来，只改这一句。', 'efficient', 30, '今晚最大的进展，是终于选中了修改范围。'],
+      ['把两版丢给另一家，问它选哪个。', 'router', 35, '恭喜，获得了第三版。'],
+      ['先放着，等截止前五分钟再看。', 'deadline', 75, '你真正的系统提示词是倒计时。']
+    ]),
+    question('deadline', '稿子来了', '群里问“能交了吗”，你手上已经有一版能用的。', [
+      ['再来一版，感觉还能更好看。', 'again', 55, '「能交」和「愿意交」隔着一整个版本库。'],
+      ['过一遍要求，没漏就发。', 'efficient', 30, '提交文件的手并没有发抖。'],
+      ['交给另一个 AI 当评委，票数高的发。', 'router', 35, '评委建议参考第一版和第二版。'],
+      ['回个“马上”，离截止还有半小时呢。', 'deadline', 75, '嘴上的马上，电脑上的稍后。']
+    ])
+  ]
+};
+
+const BUDDY_QUESTIONS = {
+  deepseek: [
+    question('whale-busy', '干饭鲸出题', '你问一道题，鲸鱼转了半天，最后说服务器繁忙。', [['再点一次。都等这么久了。','again',55,'等了十分钟的人很难放下这一分钟。'],['先把能写的写了，卡住那步留着。','adapt',55,'鲸在排队，你不用跟它一起排。'],['换一家，顺便比较两家的解法。','router',35,'鲸鱼工位暂由另一位同事接管。'],['我也去吃饭，回来再说。','delegate',20,'你和鲸鱼这次排班一致。']]),
+    question('whale-long', '干饭鲸出题', '你问宵夜吃啥，鲸鱼把你的饮食偏好分了六种情况。', [['看完。它都写了，我也不好意思不看。','manual',75,'等看完，第七种情况是店关了。'],['让它报两家店名，然后我选。','efficient',30,'店名限定在十个字以内。'],['把菜单发给另一家，也问一遍。','router',35,'宵夜项目已成立评审团。'],['关掉窗口，去楼下吃碗面。','delegate',20,'没有方案文档，只有面。']]),
+    question('whale-rice', '干饭鲸出题', '鲸鱼给你留了一份待检查的表，说它先去吃饭。', [['自己重算一遍，放心。','manual',90,'两个人各做了一次同一张表。'],['抽三行算算，看数字是不是对得上。','check',45,'检查有了，饭也还有时间吃。'],['总数看着顺眼，直接交。','unchecked',5,'总数没有义务长得可疑。'],['约好回来一起看，我也去吃。','delegate',20,'暂时没人开工，大家都开饭。']]),
+    question('whale-steps', '干饭鲸出题', '鲸鱼给了三种解法，你只看得懂最慢的那种。', [['照最慢的做，我想弄明白。','craft',85,'慢那几步正好是你要学的。'],['让它用同一题把快方法讲一遍。','adapt',45,'能用这个例子讲清楚，再换方法。'],['选最快的，跑个小例子对一下。','check',30,'速度和验收都保住了。'],['自己从头算，先不看答案。','manual',90,'鲸鱼在一旁等你对答案。']])
+  ],
+  claude: [
+    question('crab-files','打工蟹出题','你让螃蟹改按钮颜色。它顺手改了 14 个文件。',[['先撤回，我自己改 CSS。','manual',90,'十四个文件没能进入你的变更名单。'],['打开 diff，挑出该留的那几行。','check',45,'颜色通过，顺手装修另议。'],['问另一家：这 14 个文件有必要动吗？','router',40,'临时聘请第二位装修监理。'],['它说测试过了，就合进去吧。','unchecked',5,'按钮换色，项目也换了个性格。']]),
+    question('crab-plan','打工蟹出题','你让螃蟹修一个错别字。它先发来一份修复计划。',[['直接把字改了，计划留给下一个错别字。','manual',90,'从立项到交付只按了两下键。'],['说“改这一个字就行”，让它继续。','efficient',30,'会议取消，修复继续。'],['看完计划，觉得好像还能再优化。','again',55,'错别字进入第二轮立项。'],['先让它改，回来看结果。','delegate',20,'只需要留意它有没有改动旁边那句。']]),
+    question('crab-quota','打工蟹出题','螃蟹刚说“我找到问题了”，今天的额度就用完了。',[['顺着最后一句继续查。','craft',80,'最贵的一句提示是半句。'],['把复现步骤整理一下，换一个接手。','router',40,'交接单比聊天记录好懂多了。'],['先写个最小例子，明天再接着看。','adapt',50,'今晚留下一张能接着走的地图。'],['我也下班，明天再修。','delegate',20,'额度和人都需要刷新。']]),
+    question('crab-test','打工蟹出题','螃蟹说 Bug 修完了。你点一下，还是同一个报错。',[['把复现步骤录下来，让它照着走。','efficient',30,'同事终于看到了你点的是哪个按钮。'],['自己跟一遍调用，弄明白再改。','craft',85,'问题没走，你先走了一遍代码。'],['让它加一个能复现的测试再改。','check',45,'这下“修完”有了能核对的东西。'],['叫另一家看看它漏了什么。','router',35,'又一只钳子加入了排查。']])
+  ],
+  gemini: [
+    question('star-banana','香蕉星出题','你让香蕉星换背景，回来发现你也换了张脸。',[['把原图和改图一起贴回去，只圈背景。','efficient',30,'谁能动，谁不能动，这次标清了。'],['我自己扣图，今晚就这么过了。','manual',90,'工具省下的时间，被头发丝拿回去了。'],['这张也挺好，另外存。再跑一张。','again',55,'原计划一张图，现库存十七张。'],['让另一个工具换背景，保留脸。','router',40,'角色本人要求保留本人。']]),
+    question('star-menu','香蕉星出题','新海报真好看，唯一的问题是菜单写着「宫保鸡钉」。',[['留下插图，文字自己排。','adapt',50,'鸡丁回来了，背景保住了。'],['再抽一张，总会抽到对的。','again',55,'第九张叫宫保扣丁。'],['把菜名放大逐个核对，再发。','check',45,'出菜前先核菜单。'],['同学看得懂就行，发吧。','unchecked',5,'食堂收到一份新的五金采购单。']]),
+    question('star-photo','香蕉星出题','你只传了一张教室照片，星星还给你设计了椅子、毕业照和校徽。',[['把要识别的那块先裁出来。','efficient',30,'这回它只看屏幕右上角。'],['有点意思，顺手试两张风格。','again',50,'原任务跑偏，但偏到了你想试的地方。'],['请另一家只描述图里看得见的东西。','router',40,'想象力暂时让位给视力。'],['对着照片自己标，一分钟就好了。','manual',85,'一分钟作品没有衍生宇宙。']]),
+    question('star-colors','香蕉星出题','你说配色简单点，星星发回六套渐变，每套还取了名字。',[['留一套，其余关掉。','delegate',20,'你的桌面恢复了可用面积。'],['给两种参考色，请它重做。','efficient',35,'“简单点”终于被翻译成人话了。'],['都另存，改天做素材。','collector',65,'这六套渐变又住进了一个文件夹。'],['直接开画板，我想自己配。','craft',85,'命名环节：蓝、黄。完毕。']])
+  ],
+  gpt: [
+    question('dragon-agree','白龙卷出题','你说答案有问题，它立刻说你对。你反过来说，它也同意。',[['拿个反例让它算，再看哪边对。','check',45,'今天的裁判是一道小题。'],['自己查原文，两句都先不信。','manual',85,'两次认同都不能折算成一条出处。'],['把问题原样问另一家。','router',35,'集齐三票之前，你先不点头。'],['它都改口了，那就用新版。','unchecked',5,'改口和改对，今天只发生了一件。']]),
+    question('dragon-three','白龙卷出题','你只问「能不能」，白龙卷给你分了三部分、七小点。',[['追问一句：能，还是不能？','efficient',30,'七个小点折叠成了一个字。'],['开始精炼提示词，“只许回答一句话”。','wizard',55,'你的限制比问题长了一点点。'],['算了，我自己搜。','manual',85,'你最终收到了搜索引擎的十条答案。'],['看第一行。能用就先办。','delegate',20,'第一段还没进入“首先”。']]),
+    question('dragon-style','白龙卷出题','你说“写得像我一点”，它把你的朋友圈改成了品牌发布会。',[['贴两句我平时写的，叫它照那个节奏。','adapt',45,'你提供了一个实际存在的你。'],['再来一版，再口语，再少点排比。','again',55,'嘴上已经很像人了，距离像你还有一点。'],['我把开头写了，后面的错字交给它。','craft',80,'这次写朋友圈的人总算上线了。'],['改两字发出去，就当换个月的文风。','delegate',20,'今天朋友圈确实像有新品上市。']]),
+    question('dragon-memory','白龙卷出题','聊了半小时，它突然问你“这个项目叫什么”。',[['把项目和要求压成四行，重新发。','efficient',35,'四行交接单救了半小时长聊。'],['开个新对话，把收藏的交接模板贴进去。','collector',65,'收藏夹今天终于出了一次工。'],['截个图找另一家接手。','router',40,'项目有史以来第二位同事。'],['把剩下的写完，就差两句了。','manual',90,'两句的工作暂时不再开会。']])
+  ],
+  qwen: [
+    question('fox-eleven','千问小狐出题','你问小狐一个方案，它给了十一个，还问要不要继续。',[['只留两个，再选一个试。','efficient',30,'今天的第十二种方案是少选几个。'],['十一条先收藏，以后用。','collector',65,'收藏夹新增了一支足球队。'],['把十一个发另一家，让它选。','router',35,'第二位评委建议先删九条。'],['我已经想好一个，就照我的做。','manual',85,'看完菜单，还是点了老三样。']]),
+    question('fox-expression','千问小狐出题','你问小狐怎么委婉催组员，它写得像一封正式公函。',[['改成“你那页弄好没，我要合了”。','craft',80,'两句话后，对方回了“来了”。'],['给它看两句群聊，再写一次。','adapt',50,'参考资料终于来自这个群。'],['试三个版本，选最不像催人的。','again',55,'草稿箱忙着工作，群消息还没发。'],['把称谓删掉，发。','delegate',20,'各位尊敬的同学成功变成了各位同学。']]),
+    question('fox-angle','千问小狐出题','小狐让你换个问法。你已经换了第四种。',[['贴一个我实际想要的例子。','efficient',30,'终于聊到一件看得见的东西。'],['先翻收藏里那条提问模板。','collector',65,'模板文件夹再次打开。'],['同样的问题原样发另一家。','router',35,'不换问法，今天换人。'],['这个细节我自己做，其他让它接着帮。','adapt',50,'一件卡住的事没有拖走整个任务。']]),
+    question('fox-check','千问小狐出题','小狐说活动周日截止。群通知写着周一。',[['打开最新通知，对时间和版本。','check',45,'日历暂时听发布人的。'],['让它把看过的通知链接列出来。','check',35,'两份通知可能真有两个日期。'],['信群里，先让它改提醒。','adapt',35,'确认后可以把录入交出去。'],['周一听着宽裕，就按周一。','unchecked',5,'宽裕度没有资格当证据。']])
+  ],
+  kimi: [
+    question('cat-pdf','月亮猫出题','猫读完你上传的 90 页 PDF，说重点在第 91 页。',[['让它贴原句，我在 PDF 里搜。','check',45,'第九十一页的住户终于需要出示房本了。'],['先用它给的摘要，这数字可能是排版问题。','unchecked',5,'摘要先过，页码暂时在宇宙之外。'],['给另一家同一份 PDF 对一下。','router',35,'两位读书搭子请先对齐页数。'],['直接翻原文，把那段自己找出来。','manual',85,'这回文献页数由你亲自点名。']]),
+    question('cat-tabs','月亮猫出题','你传了八个文件，猫问「你想先看哪份？」',[['叫它先按课程和日期列清单。','efficient',30,'八份文件先领八张号。'],['先存一套读 PDF 的提示词。','collector',65,'看文件之前先看怎么让猫看文件。'],['按课分给两家，交叉看最重要的。','router',35,'资料室开始分窗口办理。'],['我挑两份自己读，其他明天说。','craft',80,'两个文件获得了完整注意力。']]),
+    question('cat-summary','月亮猫出题','猫把讲座压成五条，但你记得老师说的笑话恰好没了。',[['把那个笑话补进去，我就想记这段。','craft',85,'机器记了结论，你记了当时的人。'],['让它把现场故事单列一次。','again',55,'同一场讲座现在有两个版本。'],['我只交要点，笑话留给室友听。','delegate',20,'讲座作业和宿舍节目分别归档。'],['找录音时间戳，看它是不是漏了别的。','check',45,'被删的故事成了抽查入口。']]),
+    question('cat-file','月亮猫出题','猫总结得很好。你突然发现，发给它的是去年的通知。',[['换今年的，顺手让它列出两版差异。','efficient',30,'去年的工作也没完全白做。'],['两个版本我都打开，逐条核日期。','check',45,'年份检查终于排在日期前面。'],['请另一家帮我搜今年的原文。','router',35,'叫一位同事找文件，一位读文件。'],['先拿去年的当参考，去吃饭。','delegate',20,'真正提交以前还得补看今年。']])
+  ],
+  doubao: [
+    question('bun-short','豆包团子出题','你说「简短一点」，团子把一句话扩成了朋友圈小作文。',[['我把多出来的全删了。','manual',85,'字数经历了一次涨停和跌停。'],['说“十二个字以内”，再来。','efficient',30,'这一回，“短”终于有个长度。'],['让它写三条，选最短的。','again',55,'总字数增加，目标字数减少。'],['能读懂就拿去用，我还有事。','delegate',20,'发布会上少了一轮会。']]),
+    question('bun-video','豆包团子出题','你让团子写一分钟视频稿，它给开场安排了三十秒自我介绍。',[['掐表读一遍，开头自己换掉。','check',50,'你好，观众暂时还在线。'],['单独做一条十五秒的开场。','efficient',30,'自我介绍终于有了结束时间。'],['发给另一家压缩，最好别再多一段。','router',35,'现在有两位剪辑顾问在场。'],['那就不要开场了，第一秒进正题。','adapt',35,'观众什么都没错过。']]),
+    question('bun-food','豆包团子出题','团子给了你七天食谱。你家现在只有两颗蛋。',[['把库存列清楚，让它按现有食材出一道。','efficient',30,'冰箱正式参与了需求评审。'],['煎蛋。再想就凉了。','manual',85,'食谱最终只有两个字。'],['试一下那道离煎蛋最近的菜。','adapt',45,'创意今天只改一项调料。'],['七天食谱先收藏，外卖已经下单了。','collector',65,'收藏夹的伙食比你丰富。']]),
+    question('bun-voice','豆包团子出题','团子在读你的广播稿，每句话都像在播报喜讯。',[['示范一句，再让它试。','adapt',45,'参考终于从“自然点”变成了能听的自然。'],['自己录，试三遍就发。','craft',85,'第三遍的停顿还有点像你。'],['换一家读读看。','router',35,'广播播音员开始试用。'],['这股劲挺带感，就留吧。','delegate',20,'今天连天气都像得了奖。']])
+  ],
+  grok: [
+    question('bat-source','Grok蝙蝠出题','蝙蝠搬来一张热传截图，说事情实锤了。',[['找截图里的原帖和时间。','check',45,'有截图和有原文暂时分开。'],['这么多人转，先信一次。','unchecked',5,'转发量正在申请担任证人。'],['叫另一家从头查，先不贴截图。','router',35,'给第二位选手一次盲评。'],['不追了，等真要用再查。','adapt',40,'不参与每一次全网大考。']]),
+    question('bat-joke','Grok蝙蝠出题','你让蝙蝠润一句通知，它先吐槽了通知，再吐槽你。',[['笑完把原句发了。','manual',85,'今天的润色成果是一个笑。'],['留那个好笑的点，重写成同学能看懂的。','craft',80,'笑点可以借，用词你来。'],['让它只改病句，别评价我。','efficient',30,'出题人被要求坐回工位。'],['发给另一个 AI，让它判断谁更过分。','router',35,'现在三方都在看同一条通知。']]),
+    question('bat-trend','Grok蝙蝠出题','蝙蝠给你讲了十分钟最新热梗，忘了你只是问原来的梗。',[['把原图贴回去，问它一句出处。','efficient',30,'找梗先从这一张图开始。'],['十个梗全存，课上慢慢看。','collector',65,'你收获了一份还没打算看的周报。'],['它讲到哪儿我跟到哪儿，原题明天再问。','deadline',75,'热点结束时，待办原封不动。'],['自己找这个梗最早的一条。','check',60,'十分钟速成暂时让位给原帖。']]),
+    question('bat-roast','Grok蝙蝠出题','你让蝙蝠吐槽你的海报。它吐槽得挺准，你有点生气。',[['先改最有道理的那一条。','adapt',45,'意见留一条，情绪留给晚饭。'],['要求它再审一遍，必须体面。','again',55,'海报二审结束，语气一审开始。'],['问另一家，只给海报，不给吐槽。','router',35,'不给第二个评委看参考答案。'],['我先放一晚，明天自己看。','craft',75,'半夜的最后一条修改没能过审。']])
+  ]
+};
+
+const LEISURE_QUESTIONS = [
+  question('draw', '闲下来', '你想随便画两笔。搭子说它也能画。', [
+    ['我画我的，画歪也留着。', 'enjoy', undefined, '这张图不用评奖。'],
+    ['它画一张，我也画一张，对着看。', 'explore', undefined, '桌上又多了一张纸。'],
+    ['让它画张背景，我接着往上添。', 'outcome', undefined, '这张可以画到一半转个弯。'],
+    ['都先别画，躺一会儿。', 'rest', undefined, '也可以什么都没画。']
+  ]),
+  question('photo', '闲下来', '它三秒钟就能做张晚霞图。外面现在也刚好是晚霞。', [
+    ['我出去看一眼。', 'enjoy', undefined, '手机可以晚一点再拿。'],
+    ['先拍一张，回来玩玩怎么做成明信片。', 'explore', undefined, '先看天，排版一会儿再说。'],
+    ['请它做张图发给朋友，我去吃饭。', 'outcome', undefined, '朋友收到了一份今天的颜色。'],
+    ['今天不拍，坐一会儿就好。', 'rest', undefined, '看过就算看过。']
+  ])
+];
+
+
+const CLOSING_QUESTIONS = [
+  { id:'future', tag:'假如以后', title:'有一天，搭子做你最擅长的事，也做得挺好。', sub:'你第一反应是什么？', options:[
+    {text:'有点慌，我还得找一件它不会的事。',note:'换我也会愣一下。',kind:'anxious'},
+    {text:'好奇。想试试新的分工会是什么样。',note:'也许可以先一起试一件小事。',kind:'curious'},
+    {text:'也许能轻松一点，去做一直想做的事。',note:'空出来的周末，终于还给周末。',kind:'relieved'},
+    {text:'还不知道，到了那天再说。',note:'这题可以先放着。',kind:'uncertain'}
+  ]},
+  { id:'life', tag:'最后一题', title:'活比预想早两小时做完。你想干嘛？', sub:'', options:[
+    {text:'出去走走，看看天和路边的小东西。',note:'天没黑，刚好赶上。',kind:'walk',life:'散步、看天，发现路边的小东西'},
+    {text:'和喜欢的人吃顿饭，慢慢聊。',note:'这顿饭可以吃久一点。',kind:'people',life:'和喜欢的人吃饭，慢慢聊天'},
+    {text:'做点小爱好，做得一般也没关系。',note:'材料摊开，先玩再说。',kind:'hobby',life:'做一点喜欢的事，允许它很普通'},
+    {text:'休息。什么都不产出。',note:'闹钟先别定。',kind:'rest',life:'休息，允许自己什么都不产出'}
+  ]}
+];
+
+
+const QUESTION_COUNT = 10;
+const QUESTION_BY_ID = new Map(
+  [...Object.values(COMMON_QUESTIONS).flat(), ...Object.values(BUDDY_QUESTIONS).flat(),
+    ...LEISURE_QUESTIONS, ...CLOSING_QUESTIONS].map(question => [question.id, question])
+);
+
+function shuffle(items, random) {
+  const shuffled = [...items];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+function drawQuestions(buddyId, random = Math.random) {
+  const buddyQuestions = BUDDY_QUESTIONS[buddyId] ?? BUDDY_QUESTIONS.deepseek;
+  const [first, ...otherBuddyQuestions] = shuffle(buddyQuestions, random).slice(0, 3);
+  const common = Object.values(COMMON_QUESTIONS).map(group => shuffle(group, random)[0]);
+  return [first, ...shuffle([...common, ...otherBuddyQuestions], random),
+    shuffle(LEISURE_QUESTIONS, random)[0], ...CLOSING_QUESTIONS];
+}
+
+function restoreQuestions(ids, buddyId) {
+  if (!Array.isArray(ids) || ids.length !== QUESTION_COUNT || new Set(ids).size !== QUESTION_COUNT) return null;
+  const questions = ids.map(id => QUESTION_BY_ID.get(id));
+  if (questions.some(q => !q)) return null;
+  const scored = questions.slice(0, 7);
+  const buddyQuestions = BUDDY_QUESTIONS[buddyId];
+  if (!buddyQuestions?.includes(scored[0]) || scored.filter(q => buddyQuestions.includes(q)).length !== 3) return null;
+  if (!Object.values(COMMON_QUESTIONS).every(group => scored.filter(q => group.includes(q)).length === 1)) return null;
+  if (!LEISURE_QUESTIONS.includes(questions[7]) || questions[8] !== CLOSING_QUESTIONS[0] || questions[9] !== CLOSING_QUESTIONS[1]) return null;
+  return questions;
+}
+
+function isValidAnswers(answers, questions, complete = true) {
+  if (!Array.isArray(questions) || questions.length !== QUESTION_COUNT ||
+      !Array.isArray(answers) || answers.length !== QUESTION_COUNT) return false;
+  return questions.every((q, i) => {
+    const answer = answers[i];
+    return answer === null ? !complete : Number.isInteger(answer) && answer >= 0 && answer < q.options.length;
+  });
+}
+
+function makeReport(answers, questions) {
+  if (!isValidAnswers(answers, questions)) throw new TypeError('请完成全部场景题。');
+  const selected = questions.map((q, i) => q.options[answers[i]]);
+  const scoreParts = questions.flatMap((q, i) =>
+    typeof selected[i].human === 'number' ? [{label: q.tag, value: selected[i].human}] : []
+  );
+  const score = Math.round(scoreParts.reduce((sum, part) => sum + part.value, 0) / scoreParts.length);
+  const count = kind => selected.filter(option => option.kind === kind).length;
+  let code;
+  if (count('unchecked')) code = 'AUTO-PILOT';
+  else if (count('router') >= 2) code = 'MODEL ROUTER';
+  else if (count('again')) code = 'ONE MORE';
+  else if (count('deadline')) code = 'DDL GHOST';
+  else if (count('wizard')) code = 'PROMPT WIZARD';
+  else if (count('collector')) code = 'PROMPT ARCHIVE';
+  else if (count('craft') >= 2) code = 'HUMAN BY CHOICE';
+  else if (score >= 67) code = 'MANUAL UNIVERSE';
+  else if (score <= 33) code = 'TIME RECLAIMER';
+  else code = 'FLEXIBLE PARTNER';
+ const profiles={
+ 'AUTO-PILOT':['已阅但没看','验收环节好像也被你外包了。','稿子很完整，链接很神秘。下次让“确认过”三个字真的经过确认，少给未来的自己留悬疑片。'],
+ 'MODEL ROUTER':['模型端水大师','你不生产答案，你是答案的搬运工。','问鲸鱼，拿去给螃蟹审，再让星星润色。窗口开成联合国，最后还得由你宣布今天用哪版。'],
+ 'ONE MORE':['再改一版仙人','最终版，是一种暂时状态。','你说“差一点点”，AI说“收到”。改到第十八轮，第一版突然又有了独特的美。再不交，第一版都要过保了。'],
+ 'DDL GHOST':['DDL招魂师','提示词没叫醒你，截止时间做到了。','平时潜水，最后五分钟开始召唤整个AI小队。原来你的深度思考模式，需要倒计时触发。'],
+ 'PROMPT WIZARD':['提示词道士','任务还没开始，咒语已经念完了。','世界顶级专家、二十年经验、一步步思考。提示词敲完才想起来：这回只要起个标题。'],
+ 'PROMPT ARCHIVE':['赛博囤囤鼠','你收藏的生产力，足够再造一个你。','提示词、工作流、神级工具：先存着，总有一天用得上。不如今天挑一个，真的让它帮你完成一件小事。'],
+ 'HUMAN BY CHOICE':['手作犟种','含人量高？我自愿的。','你知道捷径，也愿意亲自玩。画得一般、写得慢，都可以是过程的一部分。工具在旁边，不耽误你享受自己的手艺。'],
+ 'MANUAL UNIVERSE':['人肉CPU','含人量偏高，建议适当降人。','AI在旁边待机，你已经热到风扇起飞。先把一小段重复劳动交出去吧，看看它能不能给你腾出一个下午。'],
+ 'TIME RECLAIMER':['甩手掌柜','工作已转交，本人有别的事要活。','能委托的交出去，该验收的看一眼。你省下来的时间，也可以不再塞进另一份待办清单。'],
+ 'FLEXIBLE PARTNER':['AI甲方','今天谁合适，今天就谁上。','你在自己动手和找AI帮忙之间切换，分工合同随时更新。有时候一句“先把这行改了”就够开工。']};
+ const [name,verdict,description]=profiles[code];
+
+  return {score, profile: {code, name, verdict, description},
+    life: selected[9].life, future: selected[8].kind, scoreParts};
+}
+
+function narrativeFor(report) {
+  return {
+    anxious: '那点慌很正常。今天可以先回家吃饭，明天再想下一步。',
+    curious: '下回找件小事搭伙试试。谁顺手，谁就多做一点。',
+    relieved: '多出来的时间，你已经想好一件要做的事了。',
+    uncertain: '以后再说也行。今天这两个小时倒是可以先收下。'
+  }[report.future];
+}
+
+const colors={manual:'#f8db45',craft:'#f8b9c9',delegate:'#b8a5ed',adapt:'#b7d6f0',unchecked:'#a8d7ba',human:'#f6a665'};
+const CHARACTERS={
+ 'MANUAL UNIVERSE':{short:'CPU',name:'人肉CPU',color:colors.manual,kind:'manual',quote:'能自动化的事，你决定再手动一遍。',tags:['手搓宇宙','亲力亲为','Ctrl+C的传人']},
+ 'HUMAN BY CHOICE':{short:'DIY',name:'手作犟种',color:colors.craft,kind:'craft',quote:'它会它的，我玩我的。',tags:['自愿费劲','过程快乐','慢一点也行']},
+ 'TIME RECLAIMER':{short:'OFF',name:'甩手掌柜',color:colors.delegate,kind:'delegate',quote:'工作已转交，本人有别的事要活。',tags:['放心委托','定点验收','生活余额+1']},
+ 'FLEXIBLE PARTNER':{short:'BOSS',name:'AI甲方',color:colors.adapt,kind:'adapt',quote:'我不一定会做，但我知道哪里不对。',tags:['弹性分工','边干边改','先试再说']},
+ 'AUTO-PILOT':{short:'OK?',name:'已阅但没看',color:colors.unchecked,kind:'unchecked',quote:'它说得这么完整，应该不是编的吧。',tags:['一键通过','验收失踪','建议回看']}
+};
+
+function originalCharacterSVG(kind='human',label='含人量检测站原创角色'){
+ const color=colors[kind]||colors.human;
+ const common=`fill="${color}" stroke="#202020" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"`;
+ const ground='<ellipse cx="160" cy="279" rx="94" ry="12" fill="#202020" opacity=".09"/>';
+ let art='';
+ if(kind==='manual')art=`<path d="M118 218l-12 51-22 5m111-56 13 51 24 5" fill="none" stroke="#202020" stroke-width="6" stroke-linecap="round"/><rect x="87" y="86" width="145" height="143" rx="25" ${common}/><path d="M97 134H74v40h23m126-40h25v40h-25" ${common}/><path d="M122 86V64m24 22V58m24 28V58m24 28V64" fill="none" stroke="#202020" stroke-width="4"/><rect x="108" y="111" width="103" height="67" rx="10" fill="#fff9e6" stroke="#202020" stroke-width="4"/><path d="M123 137h16m41 0h16m-57 22q20 10 38 0" stroke="#202020" stroke-width="4" fill="none"/><rect x="110" y="196" width="98" height="17" rx="4" fill="#fff9e6" stroke="#202020" stroke-width="3"/><path d="M125 198v13m17-13v13m17-13v13m17-13v13m17-13v13" stroke="#202020" stroke-width="2"/><path d="M51 83l10 10m-9 11 14-3m181-32-4 13m10 0 8-7" stroke="#202020" stroke-width="3"/><path d="M241 190q21 4 17 18" stroke="#202020" stroke-width="5" fill="none"/>`;
+ if(kind==='craft')art=`<path d="M128 220l-14 48-18 5m90-53 16 48 20 5" stroke="#202020" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M110 154q-21-56 3-80 4-8 13-5 11 4 15 48 7-68 26-64 24 2 13 71 24-52 40-40 17 13-8 67 14 6 14 33 0 51-60 52-63 0-66-45-1-24 10-37Z" ${common}/><path d="M135 158v12m49-12v12m-39 26q12 10 24-1" stroke="#202020" stroke-width="5" fill="none"/><path d="m97 190-25-18m143 20 29-17" stroke="#202020" stroke-width="6"/><path d="m244 173 15-56" stroke="#202020" stroke-width="6"/><path d="m255 121 8-22 5 25Z" fill="#f86a44" stroke="#202020" stroke-width="3"/><path d="m64 76 4-13 5 13 13 5-13 5-5 13-4-13-14-5Z" fill="#f8db45" stroke="#202020" stroke-width="2"/>`;
+ if(kind==='delegate')art=`<path d="M64 239h188m-166-7-8 41m151-41 8 41" stroke="#202020" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M103 220q-31-70 4-107 28-26 67-9 33 16 31 64l-7 54Z" ${common}/><ellipse cx="149" cy="104" rx="48" ry="44" ${common}/><path d="M108 96h38v20h-30Zm42 0h38l-8 20h-30Z" fill="#202020"/><path d="M145 101h9m-24 28q17 9 29-1" fill="none" stroke="#202020" stroke-width="4"/><path d="m123 160 28 36 47-38m-10 62 33 11 25-22" stroke="#202020" stroke-width="6" fill="none"/><path d="M230 117h31l-4 42h-24Z" fill="#fff9e6" stroke="#202020" stroke-width="3"/><path d="m241 118 7-23 19-2" stroke="#202020" stroke-width="3" fill="none"/><path d="M49 120h22m-11-11v22" stroke="#202020" stroke-width="3"/>`;
+ if(kind==='adapt')art=`<path d="M127 221v48l-19 5m79-53v48l22 5" stroke="#202020" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M109 158q-20-20-13-47-6-30 20-38 16-29 42-14 29-10 38 12 31 2 28 31 15 25-4 48l-14 32-91-2Z" ${common}/><path d="M111 154h95l11 76H98Z" ${common}/><circle cx="134" cy="123" r="4" fill="#202020"/><circle cx="181" cy="123" r="4" fill="#202020"/><path d="M142 143h24m-65 43-33-13m145 14 30-15" stroke="#202020" stroke-width="4" fill="none"/><rect x="215" y="156" width="45" height="58" rx="4" fill="#fffdf4" stroke="#202020" stroke-width="3" transform="rotate(12 237 185)"/><path d="m225 173 21 4m-24 6 17 4m-19 6 20 4" stroke="#202020" stroke-width="2"/><path d="m52 90 9 8-10 7m13-23 7 15" stroke="#202020" stroke-width="3" fill="none"/>`;
+ if(kind==='unchecked')art=`<path d="M129 221v48l-19 5m77-53v48l22 5" stroke="#202020" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M115 150q-35-22-22-49-9-26 18-34 3-28 32-21 23-21 43 4 31-9 37 20 29 13 11 40 7 32-24 41l5 75H105Z" ${common}/><path d="M127 103h18m33 0h18m-51 30q19 7 32-3" stroke="#202020" stroke-width="5" fill="none"/><path d="m106 183-37 14m148-10 33-30" stroke="#202020" stroke-width="6" fill="none"/><path d="m238 156 12 3 13-17" stroke="#202020" stroke-width="4" fill="none"/><rect x="115" y="164" width="83" height="34" rx="5" fill="#fffdf4" stroke="#202020" stroke-width="3"/><text x="155" y="187" text-anchor="middle" font-size="20" font-weight="bold" fill="#202020" font-family="monospace">OK!</text><path d="M57 93q-1-17 12-16 17 2 3 18l-4 6m0 11v1" stroke="#202020" stroke-width="4" fill="none"/>`;
+ if(kind==='human')art=`<path d="M127 220v48l-22 6m84-54v48l22 6" stroke="#202020" stroke-width="6" stroke-linecap="round" fill="none"/><path d="M111 147q-25-15-24-40-5-25 17-37 8-22 32-15 22-21 43-1 26-7 39 16 26 7 20 35 8 24-16 41l-9 79H105Z" ${common}/><circle cx="135" cy="112" r="4" fill="#202020"/><circle cx="184" cy="112" r="4" fill="#202020"/><path d="M146 136q13 9 27-2m-67 42-37 13m148-13 27-29" stroke="#202020" stroke-width="5" fill="none"/><path d="m243 145 1-13m-1 13 12-5m-12 5 10 7" stroke="#202020" stroke-width="3"/><path d="M132 177h53" stroke="#202020" stroke-width="4"/><path d="m53 102 5-14 5 14 13 5-13 4-5 14-5-14-13-4Z" fill="#f8db45" stroke="#202020" stroke-width="2"/>`;
+ return `<svg class="character" viewBox="0 0 320 310" role="img" aria-label="${label}" xmlns="http://www.w3.org/2000/svg">${ground}${art}</svg>`;
+}
+
+Object.assign(CHARACTERS,{
+ 'MODEL ROUTER':{short:'HUB',name:'模型端水大师',color:'#abd5d1',kind:'router',quote:'问完这家问那家，最后问自己。',tags:['四窗齐开','模型互审','人肉中转站']},
+ 'ONE MORE':{short:'AGAIN',name:'再改一版仙人',color:'#f4b0a0',kind:'again',quote:'第一版挺好的，改回去吧。',tags:['十八版回环','不如上一版','再微调一下']},
+ 'DDL GHOST':{short:'23:59',name:'DDL招魂师',color:'#c2c5f1',kind:'deadline',quote:'平时人不在，死线一来魂就回。',tags:['倒计时启动','极限施法','交了再说']},
+ 'PROMPT WIZARD':{short:'SPELL',name:'提示词道士',color:'#ead099',kind:'wizard',quote:'你是世界顶级专家，先不要回答。',tags:['祖传提示词','仪式完整','前摇三千字']},
+ 'PROMPT ARCHIVE':{short:'SAVE',name:'赛博囤囤鼠',color:'#d7ccad',kind:'collector',quote:'收藏了，等于我以后会了。',tags:['先存再说','三G提示词','明天就学']}
+});
+function characterSVG(kind='human',label='人类样本'){
+ if(!['router','again','deadline','wizard','collector'].includes(kind))return originalCharacterSVG(kind,label);
+ const color=Object.values(CHARACTERS).find(c=>c.kind===kind).color;
+ const st='stroke="#202020" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"';let art='';
+ const legs='<path d="M126 223v47l-18 5m79-52v47l20 5" stroke="#202020" stroke-width="6" fill="none" stroke-linecap="round"/>';
+ if(kind==='wizard')art=legs+'<path d="M99 162q58-48 113 0l7 65H92Z" fill="'+color+'" '+st+'/><ellipse cx="155" cy="132" rx="49" ry="45" fill="#fff4d5" '+st+'/><path d="m100 106 50-73 54 73 18 10H86Z" fill="'+color+'" '+st+'/><path d="m142 75 9-14 8 14-8 11Z" fill="#fffdf5"/><path d="M135 129v10m40-10v10m-35 18q16 8 28-1m-66 35-28-19m142 17 26-33" fill="none" '+st+'/><path d="m241 157 14-55" fill="none" '+st+'/><path d="m254 98 4-13 5 13 13 5-13 5-5 13-4-13-13-5Z" fill="#f8db45" '+st+'/>';
+ if(kind==='collector')art=legs+'<circle cx="113" cy="92" r="27" fill="'+color+'" '+st+'/><circle cx="198" cy="92" r="27" fill="'+color+'" '+st+'/><path d="M96 123q57-52 117 0l6 86q-63 46-128 0Z" fill="'+color+'" '+st+'/><path d="M130 130v11m50-11v11m-30 15 7 5 7-5" fill="none" '+st+'/><path d="M110 187h93v46h-93Z" fill="#fffdf5" '+st+'/><path d="m142 182 0-20h28v20m-39 24h48" fill="none" '+st+'/><rect x="45" y="147" width="43" height="58" rx="5" fill="#f8db45" '+st+'/><path d="m52 157 29 0m-29 12h24m-24 11h24" stroke="#202020" stroke-width="3"/>';
+ if(kind==='router')art=legs+'<path d="M116 167q-45-22-72-5m72 25q-37 2-57 28m143-48q45-22 72-5m-72 26q36 2 56 28" fill="none" '+st+'/><rect x="104" y="92" width="104" height="137" rx="28" fill="'+color+'" '+st+'/><path d="M130 126v12m50-12v12m-44 22q20 9 37-2" fill="none" '+st+'/><rect x="30" y="126" width="49" height="36" rx="6" fill="#f6b992" '+st+'/><rect x="235" y="126" width="49" height="36" rx="6" fill="#cdbbf4" '+st+'/><rect x="33" y="215" width="49" height="36" rx="6" fill="#b7d6f0" '+st+'/><rect x="231" y="215" width="49" height="36" rx="6" fill="#c2dcca" '+st+'/><path d="M148 91V66m-11 11 11-11 12 11" fill="none" '+st+'/>';
+ if(kind==='again')art=legs+'<path d="M99 117q17-35 57-36 51 1 59 46l-8 99H104Z" fill="'+color+'" '+st+'/><path d="M125 137h18m29 0h18m-49 26q16-8 30 0" fill="none" '+st+'/><path d="M85 106q-18-45 35-58 43-9 70 8m-6-13 9 16-22 4m55 150q32 36-11 61" fill="none" '+st+'/><rect x="119" y="186" width="77" height="44" rx="3" fill="#fffdf5" '+st+'/><path d="M133 200h48m-48 11h35" fill="none" stroke="#202020" stroke-width="3"/>';
+ if(kind==='deadline')art='<path d="M92 154q-1-66 66-65 61 2 64 65l10 88-28-11-22 16-24-16-24 16-23-16-26 11Z" fill="'+color+'" '+st+'/><ellipse cx="133" cy="148" rx="7" ry="11" fill="#202020"/><ellipse cx="184" cy="148" rx="7" ry="11" fill="#202020"/><ellipse cx="159" cy="179" rx="12" ry="16" fill="#202020"/><circle cx="230" cy="82" r="35" fill="#f8db45" '+st+'/><path d="M230 60v23l15 8m-12-43v-8m-11 0h22" fill="none" '+st+'/><path d="m101 174-35 16m153-10 27 17" fill="none" '+st+'/>';
+ return '<svg class="character" viewBox="0 0 320 310" role="img" aria-label="'+label+'" xmlns="http://www.w3.org/2000/svg"><ellipse cx="160" cy="279" rx="94" ry="12" fill="#202020" opacity=".09"/>'+art+'</svg>';
+}
+
+const AI_BUDDIES={
+ deepseek:{name:'DeepSeek',nick:'干饭鲸',color:'#b7d6f0',line:'我在思考。你先吃饭。',kind:'whale'},
+ claude:{name:'Claude',nick:'打工蟹',color:'#f6b992',line:'只改一行。你别数文件。',kind:'crab'},
+ gemini:{name:'Gemini',nick:'香蕉星',color:'#cdbbf4',line:'背景换了。你脸也换了。',kind:'star'},
+ gpt:{name:'ChatGPT',nick:'白龙卷',color:'#c2dcca',line:'你说得对。你反过来说也对。',kind:'dragon'},
+ qwen:{name:'Qwen',nick:'千问小狐',color:'#d0c4f0',line:'你要一个方案？我写了十一个。',kind:'fox'},
+ kimi:{name:'Kimi',nick:'月亮猫',color:'#c2cee1',line:'把 PDF 放这儿，我翻翻。',kind:'mooncat'},
+ doubao:{name:'豆包',nick:'豆包团子',color:'#f7d7ac',line:'我来把这句简单的话扩写一下。',kind:'bun'},
+ grok:{name:'Grok',nick:'嘴硬蝠',color:'#c8c7ee',line:'先让我看看这图是谁发的。',kind:'bat'}
+};
+function buddySVG(id='deepseek'){
+ const b=AI_BUDDIES[id]||AI_BUDDIES.deepseek;let art='';const st='stroke="#202020" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"';
+ if(b.kind==='whale')art=`<path d="M218 157q31-47 54-35-2 30-23 38 28 1 27 23-32 9-55-8-14 57-87 53-78-4-86-58-8-48 38-76 49-30 98-4 29 15 34 67Z" fill="#779fe2" ${st}/><path d="M52 174q24 42 90 39 46-3 69-31-39 10-72 8-58-2-87-16Z" fill="#d9ecfc"/><path d="M122 209l-10 22 28-9" fill="#779fe2" ${st}/><circle cx="88" cy="151" r="5" fill="#202020"/><path d="M75 170q14 12 28-2m36-75q-8-23 6-30m2 22q14-20 27-8" fill="none" ${st}/><path d="M159 178h43l-4 19h-35Z" fill="#fffdf5" ${st}/><path d="M163 176q17-21 35 0" fill="#fffdf5" ${st}/>`;
+ if(b.kind==='crab')art=`<path d="m100 182-35 18-16 19m61-25-26 28m116-40 35 18 16 19m-62-25 27 28" fill="none" ${st}/><path d="M87 155q-23-7-33-32m159 32q23-7 33-32" fill="none" stroke="#202020" stroke-width="6"/><path d="M55 128q-31-9-19-36l15 16 12-23q22 23-8 43m190 0q31-9 19-36l-15 16-12-23q-22 23 8 43" fill="#e99773" ${st}/><path d="M95 123h110v75H95Z" fill="#e99773" ${st}/><path d="M109 124v-22h17v22m48 0v-22h17v22" fill="#e99773" ${st}/><path d="M124 145v11m51-11v11m-44 20q20 10 39-1" fill="none" ${st}/><rect x="110" y="191" width="83" height="34" rx="3" fill="#fffdf5" ${st}/><path d="M124 207h14m22 0h18" fill="none" stroke="#202020" stroke-width="3"/>`;
+ if(b.kind==='star')art=`<path d="m150 45 27 67 72 8-55 47 15 72-59-38-60 38 15-72-55-47 72-8Z" fill="#bd9de7" ${st}/><path d="m150 45 27 67 72 8-99 42Z" fill="#82b5ea"/><path d="m150 162 59 77-15-72 55-47Z" fill="#dfadd3"/><path d="m90 239 15-72-55-47 72-8 28 50Z" fill="#bdd3ef"/><path d="M127 145v11m46-11v11m-40 22q18 11 35-3" fill="none" ${st}/><path d="M213 211q21 22 44-5-5 43-32 38-24-4-29-24Z" fill="#f8db45" ${st}/><path d="m253 204 8-9" ${st}/>`;
+ if(b.kind==='dragon')art=`<path d="M193 197q63 29 59-17 35 56-19 66-34 5-59-17" fill="#e8e7f5" ${st}/><path d="M111 149 60 119l-3 69 48-16m83-23 51-30 3 69-48-16" fill="#d0c5e8" ${st}/><path d="M107 124q-29-58-9-61l27 45m49 0 29-45q21 6-9 61" fill="#eae5f4" ${st}/><path d="M102 121q48-39 95 0l10 79q-52 44-113 0Z" fill="#f7f5fc" ${st}/><path d="M121 143v10m57-10v10m-45 24q20 11 36-1" fill="none" ${st}/><path d="M115 218v23m69-23v23" ${st}/><path d="m146 90 4-11 5 11 12 4-12 5-5 11-4-11-12-5Z" fill="#91b7a8"/>`;
+ if(b.kind==='fox')art=`<path d="M199 183q65-52 54 1-4 43-54 43" fill="#a28bc7" ${st}/><path d="m89 129 8-64 48 40m10 0 49-40 10 64-9 62q-46 48-106 0Z" fill="#b6a1db" ${st}/><path d="m97 66 10 47 28-11m33 0 27 11 9-47" fill="#e9def3"/><path d="m104 162 45 32 52-32-7 35q-45 30-84-1Z" fill="#fffdf5"/><path d="M119 141h17m35 0h17m-49 28 9 5 9-5m-45 54-4 18m71-18 5 18" fill="none" ${st}/><path d="m227 122 8-16 7 16 16 7-16 7-7 16-8-16-16-7Z" fill="#f8db45" ${st}/>`;
+ if(b.kind==='mooncat')art=`<path d="M211 82q-13 78 55 104-34 45-84 17-53-32-33-79 18-39 62-42Z" fill="#f8db45" ${st}/><path d="m78 143 8-58 38 37 44-37 8 58 4 70q-48 36-105-1Z" fill="#424d71" ${st}/><path d="M99 155h11m34 0h11m-39 27 9 5 9-5" fill="none" stroke="#fffdf5" stroke-width="4" stroke-linecap="round"/><path d="m96 231-4 14m67-14 4 14m-78-51-33-3m119 5 25-3" fill="none" ${st}/><path d="M106 206h40v28h-40Z" fill="#fffdf5" stroke="#202020" stroke-width="3"/>`;
+ if(b.kind==='bun')art=`<path d="M64 199q-16-51 35-86 24-17 48-41 18 22 48 32 55 26 47 76-5 53-100 54-60 0-78-35Z" fill="#f7d7ac" ${st}/><path d="M120 115q16-14 27-43m0 0q6 26 29 43" fill="none" ${st}/><circle cx="114" cy="164" r="5" fill="#202020"/><circle cx="179" cy="164" r="5" fill="#202020"/><path d="M135 181q12 13 25 0m49-23 20-17m-6-8 12 10" fill="none" ${st}/><path d="M138 232v13m40-13v13" ${st}/>`;
+ if(b.kind==='bat')art=`<path d="M103 155Q71 94 30 114q30 28 26 68 25-15 43 10m98-37q32-61 73-41-30 28-26 68-25-15-43 10" fill="#766da4" ${st}/><path d="m105 135 4-59 38 35 42-35 8 59q26 73-47 86-68-9-45-86Z" fill="#a9a0d2" ${st}/><path d="M122 147h15m24 0h16m-38 26q13 7 25-4l-5 12Z" fill="#fffdf5" ${st}/><path d="m137 219-6 22m38-22 6 22" ${st}/><path d="m228 74 8-14 6 14 15 6-15 5-6 14-8-14-14-5Z" fill="#f8db45" ${st}/>`;
+ return `<svg class="ai-character" viewBox="0 0 300 280" role="img" aria-label="${b.name} ${b.nick}" xmlns="http://www.w3.org/2000/svg"><ellipse cx="150" cy="248" rx="91" ry="10" fill="#202020" opacity=".08"/>${art}</svg>`;
+}
+function buddyFigure(id,className=''){
+ return `<div class="${className}">${buddySVG(id)}</div>`;
+}
+
+function wrapPoster(ctx,text,x,y,width,lineHeight){let line='';for(const ch of text){if(ctx.measureText(line+ch).width>width&&line){ctx.fillText(line,x,y);line=ch;y+=lineHeight;}else line+=ch;}if(line)ctx.fillText(line,x,y);return y+lineHeight;}
+async function posterCharacter(kind){const svg=characterSVG(kind).replace('viewBox="0 0 320 310"','width="640" height="620" viewBox="0 0 320 310"');const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));try{return await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=url;});}finally{URL.revokeObjectURL(url);}}
+async function posterBuddy(id){const svg=buddySVG(id).replace('viewBox="0 0 300 280"','width="600" height="560" viewBox="0 0 300 280"');const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));try{return await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=url;});}finally{URL.revokeObjectURL(url);}}
+async function renderPoster(report,c,reportId,permit,buddyId='deepseek'){
+ const canvas=document.createElement('canvas');canvas.width=1000;canvas.height=permit?1330:1550;const ctx=canvas.getContext('2d');if(!ctx)throw Error('canvas unavailable');const paper='#fffdf5',ink='#202020';
+ ctx.fillStyle=paper;ctx.fillRect(0,0,1000,canvas.height);ctx.strokeStyle=ink;ctx.lineWidth=4;ctx.strokeRect(24,24,952,canvas.height-48);ctx.fillStyle=permit?'#b7d6f0':c.color;ctx.fillRect(26,26,948,100);ctx.fillStyle=ink;ctx.font='bold 29px "Microsoft YaHei", sans-serif';ctx.fillText(permit?'含人量检测站 / 生活许可证':'含人量检测站 / 人类样本档案',62,89);ctx.beginPath();ctx.moveTo(24,128);ctx.lineTo(976,128);ctx.stroke();
+ if(permit){
+  ctx.font='bold 70px "Microsoft YaHei", sans-serif';ctx.fillText('生活不用申请。',62,250);ctx.font='27px "Microsoft YaHei", sans-serif';wrapPoster(ctx,'即使以后AI会得越来越多，你依旧有享受生活、发现美的权利。',65,327,860,47);ctx.drawImage(await posterCharacter('human'),550,470,355,344);ctx.fillStyle='#f8db45';ctx.fillRect(60,490,470,180);ctx.strokeRect(60,490,470,180);ctx.fillStyle=ink;ctx.font='23px "Microsoft YaHei", sans-serif';ctx.fillText('我想把时间留给',85,538);ctx.font='bold 28px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.life+'。',85,590,415,43);ctx.font='29px "Microsoft YaHei", sans-serif';wrapPoster(ctx,'看晚霞，不用先证明你比AI更懂晚霞。',65,865,860,49);ctx.font='bold 32px "Microsoft YaHei", sans-serif';wrapPoster(ctx,'你可以认真地喜欢这个世界。',65,1005,860,54);
+ }else{
+  ctx.textAlign='center';ctx.font='900 126px Consolas, monospace';ctx.fillText(c.short,500,280);ctx.drawImage(await posterCharacter(c.kind),225,285,550,533);ctx.font='bold 76px "Microsoft YaHei", sans-serif';ctx.fillText(c.name,500,870);ctx.font='26px "Microsoft YaHei", sans-serif';ctx.fillText(c.quote,500,930);ctx.font='23px "Microsoft YaHei", sans-serif';ctx.fillText(c.tags.map(x=>'#'+x).join('   '),500,989);ctx.textAlign='left';ctx.fillStyle=c.color;ctx.fillRect(26,1040,948,120);ctx.beginPath();ctx.moveTo(24,1040);ctx.lineTo(976,1040);ctx.moveTo(24,1160);ctx.lineTo(976,1160);ctx.stroke();ctx.fillStyle=ink;ctx.font='27px "Microsoft YaHei", sans-serif';ctx.fillText('本次含人量',65,1110);ctx.font='bold 57px Consolas, monospace';ctx.fillText(String(report.score),710,1120);ctx.font='23px Consolas, monospace';ctx.fillText('/100',810,1120);ctx.font='25px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.profile.verdict,65,1230,865,44);ctx.fillStyle='#66635b';ctx.font='23px "Microsoft YaHei", sans-serif';wrapPoster(ctx,report.profile.description,65,1300,865,39);ctx.fillStyle=ink;ctx.font='bold 26px "Microsoft YaHei", sans-serif';ctx.fillText('含人量多少，都不影响你看晚霞。',65,1425);
+ }
+ if(!permit)ctx.drawImage(await posterBuddy(buddyId),727,630,220,205);
+ ctx.fillStyle='#726d63';ctx.font='18px "Microsoft YaHei", sans-serif';ctx.fillText('今日硅基同事：'+AI_BUDDIES[buddyId].name+' · '+AI_BUDDIES[buddyId].nick,62,canvas.height-74);ctx.font='17px Consolas, monospace';ctx.fillText('#'+(reportId||'LOCAL')+' / HCL · HUMAN CONTENT LAB',62,canvas.height-42);
+ return new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('export failed')),'image/png'));
+}
+
+
+const app=document.querySelector('#app');
+const KEY = 'human-content-lab:session:buddy-quiz';
+const blank = (buddy = 'deepseek') => ({
+  screen: 'home', index: 0, answers: Array(QUESTION_COUNT).fill(null),
+  questionIds: [], revealed: false, reportId: null, buddy
+});
+let state = blank();
+let questions = [];
+try {
+  const saved = JSON.parse(sessionStorage.getItem(KEY) ?? sessionStorage.getItem('human-content-lab:session:ai-squad'));
+  if (saved && Object.hasOwn(AI_BUDDIES, saved.buddy)) {
+    state.buddy = saved.buddy;
+    const restored = restoreQuestions(saved.questionIds, saved.buddy);
+    if (restored && ['quiz', 'report'].includes(saved.screen) && isValidAnswers(saved.answers, restored, false)) {
+      questions = restored;
+      const firstUnanswered = saved.answers.indexOf(null);
+      const finalIndex = QUESTION_COUNT - 1;
+      const lastReachable = firstUnanswered < 0 ? finalIndex : firstUnanswered;
+      const index = Number.isInteger(saved.index) ? Math.max(0, Math.min(lastReachable, saved.index)) : 0;
+      const screen = saved.screen === 'report' && firstUnanswered < 0 ? 'report' : 'quiz';
+      Object.assign(state, {screen, index, answers: saved.answers, questionIds: saved.questionIds,
+        revealed: saved.revealed === true, reportId: saved.reportId});
+    }
+  }
+} catch { /* Session storage is optional. */ }
+let scanTimer;
+let toastTimer;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const arrow='<span aria-hidden="true">↗</span>';
+function persist(){try{sessionStorage.setItem(KEY,JSON.stringify(state));}catch{/* 答题不依赖存储权限。 */}}
+function toast(message){const el=document.querySelector('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);}
+function focusTitle(){const title=app.querySelector('h1');if(title){title.tabIndex=-1;title.focus({preventScroll:true});}window.scrollTo({top:0,behavior:'instant'});}
+
+function home() {
+  const buddy = AI_BUDDIES[state.buddy];
+  app.innerHTML = `<section class="home fade-in">
+    <div class="home-grid">
+      <div>
+        <h1>AI率测腻了？<br>查查你的<span class="highlight">含人量</span></h1>
+        <p class="home-lead">先选个搭子。它会从自己的糗事里抽三道题。</p>
+        <div class="hero-actions">
+          <div class="buddy-picks" aria-label="选择出题搭子">
+            ${Object.entries(AI_BUDDIES).map(([id, item]) => `<button class="buddy-pick ${state.buddy === id ? 'active' : ''}" data-buddy="${id}" aria-pressed="${state.buddy === id}" aria-label="${item.name} · ${item.nick}">
+              <span aria-hidden="true">${buddySVG(id)}</span><strong>${item.name}</strong><small>${item.nick}</small>
+            </button>`).join('')}
+          </div>
+          <button class="button primary start" id="start">让${buddy.nick}出题 ${arrow}</button>
+          <p class="micro">每局 10 题 · 约 3 分钟</p>
+        </div>
+      </div>
+      <div class="stage" aria-label="当前出题搭子">
+        <div class="stage-back" style="background-color:${buddy.color}"></div>
+        <div class="squad-hero">${buddyFigure(state.buddy)}</div>
+        <div class="bubble top">${buddy.line}</div>
+      </div>
+    </div>
+    <div class="types-heading"><h2>本所常见人类样本</h2><button class="text-button sample-toggle" id="sample-toggle" aria-expanded="false">展开 10 种样本 ↗</button></div>
+    <div class="types-preview">${Object.values(CHARACTERS).map(c => `<article class="mini-type" style="--type-color:${c.color}">${characterSVG(c.kind, c.name)}<strong>${c.name}</strong><small>${c.short}</small></article>`).join('')}</div>
+  </section>`;
+  app.querySelectorAll('[data-buddy]').forEach(button => button.addEventListener('click', () => {
+    state = blank(button.dataset.buddy);
+    questions = [];
+    persist();
+    home();
+    app.querySelector(`[data-buddy="${state.buddy}"]`).focus({preventScroll: true});
+  }));
+  app.querySelector('#sample-toggle').addEventListener('click', event => {
+    const open = app.querySelector('.types-preview').classList.toggle('expanded');
+    event.currentTarget.setAttribute('aria-expanded', String(open));
+    event.currentTarget.textContent = open ? '收起样本 ↶' : '展开 10 种样本 ↗';
+  });
+  app.querySelector('#start').addEventListener('click', () => {
+    state = blank(state.buddy);
+    questions = drawQuestions(state.buddy);
+    state.questionIds = questions.map(q => q.id);
+    state.screen = 'quiz';
+    persist();
+    render();
+    focusTitle();
+  });
+}
+
+function quiz(){
+  const q=questions[state.index];
+  app.innerHTML=`<section class="question-layout fade-in"><div class="question-top"><button class="back" id="back"><span aria-hidden="true">←</span> ${state.index?'上一题':'返回首页'}</button><span class="progress-count"><strong>${String(state.index+1).padStart(2,'0')}</strong> / ${String(QUESTION_COUNT).padStart(2,'0')}</span></div><div class="progress" role="progressbar" aria-label="答题进度" aria-valuenow="${state.index+1}" aria-valuemin="0" aria-valuemax="${QUESTION_COUNT}"><span style="width:${(state.index+1)/QUESTION_COUNT*100}%"></span></div><div class="question-label"><span class="eyebrow">${String(state.index+1).padStart(2,'0')} / ${esc(q.tag)}</span>${q.tag.endsWith('出题') ? `<div class="question-mini" aria-hidden="true">${buddyFigure(state.buddy)}</div>` : ''}</div><h1>${esc(q.title)}</h1><p class="question-sub" id="question-sub" ${q.sub ? '' : 'hidden'}>${esc(q.sub)}</p><fieldset class="choices" aria-describedby="question-sub"><legend>${esc(q.title)}</legend>${q.options.map((o,i)=>`<label class="choice ${state.answers[state.index]===i?'selected':''}"><input type="radio" name="answer" value="${i}" ${state.answers[state.index]===i?'checked':''}><span class="choice-letter" aria-hidden="true">${'ABCD'[i]}</span><span class="choice-text">${esc(o.text)}</span></label>`).join('')}</fieldset><div class="feedback" id="feedback" aria-live="polite">${state.answers[state.index]!==null?esc(q.options[state.answers[state.index]].note):''}</div><div class="question-action"><button class="button primary" id="next" ${state.answers[state.index]===null?'disabled':''}>${state.index===QUESTION_COUNT-1?'看看我是啥':'下一题'} ${arrow}</button></div></section>`;
+  app.querySelectorAll('input[name="answer"]').forEach(input=>input.addEventListener('change',()=>{
+    const value=Number(input.value);state.answers[state.index]=value;state.reportId=null;state.revealed=false;persist();
+    app.querySelectorAll('.choice').forEach(c=>c.classList.toggle('selected',c.contains(input)));
+    document.querySelector('#feedback').textContent=q.options[value].note;document.querySelector('#next').disabled=false;
+  }));
+  document.querySelector('#back').addEventListener('click',()=>{if(state.index)state.index--;else state.screen='home';persist();render();focusTitle();});
+  document.querySelector('#next').addEventListener('click',()=>{
+    if(state.answers[state.index]===null)return;
+    if(state.index<QUESTION_COUNT-1){state.index++;persist();render();focusTitle();}else if(isValidAnswers(state.answers, questions)){startScan();}
+  });
+}
+
+function startScan(){
+  clearTimeout(scanTimer);app.innerHTML=`<section class="scan fade-in">${buddyFigure(state.buddy,'scan-buddy')}<h1>搭子在写报告</h1><div class="scan-line" role="status" aria-live="polite">翻一下答题记录……</div></section>`;window.scrollTo({top:0,behavior:'instant'});
+  const lines=['有一题想再确认一下……','图片画好了。'];let i=0;
+  const step=()=>{if(i<lines.length){app.querySelector('.scan-line').textContent=lines[i++];scanTimer=setTimeout(step,650);}else{state.screen='report';state.reportId=crypto.randomUUID?crypto.randomUUID().slice(0,8).toUpperCase():Date.now().toString(36).toUpperCase();persist();render();focusTitle();}};
+  scanTimer=setTimeout(step,500);
+}
+
+function reportPage(){
+ const report=makeReport(state.answers, questions),p=report.profile,c=CHARACTERS[p.code];
+ const buddyAnswer = questions[0].options[state.answers[0]];
+ app.innerHTML=`<section class="result-layout fade-in"><div class="result-intro"><div><h1>查明了，你属于——</h1><span class="eyebrow">HUMAN CONTENT REPORT / ${esc(state.reportId||'LOCAL')}</span></div><span class="pill">今日成分</span></div><div class="result-grid"><article class="ticket" aria-label="你的检测报告" style="--type-color:${c.color}"><div class="ticket-head"><span>你的含人量类型</span><span>HCL / 今日归档</span></div><div class="type-poster"><div class="short-code">${c.short}</div>${characterSVG(c.kind,c.name+'原创结果角色')}<div class="poster-sticker">人类样本<br>已归档 ✓</div><h2>${c.name}</h2><p class="type-quote">${c.quote}</p><div class="type-tags">${c.tags.map(t=>`<span>#${t}</span>`).join('')}</div></div><div class="score-strip"><span>本次含人量<br><small>碳基出勤指数</small></span><strong>${report.score}<small> /100</small></strong></div><div class="ticket-tail"><span>含人量检测站<br>${AI_BUDDIES[state.buddy].nick}协助出具</span><span class="barcode" aria-hidden="true"></span></div></article><div class="result-copy"><span class="eyebrow">本所批注</span><h2>${esc(p.verdict)}</h2><p class="result-description">${esc(p.description)}</p><div class="diagnosis"><h3>本次主要症状</h3><p>${esc(symptom(p.code))}</p></div><div class="buddy-report">${buddyFigure(state.buddy)}<div><small>出题搭子的评语</small><strong>${AI_BUDDIES[state.buddy].name} · ${AI_BUDDIES[state.buddy].nick}</strong><p>${esc(buddyAnswer.note)}</p></div></div><div class="result-actions"><button class="button primary" id="save-report">带走我的成分 ${arrow}</button><button class="button secondary" id="revise">我不服，重选 ↶</button></div><details class="rules"><summary>看看题目是怎么设定的</summary><div class="rules-content"><p>前 7 题参与计分，其中 3 题由搭子出。分数取选项值的平均数，角色类型还会参考具体选择。</p>${report.scoreParts.map(part=>`<div class="rule-row"><span>${esc(part.label)}</span><span>${part.value}</span></div>`).join('')}<p>最后 3 题留给生活。</p></div></details><p class="reveal-prompt">等等。这就能证明你有多少价值了？</p><button class="button reveal-button" id="reveal" ${state.revealed?'hidden':''}>不能。那还测个啥？ ${arrow}</button></div></div><section class="epilogue" id="epilogue" aria-labelledby="epilogue-title" ${state.revealed?'':'hidden'}><div class="epilogue-head"><span>彩蛋 / 检测仪失灵了</span><span>NO MORE SCORING</span></div><div class="epilogue-body"><div><span class="eyebrow">本所决定，撤回对你的打分。</span><h2 id="epilogue-title" tabindex="-1">含人量可以降低。<br>生活不用申请。</h2><p>刚才我们把“AI率”倒过来，<br>一本正经地又评判了你一次。</p><div class="life-permit">生活许可证 · 长期有效</div><p>合作可以慢慢试。<br>人不必靠“不可替代”才配活得开心。</p></div><div class="right"><p>${esc(narrativeFor(report))}</p><p style="margin-top:13px">你说，多出来的时间想留给：</p><strong class="life-choice">${esc(report.life)}。</strong><p>就算以后AI会得越来越多，你依旧有享受生活、发现美的权利。看晚霞，不用先证明你比AI更懂晚霞。</p><p class="final-line">好了，去过一会儿自己的日子吧。</p><button class="button" id="save-permit">领一张生活许可证 ${arrow}</button></div></div></section><div class="afterword"><button class="text-button" id="restart">换个姿势，再测一次 ↗</button></div></section>`;
+ document.querySelector('#save-report').addEventListener('click',()=>saveCard(report,false));
+ document.querySelector('#save-permit').addEventListener('click',()=>saveCard(report,true));
+ document.querySelector('#revise').addEventListener('click',()=>{state.screen='quiz';state.index=QUESTION_COUNT-1;persist();render();focusTitle();});
+ document.querySelector('#restart').addEventListener('click',()=>{state=blank(state.buddy);questions=[];persist();render();focusTitle();});
+ document.querySelector('#reveal').addEventListener('click',()=>{state.revealed=true;persist();document.querySelector('#epilogue').hidden=false;document.querySelector('#reveal').hidden=true;document.querySelector('#epilogue-title').focus({preventScroll:true});document.querySelector('#epilogue').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});});
+}
+function symptom(code){return {'MANUAL UNIVERSE':'遇到重复劳动，第一反应是“我再努努力”。AI在旁边待机，你已经热到风扇起飞。','HUMAN BY CHOICE':'知道有捷径，仍然想亲自走走。不是舍不得用工具，是这段路本来就挺好玩。','TIME RECLAIMER':'该委托的委托，该验收的验收。至于省下来的时间——你有自己的安排。','FLEXIBLE PARTNER':'一边试着自己做，一边和AI来回改。分工合同每天更新，具体谁主导，看情况。','AUTO-PILOT':'材料已读，来源未读。漂亮的引用列表里，可能住着几篇平行宇宙论文。','MODEL ROUTER':'鲸鱼写，螃蟹审，白龙总结。三家AI争论了半小时，人类负责复制粘贴。','ONE MORE':'最终版第十八次修订。你突然发现，第一版其实就挺好。','DDL GHOST':'白天离线，23:55突然召唤全部硅基同事。','PROMPT WIZARD':'任务只有两行，咒语写了三屏。你对提示词的敬畏，AI都看在眼里。','PROMPT ARCHIVE':'收藏夹的生产力已经爆表，今天真正用过的只有搜索框。'}[code];}
+
+async function saveCard(report,permit){
+ const buttons=[...app.querySelectorAll('#save-report,#save-permit')];buttons.forEach(b=>b.disabled=true);
+ try{const blob=await renderPoster(report,CHARACTERS[report.profile.code],state.reportId,permit,state.buddy);const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=(permit?'生活许可证':'我的含人量')+'-'+(state.reportId||'本机')+'.png';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);toast('成分已装裱，去下载列表领图。');}
+ catch{toast('这次装裱失败了，先截图带走也行。');}finally{buttons.forEach(b=>b.disabled=false);}
+}
+
+function render() {
+  clearTimeout(scanTimer);
+  document.querySelector('#squad-button').hidden = state.screen !== 'home';
+  if (state.screen === 'quiz') quiz();
+  else if (state.screen === 'report') reportPage();
+  else home();
+}
+const dialog=document.querySelector('#about-dialog');
+document.querySelector('.brand').addEventListener('click',event=>{event.preventDefault();state.screen='home';persist();render();focusTitle();});
+document.querySelector('#about-button').addEventListener('click',()=>dialog.showModal());
+document.querySelector('#close-dialog').addEventListener('click',()=>dialog.close());
+document.querySelector('#understood').addEventListener('click',()=>dialog.close());
+dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});
+render();
+
+document.querySelector('#squad-button').addEventListener('click', () => {
+  app.querySelector('[aria-pressed="true"]').focus({preventScroll: true});
+  app.querySelector('.buddy-picks').scrollIntoView({block: 'center'});
+});
+
+</script>
+</body>
+</html>
