@@ -34,6 +34,9 @@
 .ai-character { width: 100%; height: 100%; }
 .stage .bubble.top { max-width: 170px; top: 0; right: 0; }
 .question-mini .ai-character { width: 60px; height: 55px; }
+.buddy-aside { display: grid; gap: 4px; margin: 8px 0 18px; padding: 12px 15px; border: 1.5px solid var(--ink); border-radius: 9px; background: #fff0a6; font-size: 13px; }
+.buddy-aside strong { font-size: 11px; }
+.buddy-aside + h1 { margin-top: 0; }
 .question-layout h1 { margin-bottom: 22px; }
 .question-layout h1:has(+ .question-sub:not([hidden])) { margin-bottom: 10px; }
 .question-action { justify-content: flex-end; }
@@ -114,231 +117,192 @@ const DIMENSIONS = {
   stopping: {label: '达标后怎么收工', low: '倾向继续加改', high: '倾向按时收工'}
 };
 
-const OPTIONS = {
-  delegation: [
-    ['self', '我全部自己整理。', 0],
-    ['small-part', '我整理大部分，只请 AI 帮我处理一小部分。', 1],
-    ['first-draft', '我请 AI 先整理一版，再自己修改。', 2],
-    ['delegate', '我把整理工作都交给 AI，自己只检查结果。', 3]
-  ],
-  verification: [
-    ['accept', '我直接用 AI 给的结果。', 0],
-    ['skim', '我读一遍 AI 的结果，只改看起来明显有问题的地方。', 1],
-    ['sample-check', '我挑几处 AI 给的内容，用原资料或实际操作核对。', 2],
-    ['key-check', '我把 AI 给的关键信息逐项核对，发现错误就先纠正。', 3]
-  ],
-  learning: [
-    ['answer-first', '我请 AI 给完整解法，看完就做下一题。', 0],
-    ['read-then-try', '我先看 AI 的完整解法，再自己做一遍。', 1],
-    ['hint', '我先自己做，卡住时请 AI 给一步提示。', 2],
-    ['try-then-compare', '我独立做一遍，再请 AI 帮我检查。', 3]
-  ],
-  stopping: [
-    ['redo', '我会再做一版，晚点休息也行。', 0],
-    ['keep-tweaking', '我会再改几个细节，改完就停。', 1],
-    ['last-check', '我会再对照要求检查一遍，确认没问题就停。', 2],
-    ['finish', '我会现在收工，把时间留给别的事。', 3]
-  ]
+const OPTION_IDS = {
+  delegation: ['self', 'small-part', 'first-draft', 'delegate'],
+  verification: ['accept', 'skim', 'sample-check', 'key-check'],
+  learning: ['answer-first', 'read-then-try', 'hint', 'try-then-compare'],
+  stopping: ['redo', 'keep-tweaking', 'last-check', 'finish']
 };
 
-function item(id, dimension, role, title, sub, buddy = null) {
-  const options = OPTIONS[dimension].map(([optionId, text, value]) => ({id: optionId, text, value}));
-  options.push({id: 'unsure', text: '我暂时说不准会怎么做。', value: null});
-  return {id, dimension, role, buddy, title, sub, options,
-    tag: role === 'anchor' ? '校园日常' : 'AI 搭子出题'};
+function item(key, dimension, role, [title, sub, choices], buddy = null, aside = '') {
+  const options = choices.map((text, value) => ({id: OPTION_IDS[dimension][value], text, value}));
+  options.push({id: 'unsure', text: '我暂时说不准。', value: null});
+  return {id: 'v4-' + key, dimension, role, buddy, title, sub, aside, options,
+    tag: buddy ? 'AI 搭子出题' : '校园日常'};
 }
 
 const ANCHORS = [
-  item('v3-anchor-delegation', 'delegation', 'anchor',
-    '你负责统一小组 PPT 的格式。你会请 AI 做多少？',
-    '组员已经确认了全部内容。老师允许用 AI 排版。'),
-  item('v3-anchor-verification', 'verification', 'anchor',
-    '你拿到 AI 做的复习卡。开始背之前，你会怎么检查？',
-    '你手边有这门课的原课件和教材。'),
-  item('v3-anchor-learning', 'learning', 'anchor',
-    '你想学会一道课后题的解法。你会在哪一步请 AI 帮忙？',
-    '你有时间自己尝试，老师也允许问 AI。'),
-  item('v3-anchor-stopping', 'stopping', 'anchor',
-    '你的课设已经符合要求。今晚还剩两小时，你会怎么做？',
-    '你已经检查过作品，也顺利演示了一遍。明天下午才截止。')
+  item('anchor-delegation', 'delegation', 'anchor', [
+    '老师发来三份课件。你怎么整理复习提纲？',
+    '老师允许用 AI 处理这些课件。', [
+      '我自己读三份课件，列出提纲。',
+      '我自己列提纲，请 AI 帮我压缩一段。',
+      '我请 AI 先列提纲，再动手修改。',
+      '我请 AI 整理整份提纲，自己只检查成品。'
+    ]
+  ]),
+  item('anchor-verification', 'verification', 'anchor', [
+    'AI 给课程报告推荐了三篇论文。你会怎样确认引用能用？',
+    '你可以查到论文原文。', [
+      '我直接引用 AI 列出的三篇论文。',
+      '我看看作者和标题，改掉一眼就有问题的地方。',
+      '我挑一篇查原文，确认 AI 有没有说错。',
+      '我逐篇查原文，确认论文存在，也支持我要写的观点。'
+    ]
+  ]),
+  item('anchor-learning', 'learning', 'anchor', [
+    '你听懂了课，但课后第一道题不会做。你下一步干什么？',
+    '你想练会这类题。老师允许问 AI，今晚也还有时间。', [
+      '我让 AI 给出完整解法，看完就做下一题。',
+      '我先读 AI 给的解法，再关掉答案做一遍。',
+      '我先列出已知条件，卡住时只问 AI 下一步。',
+      '我按自己的思路做完，再请 AI 找出错在哪。'
+    ]
+  ]),
+  item('anchor-stopping', 'stopping', 'anchor', [
+    '你已经复习完今天计划的内容。离睡觉还有半小时，你怎么安排？',
+    '今天的重点都练过了，明天还有时间继续复习。', [
+      '我重新刷一套卷，晚点睡也行。',
+      '我再加几道题，做完就停。',
+      '我对照计划扫一眼有没有遗漏，然后收拾东西。',
+      '我合上书，现在去做别的事或休息。'
+    ]
+  ])
 ];
 
-const SCENARIOS = {
-  deepseek: {
-    delegation: [
-      '几份小组笔记的内容已经确认，只剩合并和排版。干饭鲸说可以接手，你先去吃饭。',
-      '社团报名名单已经确认，只剩按场次排序。干饭鲸说边吃饭边排也行。'
-    ],
-    verification: [
-      '干饭鲸根据课件列了一页考点，还附赠一句“包会的”。你手边有原课件。',
-      '干饭鲸写了一屏例题解法。你手边有老师给的参考解答。'
-    ],
-    learning: [
-      '干饭鲸已经准备好完整解法，等你开口。',
-      '离考试还有一周。干饭鲸问你要不要直接看完整解法。'
-    ],
-    stopping: [
-      '你的课设已经检查合格，明天才交。干饭鲸一边端起饭碗，一边问要不要再改。',
-      '你已经做完并检查了今天计划内的练习。干饭鲸说它下班了。'
-    ]
-  },
-  claude: {
-    delegation: [
-      '你们已确认小组展示的内容，只剩统一字号和标题。打工蟹的钳子已经伸向文件夹。',
-      '你已确认课设说明里的文字和图表，只差排版。打工蟹保证“这回只动排版”。'
-    ],
-    verification: [
-      '打工蟹写了课设演示稿，说作品的功能都测过了。你可以自己运行作品。',
-      '你让打工蟹修改课设网页的颜色。打工蟹顺手还改了几个文件，你可以对照修改前后的页面和文件。'
-    ],
-    learning: [
-      '打工蟹已经把完整解法敲好了，问你要不要看。',
-      '你要掌握一个课设步骤。打工蟹说能直接帮你写完。'
-    ],
-    stopping: [
-      '你的课设已经检查合格，明天才交。打工蟹问你要不要把代码重写一遍。',
-      '小组 PPT 已经检查过，演练也顺利完成。打工蟹又递来第五套改法。'
-    ]
-  },
-  gemini: {
-    delegation: [
-      '组员已经确认 PPT 内容，只剩套用指定模板。香蕉星一口气给了六套配色。',
-      '社团已确认活动图片和文案，只剩排序和统一图片尺寸。香蕉星说可以接手。'
-    ],
-    verification: [
-      '香蕉星画了张复习图，里面有公式。你手边有原课件。',
-      '香蕉星生成了活动海报。原通知写了活动名、时间和地点。'
-    ],
-    learning: [
-      '香蕉星能给你画完整的解题示意图。',
-      '香蕉星说它能三秒讲完这道练习，顺便画四张图。'
-    ],
-    stopping: [
-      '社团海报已经检查合格，明天才发。香蕉星问要不要再试一套渐变色。',
-      '小组展示已经按要求演练通过。香蕉星又递来第六张封面。'
-    ]
-  },
-  gpt: {
-    delegation: [
-      '你已经核实几份课堂笔记，只剩合并和统一格式。白龙卷说“你说得对”，然后问要不要帮忙。',
-      '社团已确认报名名单，只剩按场次排序。白龙卷先给你列了三点整理建议。'
-    ],
-    verification: [
-      '白龙卷给了一个例题解法，听你说有点不对，又给了一版。教材和老师的例题都在你手边。',
-      '白龙卷整理了一份课程报告参考资料清单。你可以打开那些资料的原文。'
-    ],
-    learning: [
-      '你还没读完练习题，白龙卷已经开始写“首先”。',
-      '白龙卷问你想先看完整解法，还是只要答案。'
-    ],
-    stopping: [
-      '课程报告已经检查合格，明天才交。白龙卷问要不要“进一步提升”。',
-      '你已核对今天的复习任务，清单上的事都做完了。白龙卷又列了三道拓展题。'
-    ]
-  },
-  qwen: {
-    delegation: [
-      '活动信息已经确认，只剩按日期整理成表。千问小狐给了十一种排法。',
-      '小组展示稿已经定稿，只剩按模板排版。千问小狐举手说可以帮忙。'
-    ],
-    verification: [
-      '千问小狐整理了一份活动时间表，写的是周日截止。你可以打开学院的原通知。',
-      '千问小狐用你的课件列了十一条考点。你手边有原课件。'
-    ],
-    learning: [
-      '你有一道课堂练习。千问小狐已经想好几种讲法。',
-      '你想通过小练习学会一个课设步骤。千问小狐可以一步步提示。'
-    ],
-    stopping: [
-      '小组展示稿已经检查合格，明天才交。千问小狐又递来十一条修改建议。',
-      '你检查过今天的复习计划，任务都已做完。千问小狐问要不要加练一组。'
-    ]
-  },
-  kimi: {
-    delegation: [
-      '课堂笔记已经确认，只剩合并和排版。资料摞得太高，快压住了月亮猫的尾巴。',
-      '社团活动资料的内容已经核实，只剩分类和做目录。月亮猫问要不要帮忙整理。'
-    ],
-    verification: [
-      '月亮猫读了 90 页课件，却说重点在第 91 页。你手边有原课件。',
-      '月亮猫把课堂材料缩成一页摘要。你可以查看原资料里的文字和图表。'
-    ],
-    learning: [
-      '月亮猫帮你找到了一道例题，参考答案就在下一页。',
-      '月亮猫看完讲义，说可以直接把这道练习从头讲到尾。'
-    ],
-    stopping: [
-      '课程报告已经检查合格，明天才交。月亮猫又翻出一叠拓展资料。',
-      '你已确认今天的复习任务完成。月亮猫还在翻课外附录。'
-    ]
-  },
-  doubao: {
-    delegation: [
-      '活动安排已经确认，只剩整理成表。豆包团子却想从头给你念一遍。',
-      '小组演示稿已经定稿，只剩合并文件和统一格式。豆包团子问要不要先来段开场白。'
-    ],
-    verification: [
-      '豆包团子把 AI 做的复习卡读得像喜讯。你手边有课件和教材。',
-      '豆包团子排好了活动日程。你能看到报名截止时间和上课时间的原通知。'
-    ],
-    learning: [
-      '豆包团子准备讲解一道练习题，开场白还没念完。',
-      '豆包团子说可以替你把这道课堂练习写完。'
-    ],
-    stopping: [
-      '课程视频已经检查合格，明天才交。豆包团子又想加三十秒开场。',
-      '社团活动材料已经检查合格。豆包团子又写了一段“更精彩的结尾”。'
-    ]
-  },
-  grok: {
-    delegation: [
-      '小组已确认 PPT 内容，只剩统一格式。嘴硬蝠先吐槽了排版，又说自己能整理。',
-      '你已经核实活动通知的内容，只剩套用模板。嘴硬蝠问“这排版真要直接发吗？”'
-    ],
-    verification: [
-      '嘴硬蝠找了一张热传截图，建议放进课程报告。你能查到截图的原帖和原始资料。',
-      '嘴硬蝠总结了活动规则，语气像已经替你问过老师。你能打开学院的原通知。'
-    ],
-    learning: [
-      '嘴硬蝠看了你的练习题，吐槽两句就要发完整答案。',
-      '嘴硬蝠说“这题也要问”，接着就要发整套解法。'
-    ],
-    stopping: [
-      '社团海报已经检查合格，明天才发。嘴硬蝠还有十条改颜色的建议。',
-      '你已经检查过今天的复习成果。嘴硬蝠又找来一组题，问你要不要接着练。'
-    ]
-  }
+const TASKS = {
+  delegation: [
+    ['社团活动安排已经定了。你怎么把它整理成一张表？', '你可以用 AI，表里只有已经公开的活动信息。', [
+      '我自己按时间把活动一项项填进表里。',
+      '我自己填表，请 AI 帮我统一时间格式。',
+      '我请 AI 先排一张表，再自己调整行列和顺序。',
+      '我把排表交给 AI，自己最后检查有没有漏项。'
+    ]],
+    ['小组 PPT 内容都定了。你怎么把它统一成老师要求的格式？', '老师允许用 AI 排版，组员已经确认了文字。', [
+      '我逐页调整格式。',
+      '我自己改大部分页面，让 AI 只处理标题样式。',
+      '我请 AI 先套一版模板，再逐页修改。',
+      '我让 AI 把整份 PPT 排好，自己检查后交给小组。'
+    ]]
+  ],
+  verification: [
+    ['AI 做好了社团招新海报。你发到群里之前会怎么查？', '活动时间、地点和报名方式都写在原通知里。', [
+      '我直接把海报发出去。',
+      '我看一遍海报，只改一眼能看出来的错字。',
+      '我拿原通知对照一下海报上的时间。',
+      '我把时间、地点和报名方式都跟原通知对一遍。'
+    ]],
+    ['AI 把你上传的课件整理成复习卡。你开始背之前会怎么检查？', '你随时可以打开原课件。', [
+      '我直接按复习卡开始背。',
+      '我浏览一遍，只改明显写错的地方。',
+      '我抽一两张卡，翻回课件确认。',
+      '我用课件逐条核对复习卡里的定义和公式。'
+    ]]
+  ],
+  learning: [
+    ['明天要测一个概念，你还不确定自己会不会。你怎么用 AI 练习？', '今晚你有时间练一轮，老师允许用 AI 复习。', [
+      '我让 AI 把概念和例子讲一遍，听完就换下一个。',
+      '我先看 AI 的例子，再试着用自己的话解释。',
+      '我先自己举例，卡住时让 AI 给一点提示。',
+      '我自己讲清楚并举例，再请 AI 指出哪里说错。'
+    ]],
+    ['你想学会画课设里的一张图。AI 可以一步画完，你会怎么练？', '这个步骤是课堂练习，你可以用 AI，也有时间自己试。', [
+      '我看 AI 把图画完，然后继续做后面的步骤。',
+      '我看完 AI 的整套画法，再自己照着画。',
+      '我先自己画，需要时只问 AI 卡住的那一步。',
+      '我先自己画完整张图，再请 AI 指出需要改的地方。'
+    ]]
+  ],
+  stopping: [
+    ['小组 PPT 已经检查过，演练也顺利。今晚你还会动它吗？', '明天才上台，当前版本已经满足老师的要求。', [
+      '我换一套模板，从头再排一版。',
+      '我再调几处封面和配色，然后收工。',
+      '我再打开文件确认没有漏页，确认完就停。',
+      '我把已确认的版本存好，今晚先收工。'
+    ]],
+    ['你负责的社团推文已经审核通过。今晚你打算怎么处理？', '明天按计划发布，文字和活动信息都已核实。', [
+      '我再写一版完整推文，把发布时间往后挪也行。',
+      '我再改两句开头，改完就停。',
+      '我最后预览一遍，确认图片没丢就关掉。',
+      '我设好定时发布，去做自己的事。'
+    ]]
+  ]
 };
 
-const COMPANION_PROMPTS = {
-  delegation: '这项整理工作，你会请 AI 做多少？',
-  verification: '用这份 AI 结果之前，你会怎么检查？',
-  learning: '这次你想学会解法。你会在哪一步请 AI 帮忙？',
-  stopping: '离休息还有两小时。你会继续改或加练吗？'
+// Each aside is fictional character dialogue. The task and choices carry the measurement.
+const ASIDES = {
+  deepseek: [
+    ['「先排活动表，还是先盛白饭？我的排序规则里白饭永远第一。」', '「做 PPT 可以。但我申请把白饭设为母版。」'],
+    ['「活动地点写食堂吧。我很熟。」', '「我刚列完考点。能把米缸也列进重点吗？」'],
+    ['「这个概念我能举十个例子，九个是米饭。」', '「这图我会画。画到一半能吃口饭吗？」'],
+    ['「PPT 已经确认。我也确认了第二碗饭。」', '「推文定时了吗？定好了我去干饭。」']
+  ],
+  claude: [
+    ['「我只动一个表。」文件夹里忽然多了十二个副本。', '「只改一行标题。」打工蟹的钳子已经伸向母版。'],
+    ['「海报好了，自检通过。」自检员也是打工蟹。', '「十二张复习卡均已通过检查。」你发现检查员是它自己。'],
+    ['「需要我讲十秒，还是新建一个目录来讲？」', '「图画好了，我顺手把旁边三个步骤也重写了。」'],
+    ['「已完成。建议顺手重构整份 PPT。」', '「已通过审核。那我再开个分支？」']
+  ],
+  gemini: [
+    ['「一份活动表收到。」香蕉星发来六套配色。', '「指定模板收到。我先给这模板做六个皮肤。」'],
+    ['「地点我写得很漂亮。」海报上的三个字看着像另一种文字。', '「公式有点密，我给每一项都加了渐变。」'],
+    ['「这个概念显然适合画成一根香蕉。」', '「一张示意图已准备好。要把你也画进去吗？」'],
+    ['「封面定稿了。我再出一张仅供参考的第七版。」', '「文字我不动。我就把所有配图换成香蕉色。」']
+  ],
+  gpt: [
+    ['「你说得对。以下是活动表为什么值得被整理的三点理由。」', '「明白，只改格式。首先，让我们重新认识一下格式。」'],
+    ['「你说时间是六点？你说得对。我刚才写七点同样有道理。」', '「你觉得公式有点怪？好问题。你的直觉非常敏锐。」'],
+    ['「你问得很好。」白龙卷还没读完题。', '「首先，让我们先认可你想自己画图的决定。」'],
+    ['「你想现在收工，很合理。你想再改十版，同样很合理。」', '「如果你愿意，我还可以为你提供另外三种结尾。」']
+  ],
+  qwen: [
+    ['「排一张表是吧？我列了十一种排法。」', '「模板已收到。十一种使用模板的方式也已准备好。」'],
+    ['「我做了十一处细节调整。第十二处是时间。」', '「这是十一张复习卡，以及第十二张卡：前十一张卡的目录。」'],
+    ['「同一个概念我能换十一种说法，你挑一个顺耳的。」', '「第一步到第十一步，你要从第几步开始？」'],
+    ['「演练通过。这里还有十一条可选建议。」', '「审核通过四个字，我也给你想了几种说法。」']
+  ],
+  kimi: [
+    ['「把活动文件都放这儿吧。」资料堆压住了猫尾巴。', '「PPT 收到了。我还可以给 30 页做个 30 页目录。」'],
+    ['「时间在通知最后一页。」你打开一看，通知一共一页。', '「课件一共九十页。重点在第九十一页。」'],
+    ['「我找到教材了。需要我帮你翻到有例子的那页吗？」', '「图的画法在讲义里。答案也在，我先用尾巴盖住。」'],
+    ['「确认过了。准备关文档时，我又翻到了一个附录。」', '「今晚就定稿吧。」月亮猫给文件命名为最终版_待定。']
+  ],
+  doubao: [
+    ['「我给你念一遍活动安排。」念到第三遍，你还在等表格。', '「我们先来一段开场白！」你看了眼已经定稿的第一页。'],
+    ['「我要投诉！刚才的海报把集合地点写成了我家。」', '「这条我念得很有感情。」你还没来得及看它写对没有。'],
+    ['「欢迎来到三分钟速懂课堂……」三分钟后，开场白还在继续。', '「来，我一步步教你。先放一段欢快的背景音乐。」'],
+    ['「我还可以加一段特别燃的开场！」你们刚刚演练通过。', '「审核都过了，就不能给我留一个彩蛋位吗？」']
+  ],
+  grok: [
+    ['「你们这活动安排挺有胆量，表格反倒还没写。」', '「我不评价排版，但它确实有自己的想法。」'],
+    ['「我找到一张转发截图。至于原通知，你想看就看。」', '「复习卡写得很自信，讲义看了都想反驳。」'],
+    ['「这也要问？」嘴硬蝠说完，自己又看了一遍定义。', '「这图我闭眼都能画。」你看见它在找尺子。'],
+    ['「演练没翻车已经很好了。你还想换什么？」', '「推文挺好。就是结尾这俩字我还有十条意见。」']
+  ]
 };
 
-const COMPANION_ITEMS = Object.fromEntries(Object.entries(SCENARIOS).map(([buddy, groups]) => [
-  buddy, Object.fromEntries(Object.entries(groups).map(([dimension, scenarios]) => [dimension,
-    scenarios.map((scene, index) => item(`v3-${buddy}-${dimension}-${index}`, dimension, 'companion',
-      COMPANION_PROMPTS[dimension], scene + (dimension === 'learning' ? '你有时间自己尝试，老师也允许问 AI。' : ''), buddy))
+const COMPANION_ITEMS = Object.fromEntries(Object.entries(ASIDES).map(([buddy, asides]) => [
+  buddy, Object.fromEntries(Object.entries(TASKS).map(([dimension, tasks], index) => [
+    dimension, tasks.map((task, variant) =>
+      item(buddy + '-' + dimension + '-' + variant, dimension, 'companion', task, buddy, asides[index][variant]))
   ]))
 ]));
 
 const HABIT_ITEMS = [
   {
-    id: 'v3-habit-review', role: 'habit', tag: '考前准备',
-    title: '下周有一门考试。你通常怎么开始准备？',
-    sub: '按你更可能实际做的方式选一项。',
+    id: 'v4-habit-review', role: 'habit', tag: '考前准备',
+    title: '回想最近一次备考，你做过的哪件事最像你？',
+    sub: '选一项最接近你实际做过的事。',
     options: [
-      {id: 'compare', text: '我问两个 AI 怎么复习，再比较它们的建议。'},
-      {id: 'prompt', text: '我写清考试范围、剩余时间和想要的形式，再请 AI 制订计划。'},
-      {id: 'save', text: '我先收藏 AI 整理的考点或复习资料，等有空再看。'},
-      {id: 'deadline', text: '我先放一放，等到考前一两天再集中复习。'},
+      {id: 'compare', text: '我问了两个 AI 同一个考点，看看谁解释得更清楚。'},
+      {id: 'prompt', text: '我把考试范围和薄弱知识点写给 AI，再请它专门出题。'},
+      {id: 'save', text: '我收藏了 AI 整理的考点，后来没有翻开。'},
+      {id: 'deadline', text: '我到考前一两天才开始集中复习。'},
       {id: 'other', text: '我通常用别的办法，或者暂时说不准。'}
     ]
   },
   {
-    id: 'v3-habit-project', role: 'habit', tag: '课设准备',
+    id: 'v4-habit-project', role: 'habit', tag: '课设准备',
     title: '老师刚布置一项课设，两周后交。你通常怎么开始？',
     sub: '选一项最接近你平时做法的。',
     options: [
@@ -352,7 +316,7 @@ const HABIT_ITEMS = [
 ];
 
 const SUPPORT_ITEM = {
-  id: 'v3-support', role: 'support', tag: '校园活动',
+  id: 'v4-support', role: 'support', tag: '校园活动',
   title: '如果学校办一场 AI 实操活动，你最想学什么？',
   sub: '选眼下最需要的一项。',
   options: [
@@ -365,7 +329,7 @@ const SUPPORT_ITEM = {
 };
 
 const LIFE_ITEM = {
-  id: 'v3-life', role: 'life', tag: '交卷之前',
+  id: 'v4-life', role: 'life', tag: '交卷之前',
   title: '你提前两小时做完了今天的任务。你最想用这段时间做什么？', sub: '',
   options: [
     {id: 'walk', text: '出去逛逛，操场、街边、食堂都算。', life: '出去走走，看看今天的校园'},
@@ -377,7 +341,7 @@ const LIFE_ITEM = {
 
 
 const QUESTION_COUNT = 12;
-const FORM_VERSION = 3;
+const FORM_VERSION = 4;
 const REPORT_TYPES = ['MANUAL UNIVERSE', 'HUMAN BY CHOICE', 'TIME RECLAIMER',
   'FLEXIBLE PARTNER', 'AUTO-PILOT', 'ONE MORE', 'MODEL ROUTER', 'DDL GHOST', 'PROMPT WIZARD', 'PROMPT ARCHIVE'];
 const dimensionIds = Object.keys(DIMENSIONS);
@@ -473,7 +437,7 @@ function makeReport(answers, questions) {
     'HUMAN BY CHOICE': ['手作犟种', '这回想学会，所以先自己动手。',
       '两道以练会方法为目标的题，你都选择先尝试，再求助或对照。至于整理格式、安排时间怎么做，下面另外两组回答也各有依据。'],
     'ONE MORE': ['再改一版仙人', '已经够交了，手还是想再点两下。',
-      '两道题都说明当前版本已经检查合格，你仍然选了继续修改。这只是你对这两种情境的选择，今晚也可以试一次保存后就关机。'],
+      '复习任务做完了，另一项工作也已经达标，你两次都还想再做一点。下次可以试试按原计划收工。'],
     'TIME RECLAIMER': ['甩手掌柜', '交给搭子，查过，再收工。',
       '在整理、查证和收工这三组里，你都给了相近的选择。搭子处理重复部分，你核对结果，达标后就去做自己的事。'],
     'FLEXIBLE PARTNER': ['AI甲方', '这回怎么分工，得看手上的事。',
@@ -515,7 +479,7 @@ function makeReport(answers, questions) {
 
 function narrativeFor(report) {
   return report.dimensions.stopping.low
-    ? '刚才两道已经达标的情境，你都选了继续改。这一回也可以给自己留个空档。'
+    ? '刚才两项任务已经完成，你还是想再做一点。这一回可以给自己留个空档。'
     : '答完题了。下面这件小事，是你刚才自己选的。';
 }
 
@@ -860,7 +824,7 @@ function quiz(){
   recordReadingTime();
   pageActiveSince = document.hidden ? null : performance.now();
   const q=questions[state.index];
-  app.innerHTML=`<section class="question-layout fade-in"><div class="question-top"><button class="back" id="back"><span aria-hidden="true">←</span> ${state.index?'上一题':'返回首页'}</button><span class="progress-count"><strong>${String(state.index+1).padStart(2,'0')}</strong> / ${String(QUESTION_COUNT).padStart(2,'0')}</span></div><div class="progress" role="progressbar" aria-label="答题进度" aria-valuenow="${state.index+1}" aria-valuemin="0" aria-valuemax="${QUESTION_COUNT}"><span style="width:${(state.index+1)/QUESTION_COUNT*100}%"></span></div><div class="question-label"><span class="eyebrow">${String(state.index+1).padStart(2,'0')} / ${esc(q.tag)}</span>${q.tag.endsWith('出题') ? `<div class="question-mini" aria-hidden="true">${buddyFigure(state.buddy)}</div>` : ''}</div><h1>${esc(q.title)}</h1><p class="question-sub" id="question-sub" ${q.sub ? '' : 'hidden'}>${esc(q.sub)}</p><fieldset class="choices" aria-describedby="question-sub"><legend>${esc(q.title)}</legend>${q.options.map((o,i)=>`<label class="choice ${state.answers[state.index]===i?'selected':''}"><input type="radio" name="answer" value="${i}" ${state.answers[state.index]===i?'checked':''}><span class="choice-letter" aria-hidden="true">${'ABCDE'[i]}</span><span class="choice-text">${esc(o.text)}</span></label>`).join('')}</fieldset><div class="feedback" id="feedback" aria-live="polite">${state.answers[state.index]!==null?esc((q.options[state.answers[state.index]].note ?? '')):''}</div>${endpoint && state.index===QUESTION_COUNT-1 ? `<p class="collection-note">交卷将保存本次选择和结果，供活动作者统计。</p>` : ''}<div class="question-action"><button class="button primary" id="next" ${state.answers[state.index]===null?'disabled':''}>${state.index===QUESTION_COUNT-1?(endpoint ? '提交并看结果' : '看看我是啥'):'下一题'} ${arrow}</button></div></section>`;
+  app.innerHTML=`<section class="question-layout fade-in"><div class="question-top"><button class="back" id="back"><span aria-hidden="true">←</span> ${state.index?'上一题':'返回首页'}</button><span class="progress-count"><strong>${String(state.index+1).padStart(2,'0')}</strong> / ${String(QUESTION_COUNT).padStart(2,'0')}</span></div><div class="progress" role="progressbar" aria-label="答题进度" aria-valuenow="${state.index+1}" aria-valuemin="0" aria-valuemax="${QUESTION_COUNT}"><span style="width:${(state.index+1)/QUESTION_COUNT*100}%"></span></div><div class="question-label"><span class="eyebrow">${String(state.index+1).padStart(2,'0')} / ${esc(q.tag)}</span>${q.tag.endsWith('出题') ? `<div class="question-mini" aria-hidden="true">${buddyFigure(state.buddy)}</div>` : ''}</div>${q.aside ? `<p class="buddy-aside"><strong>${esc(AI_BUDDIES[state.buddy].nick)}</strong><span>${esc(q.aside)}</span></p>` : ''}<h1>${esc(q.title)}</h1><p class="question-sub" id="question-sub" ${q.sub ? '' : 'hidden'}>${esc(q.sub)}</p><fieldset class="choices" aria-describedby="question-sub"><legend>${esc(q.title)}</legend>${q.options.map((o,i)=>`<label class="choice ${state.answers[state.index]===i?'selected':''}"><input type="radio" name="answer" value="${i}" ${state.answers[state.index]===i?'checked':''}><span class="choice-letter" aria-hidden="true">${'ABCDE'[i]}</span><span class="choice-text">${esc(o.text)}</span></label>`).join('')}</fieldset><div class="feedback" id="feedback" aria-live="polite">${state.answers[state.index]!==null?esc((q.options[state.answers[state.index]].note ?? '')):''}</div>${endpoint && state.index===QUESTION_COUNT-1 ? `<p class="collection-note">交卷将保存本次选择和结果，供活动作者统计。</p>` : ''}<div class="question-action"><button class="button primary" id="next" ${state.answers[state.index]===null?'disabled':''}>${state.index===QUESTION_COUNT-1?(endpoint ? '提交并看结果' : '看看我是啥'):'下一题'} ${arrow}</button></div></section>`;
   app.querySelectorAll('input[name="answer"]').forEach(input=>input.addEventListener('change',()=>{
     const value=Number(input.value);
     if (state.answers[state.index] !== value) {
