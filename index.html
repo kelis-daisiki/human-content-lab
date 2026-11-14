@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f8db45">
   <meta name="survey-endpoint" content="https://human-content-survey.handsomezhang23333.workers.dev/api/responses">
-  <meta name="description" content="选一位 AI 搭子，答 12 道校园场景题，看看你更像哪种搭班风格。">
+  <meta name="description" content="选一位 AI 搭子，答 14 道校园题。拿到含人量报告，还能申请再审，说说你的分工理由。">
   <title>含人量检测站 · 请适当降低无效坚持</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2217%22%20fill%3D%22%23f05a32%22%2F%3E%3Cpath%20d%3D%22M17%2017v30m22-30v30M17%2032h22%22%20fill%3D%22none%22%20stroke%3D%22%23fff9ec%22%20stroke-width%3D%227%22%2F%3E%3Ccircle%20cx%3D%2249%22%20cy%3D%2244%22%20r%3D%224%22%20fill%3D%22%2322251f%22%2F%3E%3C%2Fsvg%3E%0A" type="image/svg+xml">
   <style>
@@ -50,6 +50,25 @@
 .types-preview.expanded .mini-type { display: block; }
 .afterword { justify-content: flex-end; }
 .collection-note { font-size: 11px; color: var(--muted); line-height: 1.7; margin: 13px 0; }
+.ruler-note { border-left: 5px solid var(--yellow); padding: 12px 18px; margin-bottom: 27px; background: #fff4bd; }
+.ruler-note strong { font-size: 16px; }
+.ruler-note p { font-size: 12px; margin-top: 7px; }
+.review-court { border: 2px solid; border-radius: 14px; padding: 28px; margin: 34px 0; background: #fff9e9; }
+.court-kicker { font-size: 12px; font-weight: 800; margin-bottom: 10px; }
+.review-court h2 { font-size: 32px; margin-bottom: 13px; }
+.review-court p { font-size: 13px; margin: 12px 0 18px; }
+.review-court h3 { margin: 25px 0 10px; }
+.review-court fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.review-court legend { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+.review-court label { display: block; font-size: 13px; margin: 16px 0; line-height: 1.8; }
+.review-court select,.review-court textarea,.review-court input[type="text"] { display: block; width: 100%; font: inherit; background: var(--paper); border: 1px solid; border-radius: 7px; padding: 11px; margin-top: 8px; }
+.review-court input[name="name"] { display: block; width: 100%; padding: 10px; font: inherit; border: 1px solid; border-radius: 6px; }
+.review-court .review-consent { display: flex; align-items: flex-start; gap: 8px; }
+.review-consent input { margin-top: 6px; }
+.review-court [hidden] { display: none!important; }
+#review-status { min-height: 24px; }
+#review-share { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+@media(max-width:600px){.review-court{padding:20px 16px}.review-court h2{font-size:26px}.review-court select{font-size:12px}}
 .share-links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 10px; font-size: 12px; }
 .share-links a { text-underline-offset: 4px; }
 .share-links input { width: 100%; min-width: 0; padding: 8px; font: inherit; }
@@ -103,10 +122,10 @@
     <button class="dialog-close" id="close-dialog" aria-label="关闭说明">×</button>
     <span class="eyebrow">HUMAN CONTENT LAB</span>
     <h2 id="about-title">给人类和AI，<br>重新排个班。</h2>
-    <p>选一个 AI 搭子，回答 12 道选择题。题目会问你在学校怎么用 AI、怎么安排学习和课余时间。</p>
+    <p>选一个 AI 搭子，回答 14 道选择题。题目会问校园里的分工选择、分工理由、近期实际困难和课余安排。结果页可以自愿申请再审。</p>
     <p>请按课程允许使用 AI 的情形作答。没遇到过的情境可以选“暂时说不准”。</p>
     <p>干饭鲸、打工蟹等八个小动物都是虚构的 AI 工具角色。你是答题的人，题目里的 AI 可以帮你整理、解题或检查。</p>
-    <p id="collection-detail" hidden>交卷会保存搭子、题目与选择、结果、可选校园身份与AI使用频率、分题用时和回改次数，供活动作者统计。无需填写姓名或学号。</p>
+    <p id="collection-detail" hidden>交卷会保存搭子、题目与选择、结果、可选校园身份与AI使用频率、分题用时和回改次数，供本次校园人机协作调查统计。再审时可另行提交理由和经历，是否允许匿名摘录由你选择。无需填写姓名或学号。</p>
     <button class="button primary" id="understood">明白，允许整活 <span aria-hidden="true">↗</span></button>
   </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -130,7 +149,7 @@ const OPTION_IDS = {
 function item(key, dimension, role, [title, sub, choices], buddy = null, aside = '') {
   const options = choices.map((text, value) => ({id: OPTION_IDS[dimension][value], text, value}));
   options.push({id: 'unsure', text: '我暂时说不准。', value: null});
-  return {id: 'v4-' + key, dimension, role, buddy, title, sub, aside, options,
+  return {id: 'v5-' + key, dimension, role, buddy, title, sub, aside, options,
     tag: buddy ? 'AI 搭子出题' : '校园日常'};
 }
 
@@ -361,7 +380,7 @@ const SPECIAL_TASKS = {
 // Existing question IDs keep the dialogue and task that earlier participants saw.
 const REVISED_ASIDES = {
   deepseek: [
-    ['「名单给我。名字打码，饭不要打码。」', '「PPT 格式我来。你帮我看看食堂还开不开放。」'],
+    ['「名单没排完，这点我认。饭没吃完，这锅我也认。」', '「格式有点乱，这点我认。但食堂快关了，你先看一眼。」'],
     ['「原通知在群里。你先往上翻，我去打个饭。」', '「给你十二张卡。第十三张写的是白饭，不考。」'],
     ['「你先思考，我再吃饭。」五分钟后，鲸鱼的头像出现在校园卡消费记录里。', '「我这就给你讲。」对面先发来一张吃到一半的饭。'],
     ['「PPT 都过了。再改也行，等我第二碗。」', '「定时发布那块你帮我点一下。我碗都端起来了。」']
@@ -369,29 +388,29 @@ const REVISED_ASIDES = {
   claude: [
     ['「我只建一个表。」五分钟后它问你有没有想好文件夹怎么命名。', '「只改标题。」打工蟹顺手给你建了个新模板。'],
     ['「只改了一行。十四个文件里各一行。」', '「排序修了。人数统计我也顺手换了个写法。」'],
-    ['「要我讲十秒还是写份说明？我两样都准备好了。」', '「我先只给你画一步。」下一条消息发来一张完整施工图。'],
+    ['「你说得对，我先接住这个问题。」你看见打工蟹两只钳子里都夹着文件。', '「我先只给你画一步。」下一条消息发来一张完整施工图。'],
     ['「能播了。」打工蟹退出全屏，打开了重构清单。', '「审核过了。我另存一份，你有空再看看。」文件叫第十九版。']
   ],
   gemini: [
-    ['「活动表排好了。有日出、日落和夜景三款。」', '「浅色模板收到。」香蕉星发回来一个渐变宇宙。'],
-    ['「只换背景。」照片里有个室友开始问这人是谁。', '「海报挺好看吧？‘东门’那两个字你凑近再认认。」'],
+    ['「这份活动表极其清晰、极其直观。」你只想知道集合时间在哪一格。', '「这是一套极其克制的浅色模板。」屏幕上有七种渐变。'],
+    ['「这次换背景极其成功。」你放大照片，准备逐个认人。', '「排版极其专业。」你凑近看，专业的‘东门’写得像‘柬门’。'],
     ['「我给这个概念画了张图。」打开一看，是一根被标了八处的香蕉。', '「草图在哪儿？」你给了它三根线，它回你一张建筑效果图。'],
     ['「我没动封面。我只给它重新打了光。」', '「标题没变。现在它有一圈会发光的描边。」']
   ],
   gpt: [
-    ['「你说按时间排，非常合理。按地点排？一样合理。我都发你了。」', '「只改格式这个要求非常具体。下面我先帮你把需求复述一遍。」'],
+    ['「按时间排不代表按地点排就不对。」你问它能不能先把表给你。', '「改格式并不意味着否定原作者，也不代表……」你说行，先改字号。'],
     ['「你这个判断很准确。」前后两版的判断刚好相反。', '「你质疑满分，这恰恰说明你具备很强的自省能力。」'],
     ['「你问得非常好。」你刚刚只发了半句话。', '「看懂我的图，说明你已经走出了学会画图的第一步。」'],
-    ['「现在收工很合理。再改一晚体现了你对质量的追求。」', '「收到了。」紧接着是三版它主动附上的替代结尾。']
+    ['「收工不代表放弃，休息也不意味着……」你已经合上了电脑。', '「我不替你决定，也不代表……」你问的是定时发布按钮在哪。']
   ],
   qwen: [
-    ['「十七杯收到。我先帮你把全糖、少糖、去冰分别列出来。」', '「你说随便喝点，于是我给‘随便’写了四种规格。」'],
+    ['「为您整理如下。」你收到十七杯奶茶、一份清单和一段温馨提示。', '「当然可以！以下是四种‘随便’的方案。」你还没决定喝什么。'],
     ['「我把海报信息做成了表。」你在第三列找到一项叫预估送达。', '「卡片有十一张。我还加了一张帮你记住前面十一张。」'],
     ['「我给你拿奶茶举例。」再往下滑，是一道三分糖附加题。', '「你要一张图，我先画一张，再给你一个表方便比。」'],
     ['「演练通过。现在只差一个庆功奶茶统计表。」', '「推文定时好了。要不要顺手把庆功那杯也排上？」']
   ],
   kimi: [
-    ['「活动表我排好了。你按时间看，我按歌单听。」', '「我给每页 PPT 配了首歌。现在全班需要坐满两小时。」'],
+    ['「已为你梳理好了。」活动表一份，适合写活动表的歌单一份。', '「我先帮你总结一下。」总结完，月亮猫又加了一张专辑。'],
     ['「地址我有点拿不准。散场放哪首歌我已经定了。」', '「这张卡的公式我还在查。背它的时候别放鼓点，我刚才数着数着就进副歌了。」'],
     ['「先用自己的话讲一遍。想不起来也别急，乐队彩排还有人忘进拍呢。」', '「草图先画，我给你放首适合画图的。画完了？等等，才到吉他独奏。」'],
     ['「PPT 都演完了。轮到我的谢幕曲了吧？我从第一页就开始等。」', '「你把推文定时。我去听 Pink Floyd。歌还没播完，谁也别跟我提第九稿。」']
@@ -424,7 +443,7 @@ const PREVIOUS_COMPANION_ITEMS = Object.entries(REVISED_ASIDES).flatMap(([buddy]
 
 const HABIT_ITEMS = [
   {
-    id: 'v4-habit-review', role: 'habit', tag: '考前准备',
+    id: 'v5-habit-review', role: 'habit', tag: '考前准备',
     title: '回想最近一次备考，你做过的哪件事最像你？',
     sub: '选一项最接近你实际做过的事。',
     options: [
@@ -436,7 +455,7 @@ const HABIT_ITEMS = [
     ]
   },
   {
-    id: 'v4-habit-project', role: 'habit', tag: '课设准备',
+    id: 'v5-habit-project', role: 'habit', tag: '课设准备',
     title: '老师刚布置一项课设，两周后交。你通常怎么开始？',
     sub: '选一项最接近你平时做法的。',
     options: [
@@ -449,8 +468,39 @@ const HABIT_ITEMS = [
   }
 ];
 
+const REASON_ITEM = {
+  id: 'v5-reason', role: 'reason', tag: '这回听你说',
+  title: '遇到允许用 AI 的任务，你决定自己做多少，最看重什么？',
+  sub: '选眼下最主要的理由。你愿意自己做的部分也算。',
+  options: [
+    {id: 'enjoy', text: '我喜欢亲自做的过程，慢一点也愿意。'},
+    {id: 'learn', text: '我想借这个任务练会一种方法或能力。'},
+    {id: 'time', text: '我想节省时间，留给别的任务或自己的生活。'},
+    {id: 'quality', text: '我看哪种分工的结果更合适，再决定交出去多少。'},
+    {id: 'trust', text: '我暂时不放心 AI 的结果，宁愿多做一点。'},
+    {id: 'access', text: '我还不太会用，或者工具费用、访问条件不合适。'},
+    {id: 'unsure', text: '看具体事情，暂时说不准。'}
+  ]
+};
+
+const FRICTION_ITEM = {
+  id: 'v5-friction', role: 'friction', tag: '最近的实际情况',
+  title: '过去两周，你使用或考虑使用 AI 时，最常卡在哪？',
+  sub: '只选最主要的一项，按实际经历回答。',
+  options: [
+    {id: 'rules', text: '我不清楚这门课或这项任务允许怎样用 AI。'},
+    {id: 'checking', text: 'AI 给了结果，但我不好判断它对不对。'},
+    {id: 'asking', text: '我很难把需求讲清楚，或者改了几轮还不合用。'},
+    {id: 'access', text: '费用、账号或网络访问让我用起来不方便。'},
+    {id: 'privacy', text: '我拿不准哪些资料可以交给 AI。'},
+    {id: 'none', text: '我用过，暂时没遇到明显困难。'},
+    {id: 'unused', text: '这两周我没有使用或考虑使用 AI。'},
+    {id: 'other', text: '还有别的困难，或暂时说不清。'}
+  ]
+};
+
 const SUPPORT_ITEM = {
-  id: 'v4-support', role: 'support', tag: '校园活动',
+  id: 'v5-support', role: 'support', tag: '校园支持',
   title: '如果学校办一场 AI 实操活动，你最想学什么？',
   sub: '选眼下最需要的一项。',
   options: [
@@ -463,8 +513,8 @@ const SUPPORT_ITEM = {
 };
 
 const LIFE_ITEM = {
-  id: 'v4-life', role: 'life', tag: '交卷之前',
-  title: '你提前两小时做完了今天的任务。你最想用这段时间做什么？', sub: '',
+  id: 'v5-life', role: 'life', tag: '交卷之前',
+  title: '如果给自己留一小段时间，你最想怎么过？', sub: '任务做没做完，都可以选。',
   options: [
     {id: 'walk', text: '出去逛逛，操场、街边、食堂都算。', life: '出去走走，看看今天的校园'},
     {id: 'people', text: '和喜欢的人见个面，或者打通电话。', life: '见见想见的人，好好说会儿话'},
@@ -474,13 +524,13 @@ const LIFE_ITEM = {
 };
 
 
-const QUESTION_COUNT = 12;
-const FORM_VERSION = 4;
+const QUESTION_COUNT = 14;
+const FORM_VERSION = 5;
 const REPORT_TYPES = ['MANUAL UNIVERSE', 'HUMAN BY CHOICE', 'TIME RECLAIMER',
   'FLEXIBLE PARTNER', 'AUTO-PILOT', 'ONE MORE', 'MODEL ROUTER', 'DDL GHOST', 'PROMPT WIZARD', 'PROMPT ARCHIVE'];
 const dimensionIds = Object.keys(DIMENSIONS);
 const allItems = [...ANCHORS, ...Object.values(COMPANION_ITEMS).flatMap(groups => Object.values(groups).flat()),
-  ...PREVIOUS_COMPANION_ITEMS, ...HABIT_ITEMS, SUPPORT_ITEM, LIFE_ITEM];
+  ...PREVIOUS_COMPANION_ITEMS, ...HABIT_ITEMS, REASON_ITEM, FRICTION_ITEM, SUPPORT_ITEM, LIFE_ITEM];
 const itemById = new Map(allItems.map(question => [question.id, question]));
 
 function drawQuestions(buddyId, random = Math.random) {
@@ -491,7 +541,7 @@ function drawQuestions(buddyId, random = Math.random) {
     return candidates[Math.max(0, index)];
   });
   return [selected[0], ANCHORS[1], selected[2], ANCHORS[3],
-    ANCHORS[0], selected[1], ANCHORS[2], selected[3], ...HABIT_ITEMS, SUPPORT_ITEM, LIFE_ITEM];
+    ANCHORS[0], selected[1], ANCHORS[2], selected[3], ...HABIT_ITEMS, REASON_ITEM, FRICTION_ITEM, SUPPORT_ITEM, LIFE_ITEM];
 }
 
 function restoreQuestions(ids, buddyId) {
@@ -594,19 +644,22 @@ function makeReport(answers, questions) {
   const life = lifeQuestion.options[answers.at(-1)];
   const support = supportQuestion.options[answers.at(-2)];
   const needsBreak = stopping.low;
+  const reason = REASON_ITEM.options[answers[10]];
+  const friction = FRICTION_ITEM.options[answers[11]];
   const scenes = {
     walk: needsBreak ? '电脑先合上，去操场坐会儿。今天可以只看看人来人往，不用再给散步定个目标。' : '从平时不走的门出去，买个烤红薯，逛到哪儿算哪儿。看看街边新开的小店，也看看今天的树。',
     people: needsBreak ? '约个熟人吃顿热饭，消息晚点回也行。让对方讲讲最近那件小事，这顿饭慢慢吃。' : '给想见的人发条消息，或者打通电话。从今天食堂吃了什么聊起，想聊久一点就聊久一点。',
     hobby: needsBreak ? '把那件小爱好拿出来，画两笔、拼两块都行。玩到一半也能收起来，今天不用完成作品。' : '放首喜欢的歌，翻几页闲书，或者去打两局游戏。你想做的事，现在有了一小段时间。',
-    rest: needsBreak ? '把电脑合上，消息静音，给自己放半天假。睡醒了再吃点东西，剩下的任务明天再说。' : '冲个热水澡，换件软乎的衣服。往床上一倒，想睡就睡。'
+    rest: needsBreak ? '把电脑合上，消息静音，给自己放半天假。睡醒了再吃点东西，再安排后面的任务。' : '冲个热水澡，换件软乎的衣服。往床上一倒，想睡就睡。'
   };
   const scoredEvidence = habitCode ? habits : basis.flatMap(id => dimensions[id].evidence.filter(item => item.value !== null));
   const score = delegation.available === 2 ? Math.round((3 - delegation.value) / 3 * 100) : null;
   return {score, scoreText: score === null ? '—' : String(score), scoreLabel: '重复任务亲自处理倾向',
     profile: {code, name, verdict, description, tag: verdict}, dimensions,
     evidence: scoredEvidence, habitBasis: habitCode ? habits : [], support: {id: support.id, text: support.text},
+    reason: {id: reason.id, text: reason.text}, friction: {id: friction.id, text: friction.text},
     life: life.life, future: 'campus', scene: scenes[life.id],
-    endingTitle: needsBreak ? '今天给自己放个假。' : '这两个小时归你。',
+    endingTitle: needsBreak ? '今天给自己放个假。' : '这点时间，也可以归你。',
     scoreParts: Object.values(dimensions).map(dimension => ({label: dimension.label, value: dimension.value})),
     version: FORM_VERSION};
 }
@@ -634,6 +687,66 @@ function qualitySignals(questions, answers, timings) {
   });
   if (differing.length >= 2) flags.push('several-context-differences');
   return {flags, differing, quickPages: rapid};
+}
+
+const REVIEW_REASONS = [
+  {id: 'enjoy', text: '我就是喜欢亲自做，过程本身对我有意义。'},
+  {id: 'learn', text: '我想通过自己做来学会。'},
+  {id: 'time', text: '我想节省时间，留给别的事或生活。'},
+  {id: 'fit', text: '我试过，这种分工更适合当时的任务。'},
+  {id: 'limited', text: '当时有时间、规则、工具或访问方面的限制。'},
+  {id: 'unexamined', text: '我还没仔细想过，想借这次说清楚。'},
+  {id: 'other', text: '我的理由在下面这段话里。'}
+];
+const REVIEW_VERDICTS = [
+  {id: 'keep', text: '维持原来的趣味名，我觉得挺像。'},
+  {id: 'rename', text: '这个名字不合适，我给自己换一个。'},
+  {id: 'undecided', text: '我还没想明白，先留个问号。'}
+];
+
+function reviewPrompt(report) {
+  if (report.dimensions.delegation.high && report.dimensions.verification.low) {
+    return {branch: 'delegated-unchecked', title: '交出去以后，当时发生了什么？',
+      question: '两道核对题里你都选了较少检查。你已经验证过工具，还是当时有别的考虑？'};
+  }
+  if (report.dimensions.stopping.low) {
+    return {branch: 'keep-working', title: '再做一点，是为了什么？',
+      question: '两项任务已经完成，你仍想继续。你是在享受过程、想做得更好，还是总觉得停下来不踏实？'};
+  }
+  if (report.score === null) {
+    return {branch: 'unknown', title: '说不准的地方，也可以陈述。',
+      question: '这次有些情境你暂时说不准。哪件事更接近你的真实经历？你当时怎样分工？'};
+  }
+  if (report.score >= 67) {
+    return {branch: 'hands-on', title: '亲自做得多，理由由你说。',
+      question: '你在两道分工题里留了较多工作给自己。是喜欢过程、想学会、工具不合适，还是别的原因？'};
+  }
+  if (report.score <= 33) {
+    return {branch: 'delegated', title: '交给 AI 后，时间去了哪儿？',
+      question: '你愿意让 AI 先处理较多工作。它帮到了什么？腾出的时间后来怎样用了？也可以说说没省下来那次。'};
+  }
+  return {branch: 'mixed', title: '这件自己来，那件交出去。',
+    question: '你的分工落在中间。举一件具体的事，是什么让你决定这部分自己做、另一部分交给 AI？'};
+}
+
+function normalizeReview(value) {
+  if (!value || !REVIEW_REASONS.some(option => option.id === value.reason) ||
+      !REVIEW_VERDICTS.some(option => option.id === value.verdict) ||
+      typeof value.statement !== 'string' || value.statement.length > 600 ||
+      typeof value.name !== 'string' || value.name.length > 20 ||
+      typeof value.allowQuote !== 'boolean') return null;
+  const statement = value.statement.trim();
+  const name = value.verdict === 'rename' ? value.name.trim() : '';
+  if (value.verdict === 'rename' && !name) return null;
+  if (value.reason === 'other' && !statement) return null;
+  return {reason: value.reason, statement, verdict: value.verdict, name, allowQuote: value.allowQuote};
+}
+
+function reviewText(report, review) {
+  const reason = REVIEW_REASONS.find(option => option.id === review.reason).text;
+  const verdict = REVIEW_VERDICTS.find(option => option.id === review.verdict).text;
+  return {reason, verdict, name: review.verdict === 'rename' ? review.name : report.profile.name,
+    statement: review.statement, headline: '含人量再审 · 本人陈述'};
 }
 
 const colors={manual:'#f8db45',craft:'#f8b9c9',delegate:'#b8a5ed',adapt:'#b7d6f0',unchecked:'#a8d7ba',human:'#f6a665'};
@@ -777,6 +890,43 @@ async function renderPoster(report,c,reportId,permit,buddyId='deepseek'){
  return new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('export failed')),'image/png'));
 }
 
+async function renderReviewPoster(report, review, buddyId) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1000;
+  const count = Array.from(review.statement).length;
+  canvas.height = 1120 + Math.ceil(count / 29) * 43 +
+    Math.max(0, review.statement.split('\n').length - 1) * 43;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw Error('Canvas unavailable');
+  ctx.fillStyle = '#fffdf5';ctx.fillRect(0,0,1000,canvas.height);
+  ctx.strokeStyle = '#202020';ctx.lineWidth = 4;ctx.strokeRect(24,24,952,canvas.height-48);
+  ctx.fillStyle = '#f8db45';ctx.fillRect(26,26,948,102);
+  ctx.fillStyle = '#202020';ctx.font = 'bold 30px "Microsoft YaHei",sans-serif';
+  ctx.fillText('含人量再审法庭 / 本人陈述',60,88);
+  ctx.font = 'bold 49px "Microsoft YaHei",sans-serif';
+  let y = wrapPoster(ctx,review.name,60,223,870,65);
+  ctx.font = '25px "Microsoft YaHei",sans-serif';
+  y = wrapPoster(ctx,'本次游戏含人量 ' + report.scoreText + ' · ' + AI_BUDDIES[buddyId].nick + '陪审',62,y+28,865,40);
+  y = wrapPoster(ctx,'本庭先审审这把尺子。我的分工理由是',62,y+40,865,40);
+  ctx.font = 'bold 29px "Microsoft YaHei",sans-serif';
+  y = wrapPoster(ctx,review.reason,62,y+22,865,47);
+  ctx.font = '27px "Microsoft YaHei",sans-serif';
+  const text = review.statement || '这一次，我先把理由说到这里。';
+  for (const paragraph of text.split(/\r?\n/)) y = wrapPoster(ctx,paragraph,62,y+14,865,43);
+  ctx.font = 'bold 28px "Microsoft YaHei",sans-serif';
+  wrapPoster(ctx,review.verdict,62,y+42,865,45);
+  const top = canvas.height - 270;
+  ctx.fillRect(24,top,952,3);
+  ctx.font = 'bold 31px "Microsoft YaHei",sans-serif';ctx.fillText('你的分工，也由你陈述。',60,top+85);
+  ctx.font = '20px Consolas,monospace';ctx.fillText(SHARE_URL.replace('https://',''),60,top+135);
+  const scale = 5, size = SHARE_QR.length*scale, x = 935-size, qrY = top+22;
+  ctx.fillStyle='#fff';ctx.fillRect(x,qrY,size,size);ctx.fillStyle='#000';
+  SHARE_QR.forEach((row,py)=>Array.from(row).forEach((cell,px)=>{
+    if(cell==='1')ctx.fillRect(x+px*scale,qrY+py*scale,scale,scale);
+  }));
+  return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(Error('Export failed')),'image/png'));
+}
+
 function submissionEndpoint(documentRoot = document) {
   const value = documentRoot.querySelector('meta[name="survey-endpoint"]')?.content;
   if (!value) return '';
@@ -820,6 +970,134 @@ async function sendResponse(endpoint, payload, fetcher = fetch) {
 }
 
 
+const escapeReview = value => String(value ?? '').replace(/[&<>"']/g,
+  char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+
+function reviewSection(report, state) {
+  const saved = normalizeReview(state.review?.data);
+  const initial = state.review?.data ?? {reason: '', statement: '', verdict: 'keep', name: '', allowQuote: false};
+  const prompt = reviewPrompt(report);
+  return `<section class="review-court" aria-labelledby="court-title">
+    <p class="court-kicker">含人量再审法庭</p>
+    <h2 id="court-title">先审审这把尺子。</h2>
+    <p>亲手做得多，为什么就值得表扬？交给 AI 做，又为什么需要自证清白？<br>这次的数字来自两道任务的选择，分工的理由还得听你说。</p>
+    <button class="button primary" id="open-review" aria-expanded="${Boolean(state.review?.open)}" aria-controls="review-body">不服，我要申请再审 ↗</button>
+    <div id="review-body" ${state.review?.open ? '' : 'hidden'}>
+      <h3>${prompt.title}</h3><p>${prompt.question}</p>
+      <form id="review-form">
+        <fieldset ${state.review?.submitted ? 'disabled' : ''}>
+          <legend>补充问话</legend>
+          <label>最接近你想说的理由<select name="reason" required>
+            <option value="">请选择</option>
+            ${REVIEW_REASONS.map(option => `<option value="${option.id}" ${initial.reason === option.id ? 'selected' : ''}>${option.text}</option>`).join('')}
+          </select></label>
+          <label>说件最近的事（选填，最多600字）<textarea name="statement" maxlength="600" rows="4"
+            placeholder="做了什么？哪部分自己来，哪部分交给 AI？为什么这样分？最后怎么样？">${escapeReview(initial.statement)}</textarea></label>
+          <label>这份趣味结果，你怎么看？<select name="verdict">
+            ${REVIEW_VERDICTS.map(option => `<option value="${option.id}" ${initial.verdict === option.id ? 'selected' : ''}>${option.text}</option>`).join('')}
+          </select></label>
+          <label id="review-name-label" ${initial.verdict === 'rename' ? '' : 'hidden'}>我想叫自己（最多20字）<input name="name" maxlength="20" value="${escapeReview(initial.name)}" ${initial.verdict === 'rename' ? 'required' : ''}></label>
+          <label class="review-consent"><input type="checkbox" name="allowQuote" ${initial.allowQuote ? 'checked' : ''}>允许作者在本次调查报告中匿名摘录我的这段经历。</label>
+          <p class="collection-note">提交会把这段补充与你刚才的答卷关联保存。陈述中可以省去姓名、学号和他人身份。</p>
+          <button type="submit" class="button primary" id="submit-review">提交我的再审陈述 ↗</button>
+        </fieldset>
+      </form>
+      <p id="review-status" role="status">${state.review?.submitted ? '再审陈述已收好。本人意见已附卷。' : saved ? '陈述草稿已留在当前标签页。' : ''}</p>
+      <div id="review-share" ${saved ? '' : 'hidden'}>
+        <button class="button secondary" id="save-review">保存再审陈述卡 ↓</button>
+        <button class="text-button" id="copy-review">复制我的陈述和试玩链接</button>
+        <textarea id="review-copy" aria-label="可复制的再审陈述" readonly hidden></textarea>
+      </div>
+    </div>
+  </section>`;
+}
+
+function bindReview(report, state, {endpoint, persist, ensureParent}) {
+  const form = document.querySelector('#review-form');
+  const status = document.querySelector('#review-status');
+  const elements = form.elements;
+  const storeDraft = () => {
+    const data = {reason: elements.reason.value, statement: elements.statement.value,
+      verdict: elements.verdict.value, name: elements.name.value, allowQuote: elements.allowQuote.checked};
+    const changed = JSON.stringify(state.review?.data) !== JSON.stringify(data);
+    state.review = {...state.review, data, open: true,
+      ...(changed ? {id: null, submitted: false} : {})};
+    persist();
+    return data;
+  };
+  document.querySelector('#open-review').onclick = event => {
+    const body = document.querySelector('#review-body');
+    body.hidden = !body.hidden;
+    state.review = {...state.review, open: !body.hidden};
+    event.currentTarget.setAttribute('aria-expanded', String(!body.hidden));
+    persist();
+  };
+  elements.verdict.onchange = () => {
+    const rename = elements.verdict.value === 'rename';
+    document.querySelector('#review-name-label').hidden = !rename;
+    elements.name.required = rename;
+    storeDraft();
+  };
+  form.oninput = storeDraft;
+  form.onsubmit = async event => {
+    event.preventDefault();
+    const data = normalizeReview(storeDraft());
+    if (!data) {status.textContent = '请选理由。选“其他”时写一句陈述，换名时填上你想叫的名字。';return;}
+    const button = document.querySelector('#submit-review');
+    button.disabled = true;
+    form.querySelector('fieldset').disabled = true;
+    state.review.id ??= newResponseId();
+    state.review.data = data;
+    persist();
+    try {
+      if (endpoint) {
+        status.textContent = '正在附卷……';
+        await ensureParent();
+        await sendResponse(new URL('/api/reviews', endpoint).href,
+          {id: state.review.id, responseId: state.responseId, ...data});
+        state.review.submitted = true;
+        state.review.data = data;
+        status.textContent = '再审陈述已收好。本人意见已附卷。';
+        form.querySelector('fieldset').disabled = true;
+      } else {
+        status.textContent = '再审陈述已留在当前标签页，可以带走陈述卡。';
+      }
+      persist();
+      document.querySelector('#review-share').hidden = false;
+    } catch {
+      status.textContent = '这次还没收到附卷回执，草稿还在。可以再提交一次。';
+    } finally {
+      form.querySelector('fieldset').disabled = state.review?.submitted === true;
+      button.disabled = false;
+    }
+  };
+  document.querySelector('#save-review').onclick = async () => {
+    const data = normalizeReview(state.review?.data);
+    if (!data) return;
+    const button = document.querySelector('#save-review');
+    button.disabled = true;
+    try {
+      const blob = await renderReviewPoster(report, reviewText(report, data), state.buddy);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;link.download = '含人量再审-本人陈述.png';link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+      status.textContent = '陈述卡已保存，可以发给朋友。';
+    } catch {status.textContent = '陈述卡暂时没保存成功，先复制文字也行。';}
+    finally {button.disabled = false;}
+  };
+  document.querySelector('#copy-review').onclick = async () => {
+    const data = normalizeReview(state.review?.data);
+    if (!data) return;
+    const content = reviewText(report, data);
+    const text = [content.headline, '我想叫自己“' + content.name + '”。', content.reason,
+      content.statement, content.verdict, SHARE_URL].filter(Boolean).join('\n');
+    try {await navigator.clipboard.writeText(text);status.textContent = '本人陈述和试玩链接已复制。';}
+    catch {const input = document.querySelector('#review-copy');input.hidden=false;input.value=text;input.focus();input.select();}
+  };
+}
+
+
 const app=document.querySelector('#app');
 const KEY = 'human-content-lab:session:campus-v' + FORM_VERSION;
 const blank = (buddy = 'deepseek') => ({
@@ -827,7 +1105,7 @@ const blank = (buddy = 'deepseek') => ({
   questionIds: [], revealed: false, reportId: null, buddy,
   responseId: null, submitted: false,
   timings: Array(QUESTION_COUNT).fill(0), revisions: Array(QUESTION_COUNT).fill(0),
-  qualityReviewed: false, qualityReason: '', population: 'unspecified', aiUse: 'unspecified'
+  qualityReviewed: false, qualityReason: '', population: 'unspecified', aiUse: 'unspecified', review: null
 });
 let state = blank();
 let questions = [];
@@ -853,6 +1131,16 @@ try {
       state.qualityReason = ['confirmed', 'context-difference', 'reviewed'].includes(saved.qualityReason) ? saved.qualityReason : '';
       state.population = ['sdu-student', 'other-student', 'other', 'unspecified'].includes(saved.population) ? saved.population : 'unspecified';
       state.aiUse = ['never', 'monthly', 'weekly', 'daily', 'unspecified'].includes(saved.aiUse) ? saved.aiUse : 'unspecified';
+      if (saved.review && typeof saved.review === 'object') {
+        const draft = saved.review.data;
+        state.review = {open: saved.review.open === true, submitted: saved.review.submitted === true,
+          id: /^[a-f0-9]{32}$/.test(saved.review.id ?? '') ? saved.review.id : null,
+          data: draft && typeof draft === 'object' ? {
+            reason: String(draft.reason ?? '').slice(0,30), statement: String(draft.statement ?? '').slice(0,600),
+            verdict: String(draft.verdict ?? '').slice(0,20), name: String(draft.name ?? '').slice(0,20),
+            allowQuote: draft.allowQuote === true
+          } : null};
+      }
     }
   }
 } catch { /* Session storage is optional. */ }
@@ -932,13 +1220,7 @@ async function submitAndShowReport() {
   state.responseId ??= newResponseId();
   persist();
   try {
-    await sendResponse(endpoint, {
-      id: state.responseId, version: FORM_VERSION, buddy: state.buddy,
-      questionIds: state.questionIds, answers: state.answers,
-      context: {population: state.population, aiUse: state.aiUse},
-      quality: {timings: state.timings, revisions: state.revisions, reviewed: state.qualityReviewed, reason: state.qualityReason},
-      isTest: new URL(location.href).searchParams.get('test') === '1'
-    });
+    await ensureParentResponse();
     state.submitted = true;
     persist();
     startScan();
@@ -957,6 +1239,21 @@ async function submitAndShowReport() {
   } finally {
     submitting = false;
   }
+}
+
+async function ensureParentResponse() {
+  if (!endpoint || state.submitted) return;
+  state.responseId ??= newResponseId();
+  persist();
+  await sendResponse(endpoint, {
+    id: state.responseId, version: FORM_VERSION, buddy: state.buddy,
+    questionIds: state.questionIds, answers: state.answers,
+    context: {population: state.population, aiUse: state.aiUse},
+    quality: {timings: state.timings, revisions: state.revisions, reviewed: state.qualityReviewed, reason: state.qualityReason},
+    isTest: new URL(location.href).searchParams.get('test') === '1'
+  });
+  state.submitted = true;
+  persist();
 }
 
 function home() {
@@ -1018,12 +1315,12 @@ function quiz(){
   recordReadingTime();
   pageActiveSince = document.hidden ? null : performance.now();
   const q=questions[state.index];
-  app.innerHTML=`<section class="question-layout fade-in"><div class="question-top"><button class="back" id="back"><span aria-hidden="true">←</span> ${state.index?'上一题':'返回首页'}</button><span class="progress-count"><strong>${String(state.index+1).padStart(2,'0')}</strong> / ${String(QUESTION_COUNT).padStart(2,'0')}</span></div><div class="progress" role="progressbar" aria-label="答题进度" aria-valuenow="${state.index+1}" aria-valuemin="0" aria-valuemax="${QUESTION_COUNT}"><span style="width:${(state.index+1)/QUESTION_COUNT*100}%"></span></div><div class="question-label"><span class="eyebrow">${String(state.index+1).padStart(2,'0')} / ${esc(q.tag)}</span>${q.tag.endsWith('出题') ? `<div class="question-mini" aria-hidden="true">${buddyFigure(state.buddy)}</div>` : ''}</div>${q.aside ? `<p class="buddy-aside"><strong>${esc(AI_BUDDIES[state.buddy].nick)}</strong><span>${esc(q.aside)}</span></p>` : ''}<h1>${esc(q.title)}</h1><p class="question-sub" id="question-sub" ${q.sub ? '' : 'hidden'}>${esc(q.sub)}</p><fieldset class="choices" aria-describedby="question-sub"><legend>${esc(q.title)}</legend>${q.options.map((o,i)=>`<label class="choice ${state.answers[state.index]===i?'selected':''}"><input type="radio" name="answer" value="${i}" ${state.answers[state.index]===i?'checked':''}><span class="choice-letter" aria-hidden="true">${'ABCDE'[i]}</span><span class="choice-text">${esc(o.text)}</span></label>`).join('')}</fieldset><div class="feedback" id="feedback" aria-live="polite">${state.answers[state.index]!==null?esc((q.options[state.answers[state.index]].note ?? '')):''}</div>${endpoint && state.index===QUESTION_COUNT-1 ? `<p class="collection-note">交卷将保存本次选择和结果，供活动作者统计。</p>` : ''}<div class="question-action"><button class="button primary" id="next" ${state.answers[state.index]===null?'disabled':''}>${state.index===QUESTION_COUNT-1?(endpoint ? '提交并看结果' : '看看我是啥'):'下一题'} ${arrow}</button></div></section>`;
+  app.innerHTML=`<section class="question-layout fade-in"><div class="question-top"><button class="back" id="back"><span aria-hidden="true">←</span> ${state.index?'上一题':'返回首页'}</button><span class="progress-count"><strong>${String(state.index+1).padStart(2,'0')}</strong> / ${String(QUESTION_COUNT).padStart(2,'0')}</span></div><div class="progress" role="progressbar" aria-label="答题进度" aria-valuenow="${state.index+1}" aria-valuemin="0" aria-valuemax="${QUESTION_COUNT}"><span style="width:${(state.index+1)/QUESTION_COUNT*100}%"></span></div><div class="question-label"><span class="eyebrow">${String(state.index+1).padStart(2,'0')} / ${esc(q.tag)}</span>${q.tag.endsWith('出题') ? `<div class="question-mini" aria-hidden="true">${buddyFigure(state.buddy)}</div>` : ''}</div>${q.aside ? `<p class="buddy-aside"><strong>${esc(AI_BUDDIES[state.buddy].nick)}</strong><span>${esc(q.aside)}</span></p>` : ''}<h1>${esc(q.title)}</h1><p class="question-sub" id="question-sub" ${q.sub ? '' : 'hidden'}>${esc(q.sub)}</p><fieldset class="choices" aria-describedby="question-sub"><legend>${esc(q.title)}</legend>${q.options.map((o,i)=>`<label class="choice ${state.answers[state.index]===i?'selected':''}"><input type="radio" name="answer" value="${i}" ${state.answers[state.index]===i?'checked':''}><span class="choice-letter" aria-hidden="true">${String.fromCharCode(65+i)}</span><span class="choice-text">${esc(o.text)}</span></label>`).join('')}</fieldset><div class="feedback" id="feedback" aria-live="polite">${state.answers[state.index]!==null?esc((q.options[state.answers[state.index]].note ?? '')):''}</div>${endpoint && state.index===QUESTION_COUNT-1 ? `<p class="collection-note">交卷将保存本次选择和结果，供活动作者统计。</p>` : ''}<div class="question-action"><button class="button primary" id="next" ${state.answers[state.index]===null?'disabled':''}>${state.index===QUESTION_COUNT-1?(endpoint ? '提交并看结果' : '看看我是啥'):'下一题'} ${arrow}</button></div></section>`;
   app.querySelectorAll('input[name="answer"]').forEach(input=>input.addEventListener('change',()=>{
     const value=Number(input.value);
     if (state.answers[state.index] !== value) {
       if (state.answers[state.index] !== null) state.revisions[state.index]++;
-      state.responseId=null; state.submitted=false;
+      state.responseId=null; state.submitted=false; state.review=null;
     }
     state.answers[state.index]=value;state.reportId=null;state.revealed=false;persist();
     app.querySelectorAll('.choice').forEach(c=>c.classList.toggle('selected',c.contains(input)));
@@ -1058,6 +1355,8 @@ function reportPage() {
   app.innerHTML = `<section class="result-layout fade-in">
     <div class="result-intro"><h1>你这次的 AI 搭班风格</h1></div>
     ${endpoint ? `<p class="collection-note" role="status">${state.submitted ? '答卷已收好，谢谢你来玩。' : '这次还未交卷，答案留在当前标签页。可返回最后一题重试。'}</p>` : ''}
+    <div class="ruler-note"><strong>本次游戏含人量 ${report.scoreText}。先审审这把尺子。</strong>
+      <p>这两道任务里，你选择亲自做多少？数字只记这件事。喜欢过程、想学会、工具不合适，也都值得说清楚。</p></div>
     <div class="result-grid">
       <article class="ticket" aria-label="你的检测报告" style="--type-color:${character.color}">
         <div class="ticket-head"><span>你的搭班样本</span><span>HCL</span></div>
@@ -1080,6 +1379,8 @@ function reportPage() {
           <input id="share-url" aria-label="可手动复制的试玩链接" value="${SHARE_URL}" readonly hidden>
         </div>
         <p class="support-choice">如果学校办活动，你最想要的帮助是<br><strong>${esc(report.support.text)}</strong></p>
+        <p class="support-choice">你自己说的分工理由<br><strong>${esc(report.reason.text)}</strong></p>
+        <p class="support-choice">过去两周最主要的实际困难<br><strong>${esc(report.friction.text)}</strong></p>
         <p class="reveal-prompt">这些题聊完了，接下来想怎么过？</p>
         <button class="button reveal-button" id="reveal" ${state.revealed ? 'hidden' : ''}>把时间留给自己 ${arrow}</button>
       </div>
@@ -1098,13 +1399,14 @@ function reportPage() {
     <section class="epilogue" id="epilogue" aria-labelledby="epilogue-title" ${state.revealed ? '' : 'hidden'}>
       <div class="epilogue-head"><span>交卷以后</span><span>今天还有别的事</span></div>
       <div class="epilogue-body"><div><h2 id="epilogue-title" tabindex="-1">含人量可以降低。<br>生活不用申请。</h2>
-        <p>刚才那些选择，只说得了这几件事。<br>你还可以有许多种生活。</p><div class="life-permit">生活许可证 · 长期有效</div>
+        <p>任务还没做完，今天也可以先休息。<br>你还可以有许多种生活。</p><div class="life-permit">生活许可证 · 长期有效</div>
         <p>即使有一天，很多工作都能由 AI 完成，<br>你依旧有享受生活、发现美的权利。</p></div>
         <div class="right"><p>${esc(narrativeFor(report))}</p><strong class="life-choice">${esc(report.life)}。</strong>
           <p>${esc(report.scene)}</p><p class="final-line">${esc(report.endingTitle)}</p>
           <button class="button" id="save-permit">带走这张生活许可证 ${arrow}</button></div>
       </div>
     </section>
+    ${reviewSection(report, state)}
     <div class="completed-samples"><div class="types-heading"><h2>全部 10 种搭班风格</h2>
       <button class="text-button" id="sample-toggle" aria-expanded="false">展开全部 10 种 ↗</button></div>
       <div class="types-preview">${REPORT_TYPES.map(code => CHARACTERS[code]).map(item => `<article class="mini-type" style="--type-color:${item.color}">
@@ -1118,6 +1420,7 @@ function reportPage() {
     event.currentTarget.textContent = expanded ? '收起来 ↶' : '展开全部 10 种 ↗';
   };
   app.querySelector('#save-report').onclick = () => saveCard(report, false);
+  bindReview(report, state, {endpoint, persist, ensureParent: ensureParentResponse});
   app.querySelector('#save-permit').onclick = () => saveCard(report, true);
   app.querySelector('#copy-share').onclick = async () => {
     try {
