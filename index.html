@@ -6816,7 +6816,7 @@ async function renderPoster(report, character, permit, buddyId = 'deepseek') {
   } : {
     label: '含人量明信片  /  搭班记录',
     title: character.name,
-    subtitle: '游戏含人量 ' + report.scoreText + '  ·  ' + AI_BUDDIES[buddyId].nick + '出题',
+    subtitle: '游戏含人量 ' + (report.score === null ? '暂不计分' : report.score + '/100') + '  ·  ' + AI_BUDDIES[buddyId].nick + '出题',
     message: character.quote,
     character
   });
@@ -7266,7 +7266,7 @@ function reportPage() {
           ${characterSVG(character.kind, character.name)}<h2>${character.name}</h2>
           <p class="type-quote">${esc(character.quote)}</p>
         </div>
-        <div class="score-strip"><span>游戏含人量<br><small>按两道分工题计</small></span><strong>${report.scoreText}<small> /100</small></strong></div>
+        <div class="score-strip"><span>游戏含人量<br><small>${report.score === null ? '分工题有一处暂时说不准' : '按两道分工题计'}</small></span><strong>${report.score === null ? '<small>暂不计分</small>' : `${report.score}<small> /100</small>`}</strong></div>
         <div class="ticket-tail"><span>${AI_BUDDIES[state.buddy].nick}出题</span><span class="barcode" aria-hidden="true"></span></div>
       </article>
       <div class="result-copy">
